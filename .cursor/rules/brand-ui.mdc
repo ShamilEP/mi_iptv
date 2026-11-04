@@ -1,0 +1,38 @@
+---
+description: Brand Theme 2026–27 tokens, TV focus, required UI states
+globs: "lib/core/theme/**/*.dart,lib/core/widgets/**/*.dart,lib/features/**/presentation/**/*.dart"
+alwaysApply: false
+---
+
+# Brand & UI (Theme 2026–27)
+
+Dark-first TV; light companion surfaces. Use `lib/core/theme` tokens — no one-off hex in widgets.
+
+## Colors
+| Token | Hex | Use |
+|---|---|---|
+| ink | `#0A0D14` | TV background |
+| surface | `#1A2130` | Cards / panels |
+| panel | `#11161F` | Nested panels |
+| border | `#2A3447` | Hairline borders |
+| cloud | `#F0EEE9` | Primary text / focus ring / companion bg |
+| mist | `#A3AFC4` | Secondary text |
+| signal | `#2BD9C8` | Primary actions, progress |
+| ember | `#FF7A4D` | LIVE, alerts, send-to-TV |
+| success | `#6FDC8C` | Synced / connected |
+| warning | `#FFC857` | Weak network |
+| error | `#FF6B7A` | Stream failed |
+| companionPrimary | `#0A6F68` | Companion CTA on light |
+| companionLive | `#B8431B` | LIVE on light |
+
+## Typography
+- Display/Title: **Bricolage Grotesque** (800 / 700)
+- Body/UI: **Figtree** (400 / 600)
+- Data/timecode: **JetBrains Mono** (500)
+Do not add `google_fonts` (or font assets) until approved; keep family names in theme stubs.
+
+## TV focus
+Visible focus always: **4px Cloud ring** + Signal outer glow; scale ~**1.05–1.06**. First focus on the highest-priority actionable control.
+
+## Mandatory interaction states
+Default, Focused, Pressed, Disabled, Loading, Empty, Error, Offline, Playing, Selected, Syncing, Sync Conflict.

@@ -1,0 +1,22 @@
+---
+description: Client security — tokens, logs, TLS, credential handling
+alwaysApply: true
+---
+
+# Client Security
+
+## Never
+- Read `*.properties`, `*.env*`, or secrets files.
+- Log JWT, passwords, Xtream/M3U credentials, or refresh tokens (including Logcat).
+- Return or display third-party source passwords in UI.
+- Hardcode API keys, signing secrets, or encryption keys.
+
+## Must
+- Transport: HTTPS / TLS only toward backend.
+- Persist session tokens via a **secure storage adapter** (Keystore / Keychain behind an interface).
+- Treat source credentials as sensitive end-to-end; encrypt at rest when local cache is required.
+- Validate/sanitize user-entered URLs and search strings at the boundary before use.
+- QoE / crash telemetry: anonymous IDs only — no email or PII in payloads.
+
+## Auth UX (MVP)
+Email/password register, login, refresh, logout, reset-password against `/api/v1/auth/*`. One profile per account in MVP.

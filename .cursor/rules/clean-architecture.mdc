@@ -1,0 +1,33 @@
+---
+description: Clean Architecture layers, dependency rule, feature layout
+alwaysApply: true
+---
+
+# Clean Architecture
+
+## Dependency rule
+`presentation` → `domain` ← `data`
+
+- **Domain** has zero Flutter UI and zero third-party SDK imports.
+- **Data** implements domain contracts; owns DTOs, datasources, adapters.
+- **Presentation** talks to use cases / repositories via domain APIs only.
+
+## Feature layout
+```
+lib/features/<feature>/{domain,data,presentation}
+lib/core/{theme,widgets,error,network,constants,utils}
+lib/app/   # bootstrap, root app, DI composition
+```
+
+TV vs Companion UI split under `presentation/tv` and `presentation/companion`. Shared visual atoms live in `lib/core/widgets`.
+
+## MVP feature map
+`auth`, `home`, `live_tv`, `player`, `catalog`, `sources`, `sync`, `devices`, `search`, `settings`, `favorites`.
+
+## Adapters (required for externals)
+Catalog/sources: M3U, Xtream, proprietary → canonical domain model.  
+Player: wrap Media3/ExoPlayer (or approved engine) behind `MediaPlayerController`.  
+Storage/network/secure prefs: adapter interfaces; never call plugins from widgets/use cases directly.
+
+## File size
+Prefer < ~250 lines per file. Split by responsibility before a file becomes a grab-bag.

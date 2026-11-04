@@ -1,0 +1,33 @@
+---
+description: Core AI harness — secrets ban, package approval, ask-first, MVP scope
+alwaysApply: true
+---
+
+# Mi IPTV — Core AI Harness
+
+This workspace is **Flutter clients only** (Android TV + Companion). Backend lives elsewhere.
+
+## Ask before acting
+If requirements, architecture choice, package need, or API contract is unclear — **stop and ask**. Do not invent product decisions outside SRS MVP v2.0.
+
+## Secrets & sensitive files (hard ban)
+Never open, read, summarize, or cite:
+- `*.properties`
+- `*.env`, `*.env.*`
+- secret / credential / keystore / PEM / P12 / google-services style secret files
+- files that clearly hold tokens, passwords, API keys, or signing material
+
+Prefer abstractions and placeholders. Never hardcode secrets.
+
+## Third-party packages
+- You may **propose** a package with a short why + alternatives.
+- Do **not** edit `pubspec.yaml`, run `flutter pub add`, or install plugins until the user **explicitly approves**.
+
+## Engineering bar
+- Clean Architecture, DRY, SOLID.
+- Dart / Flutter conventions.
+- Short focused files; extract shared simple widgets early.
+- Wrap third-party SDKs behind **simple adapters** (interfaces in domain/application; impl in data).
+
+## Language
+Harness, code comments, and agent replies for this project: **English**.

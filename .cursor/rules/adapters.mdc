@@ -1,0 +1,30 @@
+---
+description: Simple adapter pattern for third-party packages and plugins
+globs: "lib/**/adapters/**/*.dart,lib/core/network/**/*.dart,lib/features/player/**/*.dart,lib/features/sources/**/*.dart,lib/features/catalog/**/*.dart"
+alwaysApply: false
+---
+
+# Adapter Pattern
+
+## Rule
+UI and domain never import plugin packages directly. Define a narrow interface; implement one adapter per vendor/SDK.
+
+```dart
+// domain or core contract
+abstract interface class MediaPlayerController {
+  Future<void> play(Uri streamUri);
+  Future<void> pause();
+  Stream<PlayerStatus> get status;
+}
+
+// data/adapters — only place that may import the SDK (after approval)
+class Media3PlayerAdapter implements MediaPlayerController { ... }
+```
+
+## Required adapter families (MVP)
+- **Catalog/Sources:** `M3uSourceAdapter`, `XtreamSourceAdapter`, `ProprietaryCatalogAdapter` → canonical `ContentItem` / `Channel`.
+- **Playback:** `MediaPlayerController` impl (Media3/ExoPlayer or approved engine).
+- **Secure storage / HTTP / WebSocket:** one adapter each; swappable for tests.
+
+## Keep adapters thin
+Map types, translate errors to domain `Failure`s, no business rules. No package installs without user approval.

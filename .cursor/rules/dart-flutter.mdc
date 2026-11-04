@@ -1,0 +1,31 @@
+---
+description: Dart and Flutter coding conventions for Mi IPTV
+globs: "**/*.dart"
+alwaysApply: false
+---
+
+# Dart & Flutter Conventions
+
+## Style
+- `lowerCamelCase` members; `UpperCamelCase` types; `snake_case` files.
+- Prefer `const` constructors; immutable domain entities.
+- Explicit types on public APIs; avoid dynamic except at true boundaries.
+- No `print` in production paths; use a logging abstraction (adapter).
+
+## SOLID / DRY
+- One public type’s primary job per file when practical.
+- Share logic via use cases / domain services — not copy-paste across TV/Companion.
+- Prefer composition over deep widget inheritance.
+
+## Widgets
+- Keep widgets **small and dumb**; lift state / orchestration out.
+- Put reusable UI in `lib/core/widgets` (FocusableCard, StateScaffold, etc.).
+- Avoid mega-screens: extract sections and overlays.
+
+## State & navigation
+- Do not introduce Riverpod/Bloc/Provider/go_router/etc. until approved.
+- Until then, keep composition root in `lib/app` and feature presentation local.
+
+## Tests
+- Unit-test domain/use cases; widget-test shared widgets and critical screens.
+- Mirror feature paths under `test/`.
