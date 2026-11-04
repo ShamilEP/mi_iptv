@@ -8,7 +8,7 @@ class FocusableSurface extends StatefulWidget {
     super.key,
     required this.child,
     this.onPressed,
-    this.borderRadius = 16,
+    this.borderRadius = AppRadius.md,
   });
 
   final Widget child;
@@ -36,9 +36,11 @@ class _FocusableSurfaceState extends State<FocusableSurface> {
       },
       child: AnimatedScale(
         scale: _focused ? FocusStyles.scale : 1,
-        duration: const Duration(milliseconds: 120),
+        duration: AppMotion.fast,
+        curve: AppMotion.emphasized,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
+          duration: AppMotion.fast,
+          curve: AppMotion.emphasized,
           decoration: BoxDecoration(
             color: context.brandColors.surface,
             borderRadius: BorderRadius.circular(widget.borderRadius),

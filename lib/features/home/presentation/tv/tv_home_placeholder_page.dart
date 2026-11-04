@@ -12,7 +12,7 @@ class TvHomePlaceholderPage extends StatelessWidget {
     final brand = context.brandColors;
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(48),
+        padding: AppOverscan.padding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -20,19 +20,19 @@ class TvHomePlaceholderPage extends StatelessWidget {
               'Mi IPTV',
               style: Theme.of(context).textTheme.displayLarge,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.stackTight),
             Text(
               'Continue watching',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.stack),
             FocusableSurface(
               onPressed: () {},
               child: SizedBox(
                 width: 280,
                 height: 160,
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AppSpacing.insetCard),
                   child: Align(
                     alignment: Alignment.bottomLeft,
                     child: Text(
