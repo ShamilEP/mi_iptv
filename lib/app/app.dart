@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../core/theme/app_theme.dart';
+import '../core/theme/theme.dart';
 import '../features/home/presentation/tv/tv_home_placeholder_page.dart';
 
 /// Root application widget. Client flavor (tv vs companion) can branch later.

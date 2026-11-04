@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
-import '../theme/focus_styles.dart';
+import '../theme/theme.dart';
 
 /// Minimal shared focus wrapper for TV D-pad targets.
 class FocusableSurface extends StatefulWidget {
@@ -41,7 +40,7 @@ class _FocusableSurfaceState extends State<FocusableSurface> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 120),
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: context.brandColors.surface,
             borderRadius: BorderRadius.circular(widget.borderRadius),
             boxShadow: _focused ? FocusStyles.focusGlow() : null,
           ),

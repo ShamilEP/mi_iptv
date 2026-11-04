@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
 import 'app_typography.dart';
+import 'mi_brand_colors.dart';
 
 abstract final class AppTheme {
   static ThemeData tvDark() {
+    final brand = MiBrandColors.tv();
     final base = ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
@@ -13,12 +15,15 @@ abstract final class AppTheme {
         surface: AppColors.surface,
         primary: AppColors.signal,
         secondary: AppColors.ember,
+        tertiary: AppColors.success,
         error: AppColors.error,
         onPrimary: AppColors.ink,
         onSecondary: AppColors.ink,
+        onTertiary: AppColors.ink,
         onSurface: AppColors.cloud,
         onError: AppColors.ink,
       ),
+      extensions: <ThemeExtension<dynamic>>[brand],
     );
 
     return base.copyWith(
@@ -29,6 +34,7 @@ abstract final class AppTheme {
   }
 
   static ThemeData companionLight() {
+    final brand = MiBrandColors.companion();
     final base = ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
@@ -37,12 +43,15 @@ abstract final class AppTheme {
         surface: AppColors.cloud,
         primary: AppColors.companionPrimary,
         secondary: AppColors.companionLive,
+        tertiary: AppColors.success,
         error: AppColors.error,
         onPrimary: AppColors.cloud,
         onSecondary: AppColors.cloud,
+        onTertiary: AppColors.ink,
         onSurface: AppColors.ink,
         onError: AppColors.ink,
       ),
+      extensions: <ThemeExtension<dynamic>>[brand],
     );
 
     return base.copyWith(
