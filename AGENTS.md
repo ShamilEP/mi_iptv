@@ -38,6 +38,7 @@ MVP features: `auth`, `home`, `live_tv`, `player`, `catalog`, `sources`, `sync`,
 ## Brand (quick)
 Dark-first: Ink `#0A0D14`, Surface `#1A2130`, Cloud `#F0EEE9`, Signal `#2BD9C8`, Ember `#FF7A4D`.  
 Fonts: Bricolage Grotesque / Figtree / JetBrains Mono (OFL bundled under `assets/fonts/`; DSN-003).  
+Logo kit: mark + wordmark under `assets/brand/` (`BrandMark` / `BrandLockup`; DSN-005).  
 TV focus: 4px Cloud ring + Signal glow, scale ~1.05–1.06. Implement the 12 mandatory UI states.
 
 ## Working agreement

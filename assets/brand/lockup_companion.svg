@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" fill="none">
+  <rect width="420" height="120" fill="#F0EEE9"/>
+  <g transform="translate(36,15.5)">
+    <svg viewBox="0 0 72 64" width="100" height="89">
+      <path d="M10 48V30a9 9 0 0 0 18 0V48M28 30a9 9 0 0 0 18 0V48M60 33v15"
+            stroke="#0A6F68" stroke-width="7" stroke-linecap="round"
+            stroke-linejoin="round" fill="none"/>
+      <circle cx="60" cy="19" r="5.5" fill="#B8431B"/>
+    </svg>
+  </g>
+  <text x="154" y="81.60000000000001" font-family="Bricolage Grotesque, sans-serif"
+        font-weight="700" font-size="104" letter-spacing="-0.03em" fill="#0A0D14">iptv</text>
+</svg>

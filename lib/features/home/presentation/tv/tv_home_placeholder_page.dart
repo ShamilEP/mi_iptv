@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/theme.dart';
+import '../../../../core/widgets/brand_lockup.dart';
 import '../../../../core/widgets/focusable_surface.dart';
 
 /// Temporary TV Home shell until feature screens land.
@@ -16,10 +17,7 @@ class TvHomePlaceholderPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Mi IPTV',
-              style: Theme.of(context).textTheme.displayLarge,
-            ),
+            const BrandLockup(markHeight: 56),
             const SizedBox(height: AppSpacing.stackTight),
             Text(
               'Continue watching',

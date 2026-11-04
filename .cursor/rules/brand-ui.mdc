@@ -81,6 +81,15 @@ Visible focus always: **4px Cloud ring** + Signal outer glow; scale ~**1.05–1.
 ## Mandatory interaction states
 Default, Focused, Pressed, Disabled, Loading, Empty, Error, Offline, Playing, Selected, Syncing, Sync Conflict.
 
+## Logo & icon kit (DSN-005)
+Canonical mark: two Signal arches spell **m**; stem + Ember live-dot spell **i** (broadcast signal + LIVE beacon).
+- Geometry: viewBox `72×64`, stroke 7, live-dot r `5.5` → clear space = **dot diameter (11)**.
+- Minimum mark size: **24 px**. Use `BrandMark` / `BrandWordmark` / `BrandLockup` — do not invent logos.
+- Wordmark: lowercase `iptv`, Bricolage Grotesque **700**, tracking **−3%** (`BrandAssets.wordmarkTrackingEm`).
+- Tones: `BrandMarkTone.dark` (Signal/Ember), `.companion` (companionPrimary/Live), `.monochrome` (Ink).
+- Kit paths: `assets/brand/` (SVG masters, `app_icon_512.png`, `tv_banner_320x180.png`, adaptive layers).
+- Android: adaptive `ic_launcher` + `drawable/tv_banner` (Leanback launcher wiring is TV-003).
+
 ## Accessibility (DSN-002)
 - Text / fill contrast: use only **approved** FG/BG pairs locked in `test/core/theme/color_contrast_test.dart` (WCAG AA 4.5:1 via `ColorContrast`). Helpers live in `lib/core/theme/color_contrast.dart`.
 - **Never** use status accents (`signal`, `ember`, `success`, `warning`, `error`) as body text on `cloud` — those pairs fail AA. On companion light, prefer `ink`, `companionPrimary`, `companionLive`, or `companionMuted` on `cloud`; use Ink (or Cloud) as `on*` text for filled CTAs / chips.

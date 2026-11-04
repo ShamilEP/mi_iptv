@@ -9,6 +9,7 @@ export 'app_radius.dart';
 export 'app_spacing.dart';
 export 'app_theme.dart';
 export 'app_typography.dart';
+export 'brand_assets.dart';
 export 'color_contrast.dart';
 export 'focus_styles.dart';
 export 'mi_brand_colors.dart';
