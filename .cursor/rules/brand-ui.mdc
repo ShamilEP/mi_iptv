@@ -25,11 +25,23 @@ Dark-first TV; light companion surfaces. Use `lib/core/theme` tokens — no one-
 | companionPrimary | `#0A6F68` | Companion CTA on light |
 | companionLive | `#B8431B` | LIVE on light |
 
-## Typography
-- Display/Title: **Bricolage Grotesque** (800 / 700)
+## Typography (DSN-003)
+Families (bundled OFL under `assets/fonts/`, system fallbacks in `AppTypography`):
+- Display/Headline/Title: **Bricolage Grotesque** (800 / 700)
 - Body/UI: **Figtree** (400 / 600)
 - Data/timecode: **JetBrains Mono** (500)
-Do not add `google_fonts` (or font assets) until approved; keep family names in theme stubs.
+
+| Role | Material slot | TV size/line | Companion size/line |
+|---|---|---|---|
+| Display | `displayLarge` | 56/64 w800 | 36/44 w800 |
+| Headline | `headlineMedium` | 40/48 w700 | 28/36 w700 |
+| Title | `titleLarge` | 28/36 w700 | 20/28 w700 |
+| Body | `bodyLarge` | 20/28 w400 | 16/24 w400 |
+| UI emphasis | `bodyMedium` | body size w600 | body size w600 |
+| Label | `labelLarge` | 16/24 w600 | 13/20 w600 |
+| Data | `labelSmall` | 16/24 w500 | 13/20 w500 |
+
+Use `AppTheme.tvDark()` / `companionLight()` text themes — no one-off `fontSize` in widgets. Do not add `google_fonts`.
 
 ## TV focus
 Visible focus always: **4px Cloud ring** + Signal outer glow; scale ~**1.05–1.06**. First focus on the highest-priority actionable control.

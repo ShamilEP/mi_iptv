@@ -37,10 +37,8 @@ class TvHomePlaceholderPage extends StatelessWidget {
                     alignment: Alignment.bottomLeft,
                     child: Text(
                       'Harness ready',
-                      style: TextStyle(
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: brand.cloud,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),

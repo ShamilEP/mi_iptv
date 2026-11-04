@@ -55,10 +55,7 @@ abstract final class AppTheme {
     );
 
     return base.copyWith(
-      textTheme: AppTypography.tvTextTheme(base.textTheme).apply(
-        bodyColor: AppColors.ink,
-        displayColor: AppColors.ink,
-      ),
+      textTheme: AppTypography.companionTextTheme(base.textTheme),
     );
   }
 }
