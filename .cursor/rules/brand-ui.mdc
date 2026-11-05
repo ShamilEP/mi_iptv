@@ -25,6 +25,8 @@ Dark-first TV; light companion surfaces. Use `lib/core/theme` tokens — no one-
 | companionPrimary | `#0A6F68` | Companion CTA on light |
 | companionLive | `#B8431B` | LIVE on light |
 
+Semantic roles (DSN-007): use `SemanticColorUsage` / `docs/design/semantic_color_usage.md` — do not swap Signal↔Ember or Warning↔Error.
+
 ## Typography (DSN-003)
 Families (bundled OFL under `assets/fonts/`, system fallbacks in `AppTypography`):
 - Display/Headline/Title: **Bricolage Grotesque** (800 / 700)
