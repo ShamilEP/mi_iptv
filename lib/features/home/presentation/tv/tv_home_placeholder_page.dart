@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/brand_lockup.dart';
-import '../../../../core/widgets/focusable_surface.dart';
+import '../../../../core/widgets/content_card.dart';
 
 /// Temporary TV Home shell until feature screens land.
 class TvHomePlaceholderPage extends StatelessWidget {
@@ -10,7 +10,6 @@ class TvHomePlaceholderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brand = context.brandColors;
     return Scaffold(
       body: Padding(
         padding: AppOverscan.padding,
@@ -24,24 +23,12 @@ class TvHomePlaceholderPage extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: AppSpacing.stack),
-            FocusableSurface(
+            ContentCard(
+              kind: ContentCardKind.continueWatching,
+              title: 'Harness ready',
+              subtitle: 'Sprint 0',
+              progress: 0.35,
               onPressed: () {},
-              child: SizedBox(
-                width: 280,
-                height: 160,
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.insetCard),
-                  child: Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Text(
-                      'Harness ready',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: brand.cloud,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
             ),
           ],
         ),
