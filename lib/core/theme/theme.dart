@@ -13,4 +13,5 @@ export 'brand_assets.dart';
 export 'color_contrast.dart';
 export 'focus_styles.dart';
 export 'mi_brand_colors.dart';
+export 'semantic_color_usage.dart';
 export 'theme_context.dart';
