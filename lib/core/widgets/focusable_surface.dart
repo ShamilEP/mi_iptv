@@ -16,6 +16,8 @@ class FocusableSurface extends StatefulWidget {
     this.fill,
     this.padding,
     this.applySpecPadding = false,
+    this.focusNode,
+    this.onFocusChange,
   });
 
   final Widget child;
@@ -36,6 +38,12 @@ class FocusableSurface extends StatefulWidget {
 
   /// When true (and [padding] is null), apply the kind's default content padding.
   final bool applySpecPadding;
+
+  /// Optional external [FocusNode] (e.g. row last-focus memory).
+  final FocusNode? focusNode;
+
+  /// Notified when focus highlight visibility changes.
+  final ValueChanged<bool>? onFocusChange;
 
   @override
   State<FocusableSurface> createState() => _FocusableSurfaceState();
@@ -58,7 +66,11 @@ class _FocusableSurfaceState extends State<FocusableSurface> {
     }
 
     return FocusableActionDetector(
-      onShowFocusHighlight: (focused) => setState(() => _focused = focused),
+      focusNode: widget.focusNode,
+      onShowFocusHighlight: (focused) {
+        setState(() => _focused = focused);
+        widget.onFocusChange?.call(focused);
+      },
       actions: <Type, Action<Intent>>{
         ActivateIntent: CallbackAction<ActivateIntent>(
           onInvoke: (_) {
