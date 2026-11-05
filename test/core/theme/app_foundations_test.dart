@@ -67,6 +67,7 @@ void main() {
       expect(AppMotion.slow, const Duration(milliseconds: 320));
       expect(AppMotion.emphasized, Curves.easeOutCubic);
       expect(AppMotion.standard, Curves.easeInOut);
+      expect(AppMotion.channelInfoAutoHide, const Duration(seconds: 4));
     });
   });
 }
