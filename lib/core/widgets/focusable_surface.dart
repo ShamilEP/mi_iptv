@@ -79,19 +79,23 @@ class _FocusableSurfaceState extends State<FocusableSurface> {
           },
         ),
       },
-      child: AnimatedScale(
-        scale: _focused ? FocusStyles.scale : 1,
-        duration: AppMotion.fast,
-        curve: AppMotion.emphasized,
-        child: AnimatedContainer(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: widget.onPressed,
+        child: AnimatedScale(
+          scale: _focused ? FocusStyles.scale : 1,
           duration: AppMotion.fast,
           curve: AppMotion.emphasized,
-          decoration: BoxDecoration(
-            color: fill,
-            borderRadius: BorderRadius.circular(radius),
-            boxShadow: _focused ? FocusStyles.focusGlow() : null,
+          child: AnimatedContainer(
+            duration: AppMotion.fast,
+            curve: AppMotion.emphasized,
+            decoration: BoxDecoration(
+              color: fill,
+              borderRadius: BorderRadius.circular(radius),
+              boxShadow: _focused ? FocusStyles.focusGlow() : null,
+            ),
+            child: content,
           ),
-          child: content,
         ),
       ),
     );
