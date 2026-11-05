@@ -2,18 +2,40 @@ import 'package:flutter/material.dart';
 
 import '../theme/theme.dart';
 
-/// Minimal shared focus wrapper for TV D-pad targets.
+/// Shared TV D-pad focus wrapper (DSN-006).
+///
+/// Applies Cloud 4px ring + Signal glow + 1.05× scale for every
+/// [FocusControlKind]. Prefer this over ad-hoc focus decorations.
 class FocusableSurface extends StatefulWidget {
   const FocusableSurface({
     super.key,
     required this.child,
     this.onPressed,
-    this.borderRadius = AppRadius.md,
+    this.kind = FocusControlKind.card,
+    this.borderRadius,
+    this.fill,
+    this.padding,
+    this.applySpecPadding = false,
   });
 
   final Widget child;
   final VoidCallback? onPressed;
-  final double borderRadius;
+
+  /// Role used to resolve radius / fill from [FocusStyles.specFor].
+  final FocusControlKind kind;
+
+  /// Overrides [FocusControlSpec.borderRadius] when non-null.
+  final double? borderRadius;
+
+  /// Overrides [FocusControlSpec.fill] when non-null.
+  final Color? fill;
+
+  /// Explicit padding around [child]. When null and [applySpecPadding] is true,
+  /// uses the kind's [FocusControlSpec.contentPadding].
+  final EdgeInsetsGeometry? padding;
+
+  /// When true (and [padding] is null), apply the kind's default content padding.
+  final bool applySpecPadding;
 
   @override
   State<FocusableSurface> createState() => _FocusableSurfaceState();
@@ -24,6 +46,17 @@ class _FocusableSurfaceState extends State<FocusableSurface> {
 
   @override
   Widget build(BuildContext context) {
+    final spec = FocusStyles.specFor(widget.kind);
+    final radius = widget.borderRadius ?? spec.borderRadius;
+    final fill = widget.fill ?? spec.fill;
+    final resolvedPadding = widget.padding ??
+        (widget.applySpecPadding ? spec.contentPadding : null);
+
+    Widget content = widget.child;
+    if (resolvedPadding != null) {
+      content = Padding(padding: resolvedPadding, child: content);
+    }
+
     return FocusableActionDetector(
       onShowFocusHighlight: (focused) => setState(() => _focused = focused),
       actions: <Type, Action<Intent>>{
@@ -42,11 +75,11 @@ class _FocusableSurfaceState extends State<FocusableSurface> {
           duration: AppMotion.fast,
           curve: AppMotion.emphasized,
           decoration: BoxDecoration(
-            color: context.brandColors.surface,
-            borderRadius: BorderRadius.circular(widget.borderRadius),
+            color: fill,
+            borderRadius: BorderRadius.circular(radius),
             boxShadow: _focused ? FocusStyles.focusGlow() : null,
           ),
-          child: widget.child,
+          child: content,
         ),
       ),
     );
