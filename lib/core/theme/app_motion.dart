@@ -8,6 +8,9 @@ abstract final class AppMotion {
   static const Duration normal = Duration(milliseconds: 200);
   static const Duration slow = Duration(milliseconds: 320);
 
+  /// Channel info overlay auto-hide (DSN-015 / SRS §13).
+  static const Duration channelInfoAutoHide = Duration(seconds: 4);
+
   static const Curve emphasized = Curves.easeOutCubic;
   static const Curve standard = Curves.easeInOut;
 }
