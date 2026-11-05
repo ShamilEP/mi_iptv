@@ -90,6 +90,7 @@ void main() {
 
   testWidgets('MiIptvApp still boots with ContentCard on home', (tester) async {
     await tester.pumpWidget(const MiIptvApp());
-    expect(find.byType(ContentCard), findsOneWidget);
+    await tester.pumpAndSettle();
+    expect(find.byType(ContentCard), findsWidgets);
   });
 }

@@ -19,6 +19,8 @@ class ContentCard extends StatelessWidget {
     this.width,
     this.onPressed,
     this.artwork,
+    this.focusNode,
+    this.onFocusChange,
   }) : assert(
           progress == null || (progress >= 0 && progress <= 1),
           'progress must be in [0, 1]',
@@ -37,6 +39,12 @@ class ContentCard extends StatelessWidget {
   /// Optional artwork; falls back to a brand panel placeholder.
   final Widget? artwork;
 
+  /// Optional [FocusNode] for row last-focus memory (DSN-012).
+  final FocusNode? focusNode;
+
+  /// Forwards focus highlight changes from [FocusableSurface].
+  final ValueChanged<bool>? onFocusChange;
+
   @override
   Widget build(BuildContext context) {
     final size = ContentCardMetrics.sizeOf(kind, width: width);
@@ -52,6 +60,8 @@ class ContentCard extends StatelessWidget {
         fill: brand.surface,
         borderRadius: AppRadius.md,
         onPressed: onPressed,
+        focusNode: focusNode,
+        onFocusChange: onFocusChange,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(AppRadius.md),
           child: Stack(
