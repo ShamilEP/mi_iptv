@@ -51,3 +51,6 @@ app.*.map.json
 .tmp_docs/
 
 /task-tracker
+
+# Task tracker adapter local venv
+/tool/task_tracker/.venv/

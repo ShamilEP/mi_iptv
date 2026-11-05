@@ -1,0 +1,39 @@
+---
+description: Autonomous Excel task execution — one task, client scope, human approval gate
+alwaysApply: true
+---
+
+# Task execution policy
+
+## Source of truth
+- Tracker: `task-tracker/MiIPTV_Project_Task_Tracker.xlsx` (gitignored; local only)
+- Adapter CLI: `tool/task_tracker/cli.py` (OpenPyXL; preserve formulas)
+- Excel status labels only: `Not started` | `In progress` | `In review` | `Blocked` | `Done`
+- Never write SCREAMING_SNAKE tokens (`REVIEW`, `DONE`, …) into cells
+- Never modify rows already `Done`
+- Editable columns only: Status, Owner, Est. (pts), Notes
+
+## Scope (Option A)
+May select from sheets: **Android TV**, **Companion**, **Design**, **QA**, **Security** — and only when the work is implementable in this Flutter client repo.
+Never auto-select **Product**, **Backend**, or **Infra**. If a selected task is ambiguous, Figma-only, or needs a human product decision → `Blocked` with reason; do not invent decisions.
+
+## One task at a time
+1. If any task is `In progress` or `In review`, do not start another.
+2. Claim with adapter → `In progress`.
+3. Create git branch `task/<ID>-<slug>` from up-to-date `main`.
+4. Analyze codebase and architecture **before** coding; obey Clean Architecture and existing `.cursor/rules`.
+5. Implement only that task’s DoD.
+6. Validate: `flutter analyze`, `flutter test`, plus DoD checks. Propose (do not silently add) new pubspec packages.
+7. Run the **verifier** subagent; fix or `Blocked` on failure.
+8. Commit on the task branch (never commit the `.xlsx`; never `--force`).
+9. Adapter → `In review` + Notes report → **STOP**.
+
+## Human approval gate
+- After `In review`, wait. Do **not** mark `Done` or start the next task.
+- Only on explicit user approval (`approved` / `approve <ID>`) → adapter `Done`.
+- Then wait for `/execute-next-task` (or explicit next-task request) before selecting again.
+
+## Git
+- Refuse to claim if tracked working tree is dirty with unrelated changes.
+- Branch per task; commit before `In review`.
+- Do not overwrite unrelated developer work.
