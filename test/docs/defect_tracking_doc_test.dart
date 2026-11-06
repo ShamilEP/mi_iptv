@@ -45,5 +45,7 @@ void main() {
     expect(text, contains('Sprint 0'));
     expect(text, contains('MVP'));
     expect(text, contains('Release 1'));
+    expect(text, contains('client_security_checklist.md'));
+    expect(text, contains('A7'));
   });
 }
