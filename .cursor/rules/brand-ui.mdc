@@ -74,8 +74,9 @@ xs 8 · sm 12 · **md 16** (default cards / `FocusableSurface`) · lg 24 · full
 ### Elevation (`AppElevation`)
 Soft ambient recipes on Ink — not Material elevation ints: `flat`, `raised`, `overlay`. Focus chrome stays in `FocusStyles.focusGlow`.
 
-### Motion (`AppMotion`)
-`fast` 120ms (focus) · `normal` 200ms · `slow` 320ms · curves `emphasized` / `standard`. Focus scale remains `FocusStyles.scale` (1.05).
+### Motion (`AppMotion`) — DSN-004 / DSN-020
+`fast` 120ms (focus) · `normal` 200ms · `slow` 320ms · curves `emphasized` / `standard`. Focus scale remains `FocusStyles.scale` (1.05).  
+Short + functional only; use `AppMotion.durationOf` / `curveOf` so reduced motion (`MediaQuery.disableAnimations`) snaps transitions. Keep focus ring/glow visible. Guide: `docs/design/motion_guidelines.md`.
 
 ## TV focus
 Visible focus always: **4px Cloud ring** + Signal outer glow; scale ~**1.05–1.06**. First focus on the highest-priority actionable control.
