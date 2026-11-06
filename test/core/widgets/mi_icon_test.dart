@@ -23,6 +23,15 @@ void main() {
     expect(find.byIcon(Icons.fiber_manual_record), findsOneWidget);
   });
 
+  testWidgets('labelRequired ignores showLabel false', (tester) async {
+    await pump(
+      tester,
+      const MiIcon(role: IconRole.weakNetwork, showLabel: false),
+    );
+
+    expect(find.text('Weak network'), findsOneWidget);
+  });
+
   testWidgets('clear play role stays icon-only by default', (tester) async {
     await pump(tester, const MiIcon(role: IconRole.play));
 

@@ -12,7 +12,7 @@ class MiIcon extends StatelessWidget {
     super.key,
     required this.role,
     this.label,
-    this.showLabel,
+    this.showLabel = false,
     this.size,
     this.color,
   });
@@ -22,8 +22,9 @@ class MiIcon extends StatelessWidget {
   /// Override catalog default label.
   final String? label;
 
-  /// Force show/hide visible label. Defaults to [IconographyEntry.labelRequired].
-  final bool? showLabel;
+  /// When true, always show the label. Ignored when [IconographyEntry.labelRequired]
+  /// is true (ambiguous icons cannot hide the text label).
+  final bool showLabel;
 
   final double? size;
   final Color? color;
@@ -32,7 +33,7 @@ class MiIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     final entry = Iconography.of(role);
     final text = label ?? entry.label;
-    final visible = showLabel ?? entry.labelRequired;
+    final visible = entry.labelRequired || showLabel;
     final brand = context.brandColors;
     final iconColor = color ?? brand.cloud;
     final iconSize = size ?? AppSpacing.md;
