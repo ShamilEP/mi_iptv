@@ -73,6 +73,12 @@ class ContentRowState extends State<ContentRow> {
 
   int get totalSlots => widget.itemCount + widget.placeholderCount;
 
+  /// Moves D-pad focus to a real item slot (skips placeholders).
+  void requestFocusAt(int index) {
+    if (index < 0 || index >= _nodes.length) return;
+    _nodes[index].requestFocus();
+  }
+
   @override
   void initState() {
     super.initState();
