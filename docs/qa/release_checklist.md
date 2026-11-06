@@ -2,7 +2,8 @@
 
 **Scope:** Flutter clients (Android TV / Google TV + Companion).  
 **Defect workflow:** [defect_tracking.md](./defect_tracking.md).  
-**Phase strategy:** [test_strategy.md](./test_strategy.md).
+**Phase strategy:** [test_strategy.md](./test_strategy.md).  
+**Security controls:** [client_security_checklist.md](../security/client_security_checklist.md) (SEC-002).
 
 Use one copy of this checklist **per release candidate** (Sprint 0 foundation exit, MVP ship, Release 1 RC).  
 Record build SHA, date, and reviewer name. Any unchecked **Must** item ⇒ **NO-GO**.
@@ -32,6 +33,7 @@ Record build SHA, date, and reviewer name. Any unchecked **Must** item ⇒ **NO-
 | A4 | No open **Critical** defects for this client | ☐ |
 | A5 | Every open **Major** has owner + target build (or human waiver) | ☐ |
 | A6 | No secrets / credentials / PII in logs, fixtures, or release notes | ☐ |
+| A7 | SEC-002 checklist §3 Must IDs for shipped surfaces are Pass or human-waived | ☐ |
 
 ---
 

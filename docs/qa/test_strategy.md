@@ -5,7 +5,8 @@
 **Authority:** Derived for client execution from tracker QA-001 / SRS §22 themes (entry/exit per phase, defect process, severity). Where SRS §22 and this doc diverge, prefer the external SRS and update this file.
 
 Related engineering rules: [`.cursor/rules/testing.mdc`](../../.cursor/rules/testing.mdc), [`AGENTS.md`](../../AGENTS.md).  
-Defect workflow & release go/no-go: [defect_tracking.md](./defect_tracking.md), [release_checklist.md](./release_checklist.md) (QA-005).
+Defect workflow & release go/no-go: [defect_tracking.md](./defect_tracking.md), [release_checklist.md](./release_checklist.md) (QA-005).  
+Client security acceptance criteria: [client_security_checklist.md](../security/client_security_checklist.md) (SEC-002).
 
 ---
 
