@@ -4,7 +4,8 @@
 **Out of scope here:** Backend API certification, infrastructure SLOs, and Product backlog decisions (tracked elsewhere).  
 **Authority:** Derived for client execution from tracker QA-001 / SRS §22 themes (entry/exit per phase, defect process, severity). Where SRS §22 and this doc diverge, prefer the external SRS and update this file.
 
-Related engineering rules: [`.cursor/rules/testing.mdc`](../../.cursor/rules/testing.mdc), [`AGENTS.md`](../../AGENTS.md).
+Related engineering rules: [`.cursor/rules/testing.mdc`](../../.cursor/rules/testing.mdc), [`AGENTS.md`](../../AGENTS.md).  
+Defect workflow & release go/no-go: [defect_tracking.md](./defect_tracking.md), [release_checklist.md](./release_checklist.md) (QA-005).
 
 ---
 
@@ -114,6 +115,8 @@ Backend/infra availability is an **entry** dependency, not owned by this repo.
 
 ## 5. Defect process
 
+Canonical workflow, fields, labels, and severities: **[defect_tracking.md](./defect_tracking.md)** (QA-005). Summary below stays aligned with that doc.
+
 ### 5.1 Intake
 
 1. Reproduce on a named build (`main` SHA or task branch) and device class (TV / Companion).
@@ -144,6 +147,10 @@ Severity is about **user/security impact**, not effort.
 - **Severity** = impact (table above).  
 - **Priority** = schedule order (P0–P3), set during triage. A **Minor** can be P0 before a demo; a **Major** can be P2 if workaround is solid.
 
+### 5.5 Release go / no-go
+
+Per-RC checklist: **[release_checklist.md](./release_checklist.md)**. Open Blocker/Critical ⇒ automatic no-go.
+
 ---
 
 ## 6. Definition of done (per client task)
@@ -171,6 +178,7 @@ Automated suite layout mirrors code: `test/core/...`, future `test/features/<fea
 
 ## 8. Open dependencies (not decided here)
 
-- Exact staging URLs, device farm, and bug tracker product (see QA-005).  
-- Formal SRS §22 wording — keep this file aligned when the external spec is edited.  
+- Exact staging URLs and device farm (Infra).  
+- Bug tracker of record for client defects: GitHub Issues on this repo by default ([defect_tracking.md](./defect_tracking.md)); org-wide board mapping is an Infra/Process choice.  
+- Formal SRS §19 / §22 wording — keep QA docs aligned when the external spec is edited.  
 - Approval for integration_test / golden / mock packages.
