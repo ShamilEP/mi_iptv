@@ -37,6 +37,7 @@ void main() {
     );
 
     expect(find.text('Signal News'), findsOneWidget);
+    expect(find.byIcon(Icons.live_tv_outlined), findsOneWidget);
     expect(key.currentState!.isShowing, isTrue);
     expect(
       find.byKey(const ValueKey('overlay-primary-action')),

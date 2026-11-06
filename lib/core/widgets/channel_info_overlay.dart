@@ -15,6 +15,8 @@ class ChannelInfoOverlay extends StatefulWidget {
     required this.channelNumber,
     required this.channelTitle,
     this.nowPlaying,
+    this.sourceLabel,
+    this.logo,
     this.visible = true,
     this.autoHide = true,
     this.onHidden,
@@ -23,6 +25,13 @@ class ChannelInfoOverlay extends StatefulWidget {
   final String channelNumber;
   final String channelTitle;
   final String? nowPlaying;
+
+  /// Active IPTV / catalog source name (DSN-033).
+  final String? sourceLabel;
+
+  /// Optional channel logo; falls back to a live-TV glyph placeholder.
+  final Widget? logo;
+
   final bool visible;
   final bool autoHide;
   final VoidCallback? onHidden;
@@ -93,30 +102,60 @@ class ChannelInfoOverlayState extends State<ChannelInfoOverlay> {
           child: FittedBox(
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  widget.channelNumber,
-                  style: textTheme.labelSmall?.copyWith(color: brand.primary),
+                SizedBox(
+                  width: AppSpacing.xxl,
+                  height: AppSpacing.xxl,
+                  child: widget.logo ??
+                      Icon(
+                        Icons.live_tv_outlined,
+                        color: brand.cloud,
+                        size: AppSpacing.xl,
+                      ),
                 ),
-                Text(
-                  widget.channelTitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: textTheme.titleLarge?.copyWith(color: brand.cloud),
+                const SizedBox(width: AppSpacing.md),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      widget.channelNumber,
+                      style:
+                          textTheme.labelSmall?.copyWith(color: brand.primary),
+                    ),
+                    Text(
+                      widget.channelTitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style:
+                          textTheme.titleLarge?.copyWith(color: brand.cloud),
+                    ),
+                    if (widget.sourceLabel != null) ...[
+                      const SizedBox(height: AppSpacing.xxs),
+                      Text(
+                        widget.sourceLabel!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style:
+                            textTheme.labelLarge?.copyWith(color: brand.mist),
+                      ),
+                    ],
+                    if (widget.nowPlaying != null) ...[
+                      const SizedBox(height: AppSpacing.xxs),
+                      Text(
+                        widget.nowPlaying!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style:
+                            textTheme.labelLarge?.copyWith(color: brand.mist),
+                      ),
+                    ],
+                  ],
                 ),
-                if (widget.nowPlaying != null) ...[
-                  const SizedBox(height: AppSpacing.xxs),
-                  Text(
-                    widget.nowPlaying!,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: textTheme.labelLarge?.copyWith(color: brand.mist),
-                  ),
-                ],
               ],
             ),
           ),
