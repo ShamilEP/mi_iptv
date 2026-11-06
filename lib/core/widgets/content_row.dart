@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/theme.dart';
 import 'content_card.dart';
+import 'content_card_skeleton.dart';
 
 /// Builds a focusable card for index `[0, itemCount)`.
 ///
@@ -15,8 +16,8 @@ typedef ContentRowItemBuilder = Widget Function(
 /// Horizontal catalog rail with title, position cue, and last-focus memory
 /// (DSN-012 / SRS §12).
 ///
-/// Spacing uses [AppGrid.gutter]. Lazy-load slots are non-interactive
-/// placeholders sized to [ContentCardMetrics] — full skeletons are DSN-016.
+/// Spacing uses [AppGrid.gutter]. Lazy-load slots use [ContentCardSkeleton]
+/// (DSN-016) so rail height stays stable.
 class ContentRow extends StatefulWidget {
   const ContentRow({
     super.key,
@@ -232,7 +233,7 @@ class ContentRowState extends State<ContentRow> {
                         const SizedBox(width: AppGrid.gutter),
                     itemBuilder: (context, index) {
                       if (index >= widget.itemCount) {
-                        return _LazyLoadPlaceholder(
+                        return ContentCardSkeleton(
                           kind: widget.kind,
                           width: widget.cardWidth,
                         );
@@ -246,38 +247,6 @@ class ContentRowState extends State<ContentRow> {
                   ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _LazyLoadPlaceholder extends StatelessWidget {
-  const _LazyLoadPlaceholder({
-    required this.kind,
-    this.width,
-  });
-
-  final ContentCardKind kind;
-  final double? width;
-
-  @override
-  Widget build(BuildContext context) {
-    final size = ContentCardMetrics.sizeOf(kind, width: width);
-    final brand = context.brandColors;
-    return Semantics(
-      label: 'Loading',
-      child: ExcludeFocus(
-        child: SizedBox(
-          width: size.width,
-          height: size.height,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: brand.panel,
-              borderRadius: BorderRadius.circular(AppRadius.md),
-              border: Border.all(color: brand.border),
-            ),
-          ),
-        ),
       ),
     );
   }
