@@ -1,0 +1,77 @@
+# Mi IPTV — Client Release Go / No-Go Checklist (QA-005)
+
+**Scope:** Flutter clients (Android TV / Google TV + Companion).  
+**Defect workflow:** [defect_tracking.md](./defect_tracking.md).  
+**Phase strategy:** [test_strategy.md](./test_strategy.md).
+
+Use one copy of this checklist **per release candidate** (Sprint 0 foundation exit, MVP ship, Release 1 RC).  
+Record build SHA, date, and reviewer name. Any unchecked **Must** item ⇒ **NO-GO**.
+
+---
+
+## Header
+
+| Field | Value |
+|---|---|
+| Release / phase | Sprint 0 / MVP / Release 1 |
+| Candidate build (SHA) | |
+| Date (UTC) | |
+| Reviewer | |
+| Decision | GO / NO-GO |
+| Notes / waivers | Human-written only; link issue IDs |
+
+---
+
+## A. Quality gates (Must)
+
+| # | Check | Pass? |
+|---|---|---|
+| A1 | `flutter analyze` clean on candidate SHA | ☐ |
+| A2 | `flutter test` green on candidate SHA | ☐ |
+| A3 | No open **Blocker** defects for this client | ☐ |
+| A4 | No open **Critical** defects for this client | ☐ |
+| A5 | Every open **Major** has owner + target build (or human waiver) | ☐ |
+| A6 | No secrets / credentials / PII in logs, fixtures, or release notes | ☐ |
+
+---
+
+## B. Platform smoke (Must for MVP / Release 1; recommended for Sprint 0)
+
+| # | Check | Pass? |
+|---|---|---|
+| B1 | **TV:** cold start → focus visible (Cloud ring + Signal glow) on first actionable control | ☐ |
+| B2 | **TV:** mandatory UI states exercised where in-scope (empty / error / offline at minimum for shipped surfaces) | ☐ |
+| B3 | **Companion:** browse path works; **no video playback** in MVP | ☐ |
+| B4 | **Companion:** send-to-TV happy path **or** deferred with explicit human waiver if not yet in build | ☐ |
+| B5 | Staging only for networked smoke; TLS; test accounts only | ☐ |
+
+*Sprint 0 may mark B3–B5 N/A if those features are not yet implemented — note N/A in Notes.*
+
+---
+
+## C. Scope honesty (Must)
+
+| # | Check | Pass? |
+|---|---|---|
+| C1 | Out-of-MVP items not claimed as shipped: EPG grid, multi-profile, Companion playback, social login, Smart TV | ☐ |
+| C2 | Client sheets’ in-scope DoDs for this phase are Done or explicitly Blocked / waived by human | ☐ |
+| C3 | No invented Product / Backend / Infra decisions in release notes | ☐ |
+
+---
+
+## D. Defect hygiene (Must)
+
+| # | Check | Pass? |
+|---|---|---|
+| D1 | New RC regressions filed with [required fields](./defect_tracking.md#2-required-issue-fields) | ☐ |
+| D2 | Severity taxonomy unchanged (Blocker → Trivial) unless SRS update recorded | ☐ |
+| D3 | Known issues list attached (or “none”) | ☐ |
+
+---
+
+## E. Decision
+
+- **GO** — all Must rows for this phase are Pass or documented human waiver.  
+- **NO-GO** — any Must failure without waiver; fix or re-cut RC.
+
+Sign-off: ______________________ (human reviewer)
