@@ -84,11 +84,11 @@ class _FocusableSurfaceState extends State<FocusableSurface> {
         onTap: widget.onPressed,
         child: AnimatedScale(
           scale: _focused ? FocusStyles.scale : 1,
-          duration: AppMotion.fast,
-          curve: AppMotion.emphasized,
+          duration: AppMotion.durationOf(context, AppMotion.fast),
+          curve: AppMotion.curveOf(context, AppMotion.emphasized),
           child: AnimatedContainer(
-            duration: AppMotion.fast,
-            curve: AppMotion.emphasized,
+            duration: AppMotion.durationOf(context, AppMotion.fast),
+            curve: AppMotion.curveOf(context, AppMotion.emphasized),
             decoration: BoxDecoration(
               color: fill,
               borderRadius: BorderRadius.circular(radius),

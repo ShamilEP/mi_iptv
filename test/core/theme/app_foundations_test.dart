@@ -70,4 +70,56 @@ void main() {
       expect(AppMotion.channelInfoAutoHide, const Duration(seconds: 4));
     });
   });
+
+  group('AppMotion DSN-020 reduced motion', () {
+    testWidgets('durationOf and curveOf snap when animations disabled', (
+      tester,
+    ) async {
+      late Duration resolvedDuration;
+      late Curve resolvedCurve;
+      late bool reduced;
+
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(disableAnimations: true),
+          child: Builder(
+            builder: (context) {
+              reduced = AppMotion.reduceMotion(context);
+              resolvedDuration = AppMotion.durationOf(context, AppMotion.fast);
+              resolvedCurve = AppMotion.curveOf(context, AppMotion.emphasized);
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      );
+
+      expect(reduced, isTrue);
+      expect(resolvedDuration, Duration.zero);
+      expect(resolvedCurve, Curves.linear);
+    });
+
+    testWidgets('durationOf keeps tokens when animations enabled', (
+      tester,
+    ) async {
+      late Duration resolvedDuration;
+      late Curve resolvedCurve;
+
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(),
+          child: Builder(
+            builder: (context) {
+              resolvedDuration =
+                  AppMotion.durationOf(context, AppMotion.normal);
+              resolvedCurve = AppMotion.curveOf(context, AppMotion.standard);
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      );
+
+      expect(resolvedDuration, AppMotion.normal);
+      expect(resolvedCurve, AppMotion.standard);
+    });
+  });
 }
