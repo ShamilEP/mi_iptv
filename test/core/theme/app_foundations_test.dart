@@ -68,6 +68,7 @@ void main() {
       expect(AppMotion.emphasized, Curves.easeOutCubic);
       expect(AppMotion.standard, Curves.easeInOut);
       expect(AppMotion.channelInfoAutoHide, const Duration(seconds: 4));
+      expect(AppMotion.playerControlsAutoHide, const Duration(seconds: 4));
     });
   });
 
@@ -109,8 +110,10 @@ void main() {
           data: const MediaQueryData(),
           child: Builder(
             builder: (context) {
-              resolvedDuration =
-                  AppMotion.durationOf(context, AppMotion.normal);
+              resolvedDuration = AppMotion.durationOf(
+                context,
+                AppMotion.normal,
+              );
               resolvedCurve = AppMotion.curveOf(context, AppMotion.standard);
               return const SizedBox.shrink();
             },

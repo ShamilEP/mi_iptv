@@ -15,6 +15,9 @@ abstract final class AppMotion {
   /// [reduceMotion] is true (content still auto-dismisses).
   static const Duration channelInfoAutoHide = Duration(seconds: 4);
 
+  /// VOD player controls temporary overlay auto-hide (DSN-037).
+  static const Duration playerControlsAutoHide = Duration(seconds: 4);
+
   static const Curve emphasized = Curves.easeOutCubic;
   static const Curve standard = Curves.easeInOut;
 
