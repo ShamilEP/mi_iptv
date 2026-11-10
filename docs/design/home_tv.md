@@ -15,3 +15,4 @@ Executable UI: [`TvHomePage`](../../lib/features/home/presentation/tv/tv_home_pa
 - No full-bleed hero that pushes Live TV out of the first viewport / focus path.
 - Live TV stays in the header quick-access rail (primary emphasis).
 - Predictable initial focus: first Continue Watching card after first frame.
+- Focus map / Back / restore: [focus_maps.md](./focus_maps.md) (DSN-040).
