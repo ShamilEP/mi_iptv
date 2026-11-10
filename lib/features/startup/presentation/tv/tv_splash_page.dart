@@ -49,10 +49,9 @@ class _TvSplashPageState extends State<TvSplashPage>
         _fade.value = 1;
         _complete();
       } else {
-        _fade.forward().whenComplete(() {
-          if (!mounted) return;
-          _armHold(widget.hold);
-        });
+        // Fade and identity hold start together so wall-clock stays ≤ hold.
+        _fade.forward();
+        _armHold(widget.hold);
       }
     });
   }

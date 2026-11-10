@@ -50,11 +50,6 @@ void main() {
     await tester.pump();
     expect(finished, 0);
 
-    // Complete the fade, then flush whenComplete so the hold timer arms.
-    await tester.pump(AppMotion.fast);
-    await tester.pump(Duration.zero);
-    expect(finished, 0);
-
     await tester.pump(AppMotion.splashHold);
     expect(finished, 1);
 

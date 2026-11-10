@@ -6,7 +6,7 @@ Executable UI: [`TvSplashPage`](../../lib/features/startup/presentation/tv/tv_sp
 
 1. **Ink canvas** — full-bleed dark startup surface.
 2. **Brand lockup** — centered `BrandMark` + `iptv` wordmark (DSN-005). No secondary marketing copy, stats, or CTAs.
-3. **Timing** — optional **120 ms** fade-in (`AppMotion.fast`), then **600 ms** identity hold (`AppMotion.splashHold`), then `onFinished`.
+3. **Timing** — optional **120 ms** fade-in (`AppMotion.fast`) overlaps a **600 ms** identity hold (`AppMotion.splashHold`), then `onFinished` (wall-clock ≤ hold).
 
 ## Rules (DoD)
 
