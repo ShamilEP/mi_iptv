@@ -5,6 +5,7 @@ import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/channel_info_overlay.dart';
 import '../../../../core/widgets/mi_overlay_panel.dart';
 import '../../../../core/widgets/status_badge.dart';
+import '../../../../core/widgets/stream_failure_recovery_overlay.dart';
 import 'tv_live_tv_channel.dart';
 import 'tv_live_tv_channel_list.dart';
 
@@ -12,18 +13,39 @@ import 'tv_live_tv_channel_list.dart';
 ///
 /// Video is dominant; channel list selects the current channel; info overlay
 /// shows name, number, logo, and source; LIVE + active-source badges indicate
-/// status.
+/// status. When [streamFailed] is true, [StreamFailureRecoveryOverlay] keeps
+/// that channel context and offers recovery actions (DSN-039).
 class TvLiveTvPage extends StatefulWidget {
   const TvLiveTvPage({
     super.key,
     this.channels = demoChannels,
     this.initialIndex = 0,
     this.showChannelList = true,
+    this.streamFailed = false,
+    this.failureMessage = StreamFailureRecoveryOverlay.defaultMessage,
+    this.onRetry,
+    this.onSwitchSource,
+    this.onBackToChannels,
   });
 
   final List<TvLiveTvChannel> channels;
   final int initialIndex;
   final bool showChannelList;
+
+  /// Whether the current channel's stream failed (DSN-039).
+  final bool streamFailed;
+
+  /// Actionable copy for [StreamFailureRecoveryOverlay].
+  final String failureMessage;
+
+  /// Called when Retry is activated on the recovery overlay.
+  final VoidCallback? onRetry;
+
+  /// Called when Switch source is activated on the recovery overlay.
+  final VoidCallback? onSwitchSource;
+
+  /// Called when Back to channels is activated on the recovery overlay.
+  final VoidCallback? onBackToChannels;
 
   static const List<TvLiveTvChannel> demoChannels = <TvLiveTvChannel>[
     TvLiveTvChannel(
@@ -71,6 +93,7 @@ class _TvLiveTvPageState extends State<TvLiveTvPage> {
   }
 
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
+    if (widget.streamFailed) return KeyEventResult.ignored;
     if (event is! KeyDownEvent) return KeyEventResult.ignored;
     if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
       _select(_selectedIndex - 1);
@@ -92,10 +115,13 @@ class _TvLiveTvPageState extends State<TvLiveTvPage> {
   Widget build(BuildContext context) {
     final brand = context.brandColors;
     final channel = _channel;
-    final showList = widget.showChannelList && _listVisible;
+    final failedChannel = widget.streamFailed ? channel : null;
+    final showList =
+        widget.showChannelList && _listVisible && failedChannel == null;
 
     return Focus(
-      autofocus: true,
+      autofocus: failedChannel == null,
+      canRequestFocus: failedChannel == null,
       onKeyEvent: _onKey,
       child: Scaffold(
         backgroundColor: brand.ink,
@@ -108,7 +134,7 @@ class _TvLiveTvPageState extends State<TvLiveTvPage> {
                   channelTitle: channel.name,
                   sourceLabel: channel.sourceLabel,
                   nowPlaying: channel.nowPlaying,
-                  autoHide: true,
+                  autoHide: failedChannel == null,
                 ),
           child: Stack(
             fit: StackFit.expand,
@@ -149,6 +175,18 @@ class _TvLiveTvPageState extends State<TvLiveTvPage> {
                     channels: widget.channels,
                     selectedIndex: _selectedIndex,
                     onSelected: _select,
+                  ),
+                ),
+              if (failedChannel != null)
+                Positioned.fill(
+                  child: StreamFailureRecoveryOverlay(
+                    channelNumber: failedChannel.number,
+                    channelTitle: failedChannel.name,
+                    sourceLabel: failedChannel.sourceLabel,
+                    message: widget.failureMessage,
+                    onRetry: widget.onRetry,
+                    onSwitchSource: widget.onSwitchSource,
+                    onBackToChannels: widget.onBackToChannels,
                   ),
                 ),
             ],
