@@ -21,6 +21,8 @@ class VodPlayerControlsOverlay extends StatelessWidget {
     this.onVolumeDown,
     this.onVolumeUp,
     this.onMuteToggle,
+    this.onOpenTrackSelector,
+    this.trackSelectorLabel = 'Audio and subtitles',
   }) : assert(progress >= 0 && progress <= 1, 'progress must be in [0, 1]');
 
   final bool visible;
@@ -33,6 +35,8 @@ class VodPlayerControlsOverlay extends StatelessWidget {
   final VoidCallback? onVolumeDown;
   final VoidCallback? onVolumeUp;
   final VoidCallback? onMuteToggle;
+  final VoidCallback? onOpenTrackSelector;
+  final String trackSelectorLabel;
 
   static const String seekBackLabel = 'Back 10 seconds';
   static const String seekForwardLabel = 'Forward 10 seconds';
@@ -117,6 +121,15 @@ class VodPlayerControlsOverlay extends StatelessWidget {
                     label: volumeUpLabel,
                     onPressed: onVolumeUp,
                   ),
+                  if (onOpenTrackSelector != null) ...[
+                    const SizedBox(width: AppSpacing.xl),
+                    _LargeControl(
+                      key: const ValueKey<String>('vod-track-selector'),
+                      icon: Icons.closed_caption,
+                      label: trackSelectorLabel,
+                      onPressed: onOpenTrackSelector,
+                    ),
+                  ],
                 ],
               ),
             ],
@@ -129,6 +142,7 @@ class VodPlayerControlsOverlay extends StatelessWidget {
 
 class _LargeControl extends StatelessWidget {
   const _LargeControl({
+    super.key,
     required this.icon,
     required this.label,
     this.onPressed,
