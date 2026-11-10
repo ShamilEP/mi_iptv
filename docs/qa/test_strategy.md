@@ -6,7 +6,8 @@
 
 Related engineering rules: [`.cursor/rules/testing.mdc`](../../.cursor/rules/testing.mdc), [`AGENTS.md`](../../AGENTS.md).  
 Defect workflow & release go/no-go: [defect_tracking.md](./defect_tracking.md), [release_checklist.md](./release_checklist.md) (QA-005).  
-Client security acceptance criteria: [client_security_checklist.md](../security/client_security_checklist.md) (SEC-002).
+Client security acceptance criteria: [client_security_checklist.md](../security/client_security_checklist.md) (SEC-002).  
+Incident response (token/key compromise): [incident_response_runbook.md](../security/incident_response_runbook.md) (SEC-052).
 
 ---
 
