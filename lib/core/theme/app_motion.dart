@@ -18,6 +18,10 @@ abstract final class AppMotion {
   /// VOD player controls temporary overlay auto-hide (DSN-037).
   static const Duration playerControlsAutoHide = Duration(seconds: 4);
 
+  /// Splash identity hold before advancing (DSN-030). Keep short — not a
+  /// decorative intro sequence.
+  static const Duration splashHold = Duration(milliseconds: 600);
+
   static const Curve emphasized = Curves.easeOutCubic;
   static const Curve standard = Curves.easeInOut;
 
