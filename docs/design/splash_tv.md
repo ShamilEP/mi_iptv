@@ -17,3 +17,4 @@ Executable UI: [`TvSplashPage`](../../lib/features/startup/presentation/tv/tv_sp
 ## Notes
 
 - Design shell: callers wire `onFinished` to Home / Auth. Native Android `launch_background` stays a separate cold-start concern.
+- Focus map: [focus_maps.md](./focus_maps.md) (DSN-040) — non-interactive brand node.
