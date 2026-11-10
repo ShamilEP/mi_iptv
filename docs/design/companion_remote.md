@@ -13,7 +13,7 @@ Executable UI: [`CompanionRemotePage`](../../lib/features/devices/presentation/c
 
 ## Feedback
 
-Every control press starts a haptic impact and fills the key with the companion primary color until release. The status line names the last control, or the text that was sent.
+Every control press starts a platform impact haptic (DSN-054) and fills the key with the companion primary color until release. The status line names the last control, or the text that was sent. Layout uses [`CompanionPlatformShell`](../../lib/core/platform/companion_platform_shell.dart) for SafeArea and system-keyboard dismiss.
 
 ## Notes
 
