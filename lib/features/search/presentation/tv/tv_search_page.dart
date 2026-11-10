@@ -7,11 +7,12 @@ import '../../../../core/widgets/tv_on_screen_keyboard.dart';
 import 'tv_search_copy.dart';
 import 'tv_search_result.dart';
 import 'tv_search_results.dart';
+import 'tv_search_tolerance.dart';
 
-/// TV Search hi-fi shell (DSN-035).
+/// TV Search hi-fi shell (DSN-035 / DSN-065).
 ///
-/// Large query field with TV OSK, results grouped by Channels and VOD, and
-/// focusable result cards.
+/// Large query field with TV OSK, results grouped by Channels and VOD,
+/// tolerant suggestions / did-you-mean, and focusable result cards.
 class TvSearchPage extends StatefulWidget {
   const TvSearchPage({
     super.key,
@@ -72,20 +73,17 @@ class _TvSearchPageState extends State<TvSearchPage> {
     super.dispose();
   }
 
-  List<TvSearchResult> get _matches {
-    final q = _query.text.trim().toLowerCase();
-    if (q.isEmpty) return widget.catalog;
-    return widget.catalog
-        .where(
-          (item) =>
-              item.title.toLowerCase().contains(q) ||
-              item.subtitle.toLowerCase().contains(q),
-        )
-        .toList(growable: false);
-  }
+  TolerantSearchOutcome get _outcome =>
+      TolerantSearch.query(_query.text, widget.catalog);
 
   void _clear() {
     _query.clear();
+    setState(() {});
+  }
+
+  void _applySuggestion(String suggestion) {
+    _query.text = suggestion;
+    _query.selection = TextSelection.collapsed(offset: suggestion.length);
     setState(() {});
   }
 
@@ -93,7 +91,8 @@ class _TvSearchPageState extends State<TvSearchPage> {
   Widget build(BuildContext context) {
     final brand = context.brandColors;
     final textTheme = Theme.of(context).textTheme;
-    final matches = _matches;
+    final outcome = _outcome;
+    final matches = outcome.matches;
     final channels = matches
         .where((item) => item.kind == TvSearchResultKind.channel)
         .toList(growable: false);
@@ -150,8 +149,11 @@ class _TvSearchPageState extends State<TvSearchPage> {
                       child: TvSearchResults(
                         channels: channels,
                         vod: vod,
+                        suggestions: outcome.suggestions,
+                        didYouMean: outcome.didYouMean,
                         onClear: _clear,
                         onSelected: widget.onResultSelected,
+                        onSuggestionSelected: _applySuggestion,
                       ),
                     ),
                   ),

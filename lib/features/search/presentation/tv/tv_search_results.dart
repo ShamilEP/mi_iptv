@@ -6,56 +6,77 @@ import '../../../../core/widgets/status_pattern.dart';
 import '../../../../core/widgets/status_pattern_copy.dart';
 import 'tv_search_copy.dart';
 import 'tv_search_result.dart';
+import 'tv_search_suggestions.dart';
 
-/// Channels and VOD result groups with visible card focus (DSN-035).
+/// Channels and VOD result groups with visible card focus (DSN-035 / DSN-065).
 class TvSearchResults extends StatelessWidget {
   const TvSearchResults({
     super.key,
     required this.channels,
     required this.vod,
+    this.suggestions = const <String>[],
+    this.didYouMean,
     this.onClear,
     this.onSelected,
+    this.onSuggestionSelected,
   });
 
   final List<TvSearchResult> channels;
   final List<TvSearchResult> vod;
+  final List<String> suggestions;
+  final String? didYouMean;
   final VoidCallback? onClear;
   final ValueChanged<TvSearchResult>? onSelected;
+  final ValueChanged<String>? onSuggestionSelected;
 
   bool get isEmpty => channels.isEmpty && vod.isEmpty;
 
   @override
   Widget build(BuildContext context) {
-    if (isEmpty) {
-      return EmptyPattern(
-        copy: const StatusPatternCopy(
-          title: TvSearchCopy.emptyTitle,
-          message: TvSearchCopy.emptyMessage,
-          actionLabel: TvSearchCopy.emptyAction,
-        ),
-        onAction: onClear,
-      );
-    }
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (channels.isNotEmpty) ...[
-          _Group(
-            title: TvSearchCopy.channelsGroup,
-            items: channels,
-            kind: ContentCardKind.channelTile,
-            onSelected: onSelected,
+        if (suggestions.isNotEmpty && onSuggestionSelected != null) ...[
+          TvSearchSuggestionChips(
+            suggestions: suggestions,
+            onSelected: onSuggestionSelected!,
           ),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.md),
         ],
-        if (vod.isNotEmpty)
-          _Group(
-            title: TvSearchCopy.vodGroup,
-            items: vod,
-            kind: ContentCardKind.poster,
-            onSelected: onSelected,
+        if (didYouMean != null && onSuggestionSelected != null) ...[
+          TvSearchDidYouMean(
+            suggestion: didYouMean!,
+            onApply: onSuggestionSelected!,
           ),
+          const SizedBox(height: AppSpacing.md),
+        ],
+        if (isEmpty)
+          EmptyPattern(
+            copy: const StatusPatternCopy(
+              title: TvSearchCopy.emptyTitle,
+              message: TvSearchCopy.emptyMessage,
+              actionLabel: TvSearchCopy.emptyAction,
+            ),
+            onAction: onClear,
+          )
+        else ...[
+          if (channels.isNotEmpty) ...[
+            _Group(
+              title: TvSearchCopy.channelsGroup,
+              items: channels,
+              kind: ContentCardKind.channelTile,
+              onSelected: onSelected,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+          ],
+          if (vod.isNotEmpty)
+            _Group(
+              title: TvSearchCopy.vodGroup,
+              items: vod,
+              kind: ContentCardKind.poster,
+              onSelected: onSelected,
+            ),
+        ],
       ],
     );
   }
