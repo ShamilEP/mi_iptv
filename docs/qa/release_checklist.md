@@ -3,7 +3,8 @@
 **Scope:** Flutter clients (Android TV / Google TV + Companion).  
 **Defect workflow:** [defect_tracking.md](./defect_tracking.md).  
 **Phase strategy:** [test_strategy.md](./test_strategy.md).  
-**Security controls:** [client_security_checklist.md](../security/client_security_checklist.md) (SEC-002).
+**Security controls:** [client_security_checklist.md](../security/client_security_checklist.md) (SEC-002).  
+**Incidents:** [incident_response_runbook.md](../security/incident_response_runbook.md) (SEC-052).
 
 Use one copy of this checklist **per release candidate** (Sprint 0 foundation exit, MVP ship, Release 1 RC).  
 Record build SHA, date, and reviewer name. Any unchecked **Must** item ⇒ **NO-GO**.

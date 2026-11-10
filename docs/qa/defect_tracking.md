@@ -31,7 +31,7 @@ Use the **GitHub Issues** tracker on this client repo (or the org board that alr
 | Phase | Yes | Sprint 0 / MVP / Release 1 |
 | Feature | When known | `auth`, `home`, `live_tv`, `player`, … or `core` |
 | Related task | When known | Tracker ID (e.g. `TV-033`) |
-| Logs / screenshots | Preferred | **Scrub secrets** — no JWT, passwords, Xtream/M3U creds, refresh tokens |
+| Logs / screenshots | Preferred | **Scrub secrets** — no JWT, passwords, Xtream/M3U creds, refresh tokens; if a secret already leaked, follow [incident_response_runbook.md](../security/incident_response_runbook.md) (SEC-052) |
 
 ---
 
