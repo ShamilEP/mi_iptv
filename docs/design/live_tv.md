@@ -8,6 +8,7 @@ Executable UI: [`TvLiveTvPage`](../../lib/features/live_tv/presentation/tv/tv_li
 2. **Channel list / selector** — left rail (`TvLiveTvChannelList` / `MiListRow`); zap with ↑/↓.
 3. **Info overlay** — [`ChannelInfoOverlay`](../../lib/core/widgets/channel_info_overlay.dart): number, name, logo, source, optional now-playing; auto-hides (DSN-015).
 4. **Status indicators** — `StatusBadge.live` + `StatusBadge.activeSource` (source name) (DSN-018).
+5. **Stream failure** — [`StreamFailureRecoveryOverlay`](../../lib/core/widgets/stream_failure_recovery_overlay.dart) on `TvLiveTvPage(streamFailed: true)` (DSN-039). See [stream_failure_recovery.md](stream_failure_recovery.md).
 
 ## Notes
 

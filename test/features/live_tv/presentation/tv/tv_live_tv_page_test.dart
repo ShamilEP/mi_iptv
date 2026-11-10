@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mi_iptv/core/theme/theme.dart';
 import 'package:mi_iptv/core/widgets/status_badge.dart';
+import 'package:mi_iptv/core/widgets/stream_failure_recovery_overlay.dart';
 import 'package:mi_iptv/features/live_tv/presentation/tv/tv_live_tv_page.dart';
 
 void main() {
@@ -49,5 +50,46 @@ void main() {
     await tester.pump();
 
     expect(find.text('Ember Sports'), findsWidgets);
+  });
+
+  testWidgets('DSN-039 keeps channel context and offers recovery actions', (
+    tester,
+  ) async {
+    var retried = false;
+    var switched = false;
+    var backed = false;
+
+    await pump(
+      tester,
+      page: TvLiveTvPage(
+        streamFailed: true,
+        onRetry: () => retried = true,
+        onSwitchSource: () => switched = true,
+        onBackToChannels: () => backed = true,
+      ),
+    );
+
+    expect(find.byIcon(Icons.play_circle_outline), findsOneWidget);
+    expect(find.text('Signal News'), findsWidgets);
+    expect(find.text('12'), findsWidgets);
+    expect(find.text('Home Xtream'), findsWidgets);
+    expect(
+      find.text(StreamFailureRecoveryOverlay.defaultMessage),
+      findsOneWidget,
+    );
+    expect(find.textContaining('12  Signal News'), findsNothing);
+    expect(find.text('Retry'), findsOneWidget);
+    expect(find.text('Switch source'), findsOneWidget);
+    expect(find.text('Back to channels'), findsOneWidget);
+
+    await tester.tap(find.text('Retry'));
+    await tester.tap(find.text('Switch source'));
+    await tester.tap(find.text('Back to channels'));
+    await tester.pump();
+
+    expect(retried, isTrue);
+    expect(switched, isTrue);
+    expect(backed, isTrue);
+    expect(find.text('Signal News'), findsWidgets);
   });
 }
