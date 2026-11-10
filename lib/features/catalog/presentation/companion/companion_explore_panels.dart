@@ -77,7 +77,10 @@ class _Rail extends StatelessWidget {
         Text(title, style: textTheme.titleLarge?.copyWith(color: brand.ink)),
         const SizedBox(height: AppSpacing.sm),
         SizedBox(
-          height: ContentCardMetrics.sizeOf(kind).height,
+          // Grow with Dynamic Type so titles remain reachable (CMP-063).
+          height: MediaQuery.textScalerOf(context).scale(
+            ContentCardMetrics.sizeOf(kind).height,
+          ),
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: items.length,

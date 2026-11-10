@@ -58,54 +58,60 @@ class MiTextField extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xs),
         ],
-        TextField(
-          controller: controller,
-          focusNode: focusNode,
+        Semantics(
+          textField: true,
+          label: label,
+          obscured: obscureText,
           enabled: enabled,
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: chrome.foreground,
-              ),
-          cursorColor: brand.primary,
-          onChanged: onChanged == null
-              ? null
-              : (value) => onChanged!(sanitize(value)),
-          decoration: InputDecoration(
-            isDense: true,
-            hintText: hint,
-            hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: brand.muted,
+          child: TextField(
+            controller: controller,
+            focusNode: focusNode,
+            enabled: enabled,
+            obscureText: obscureText,
+            keyboardType: keyboardType,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: chrome.foreground,
                 ),
-            filled: true,
-            fillColor: chrome.fill,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: AppSpacing.sm,
-            ),
-            prefixIcon: chrome.leadingIcon != null || chrome.showProgress
-                ? Padding(
-                    padding: const EdgeInsets.only(left: AppSpacing.sm),
-                    child: ControlStatusCue(chrome: chrome, compact: true),
-                  )
-                : null,
-            prefixIconConstraints: const BoxConstraints(
-              minWidth: AppSpacing.xl,
-              minHeight: AppSpacing.lg,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.sm),
-              borderSide: BorderSide(color: chrome.border),
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.sm),
-              borderSide: BorderSide(color: chrome.border),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.sm),
-              borderSide: BorderSide(
-                color: brand.primary,
-                width: FocusStyles.ringWidth / 2,
+            cursorColor: brand.primary,
+            onChanged: onChanged == null
+                ? null
+                : (value) => onChanged!(sanitize(value)),
+            decoration: InputDecoration(
+              isDense: true,
+              hintText: hint,
+              hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: brand.muted,
+                  ),
+              filled: true,
+              fillColor: chrome.fill,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.sm,
+              ),
+              prefixIcon: chrome.leadingIcon != null || chrome.showProgress
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: AppSpacing.sm),
+                      child: ControlStatusCue(chrome: chrome, compact: true),
+                    )
+                  : null,
+              prefixIconConstraints: const BoxConstraints(
+                minWidth: AppSpacing.xl,
+                minHeight: AppSpacing.lg,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadius.sm),
+                borderSide: BorderSide(color: chrome.border),
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadius.sm),
+                borderSide: BorderSide(color: chrome.border),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadius.sm),
+                borderSide: BorderSide(
+                  color: brand.primary,
+                  width: FocusStyles.ringWidth / 2,
+                ),
               ),
             ),
           ),

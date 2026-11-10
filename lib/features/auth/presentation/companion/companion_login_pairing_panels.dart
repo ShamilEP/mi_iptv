@@ -56,22 +56,26 @@ class CompanionLoginPanel extends StatelessWidget {
         ),
         if (formError != null) ...[
           const SizedBox(height: AppSpacing.md),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              MiIcon(
-                role: IconRole.error,
-                color: brand.error,
-                size: AppSpacing.lg,
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              Expanded(
-                child: Text(
-                  formError!,
-                  style: textTheme.bodyLarge?.copyWith(color: brand.ink),
+          Semantics(
+            liveRegion: true,
+            label: formError,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                MiIcon(
+                  role: IconRole.error,
+                  color: brand.error,
+                  size: AppSpacing.lg,
                 ),
-              ),
-            ],
+                const SizedBox(width: AppSpacing.xs),
+                Expanded(
+                  child: Text(
+                    formError!,
+                    style: textTheme.bodyLarge?.copyWith(color: brand.ink),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
         const SizedBox(height: AppSpacing.lg),
@@ -134,21 +138,33 @@ class CompanionLinkedTvList extends StatelessWidget {
           for (final tv in tvs) ...[
             MiListRow(
               title: tv.name,
+              subtitle: _connectionLabel(tv.connection),
               leading: MiIcon(
                 role: IconRole.liveTv,
                 color: brand.ink,
                 size: AppSpacing.lg,
               ),
-              trailing: MiIcon(
-                role: _connectionRole(tv.connection),
-                color: brand.ink,
-                size: AppSpacing.lg,
+              trailing: ExcludeSemantics(
+                child: Icon(
+                  Iconography.of(_connectionRole(tv.connection)).icon,
+                  color: brand.ink,
+                  size: AppSpacing.lg,
+                ),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
           ],
       ],
     );
+  }
+
+  String _connectionLabel(CompanionTvConnection connection) {
+    switch (connection) {
+      case CompanionTvConnection.connected:
+        return CompanionLoginPairingCopy.connectedLabel;
+      case CompanionTvConnection.offline:
+        return CompanionLoginPairingCopy.offlineLabel;
+    }
   }
 
   IconRole _connectionRole(CompanionTvConnection connection) {
