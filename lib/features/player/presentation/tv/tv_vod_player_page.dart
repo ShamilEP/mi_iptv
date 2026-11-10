@@ -9,12 +9,15 @@ import '../../../../core/widgets/focusable_surface.dart';
 import '../../../../core/widgets/mi_overlay_panel.dart';
 import '../../../../core/widgets/mi_subtitle_caption.dart';
 import '../../../../core/widgets/vod_player_controls_overlay.dart';
+import 'tv_track_models.dart';
+import 'tv_track_selector_panel.dart';
 
-/// TV VOD player hi-fi shell (DSN-037 / DSN-021 captions).
+/// TV VOD player hi-fi shell (DSN-037 / DSN-021 captions / DSN-064 tracks).
 ///
 /// Temporary controls overlay with large seek / volume chrome and a timeline.
 /// Play/pause sits in the uncovered primary action slot. Optional captions use
-/// [AppSubtitleStyle] defaults.
+/// [AppSubtitleStyle] defaults. Audio & subtitle picker remembers preference
+/// for the session (design shell — no Media3 / persistence plugin).
 class TvVodPlayerPage extends StatefulWidget {
   const TvVodPlayerPage({
     super.key,
@@ -25,12 +28,16 @@ class TvVodPlayerPage extends StatefulWidget {
     this.durationLabel = '1:45:00',
     this.progress = 0.32,
     this.autoHide = true,
+    this.initialPreference = const TvTrackPreference(),
+    this.audioTracks = demoAudioTracks,
+    this.subtitleTracks = demoSubtitleTracks,
     this.onSeekBackward,
     this.onSeekForward,
     this.onVolumeDown,
     this.onVolumeUp,
     this.onMuteToggle,
     this.onPlayPause,
+    this.onPreferenceChanged,
   }) : assert(progress >= 0 && progress <= 1, 'progress must be in [0, 1]');
 
   final String title;
@@ -40,12 +47,16 @@ class TvVodPlayerPage extends StatefulWidget {
   final String durationLabel;
   final double progress;
   final bool autoHide;
+  final TvTrackPreference initialPreference;
+  final List<TvMediaTrack> audioTracks;
+  final List<TvMediaTrack> subtitleTracks;
   final VoidCallback? onSeekBackward;
   final VoidCallback? onSeekForward;
   final VoidCallback? onVolumeDown;
   final VoidCallback? onVolumeUp;
   final VoidCallback? onMuteToggle;
   final VoidCallback? onPlayPause;
+  final ValueChanged<TvTrackPreference>? onPreferenceChanged;
 
   static const String demoTitle = 'Harbor Lights';
   static const String demoSubtitle =
@@ -59,6 +70,8 @@ class _TvVodPlayerPageState extends State<TvVodPlayerPage> {
   bool _controlsVisible = true;
   bool _playing = true;
   bool _muted = false;
+  bool _trackSelectorOpen = false;
+  late TvTrackPreference _preference = widget.initialPreference;
   Timer? _hideTimer;
 
   @override
@@ -75,7 +88,7 @@ class _TvVodPlayerPageState extends State<TvVodPlayerPage> {
 
   void _armHideTimer() {
     _hideTimer?.cancel();
-    if (!widget.autoHide || !_controlsVisible) return;
+    if (!widget.autoHide || !_controlsVisible || _trackSelectorOpen) return;
     _hideTimer = Timer(AppMotion.playerControlsAutoHide, () {
       if (!mounted) return;
       setState(() => _controlsVisible = false);
@@ -99,15 +112,48 @@ class _TvVodPlayerPageState extends State<TvVodPlayerPage> {
     widget.onMuteToggle?.call();
   }
 
+  void _openTrackSelector() {
+    setState(() {
+      _trackSelectorOpen = true;
+      _controlsVisible = true;
+    });
+    _hideTimer?.cancel();
+  }
+
+  void _closeTrackSelector() {
+    setState(() => _trackSelectorOpen = false);
+    _armHideTimer();
+  }
+
+  void _setPreference(TvTrackPreference next) {
+    setState(() => _preference = next);
+    widget.onPreferenceChanged?.call(next);
+  }
+
+  bool get _subtitlesOn {
+    final match = widget.subtitleTracks.where(
+      (t) => t.id == _preference.subtitleTrackId,
+    );
+    if (match.isEmpty) return false;
+    return !match.first.isOff;
+  }
+
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
     if (event is! KeyDownEvent) return KeyEventResult.ignored;
+    if (event.logicalKey == LogicalKeyboardKey.escape ||
+        event.logicalKey == LogicalKeyboardKey.goBack) {
+      if (_trackSelectorOpen) {
+        _closeTrackSelector();
+        return KeyEventResult.handled;
+      }
+    }
     if (event.logicalKey == LogicalKeyboardKey.select ||
         event.logicalKey == LogicalKeyboardKey.enter ||
         event.logicalKey == LogicalKeyboardKey.arrowUp ||
         event.logicalKey == LogicalKeyboardKey.arrowDown ||
         event.logicalKey == LogicalKeyboardKey.arrowLeft ||
         event.logicalKey == LogicalKeyboardKey.arrowRight) {
-      if (!_controlsVisible) {
+      if (!_controlsVisible && !_trackSelectorOpen) {
         _reveal();
         return KeyEventResult.handled;
       }
@@ -121,6 +167,8 @@ class _TvVodPlayerPageState extends State<TvVodPlayerPage> {
     final textTheme = Theme.of(context).textTheme;
 
     final caption = widget.subtitleText;
+    final showCaption =
+        _subtitlesOn && caption != null && caption.trim().isNotEmpty;
 
     return TvAccessibleScope(
       child: Focus(
@@ -132,7 +180,7 @@ class _TvVodPlayerPageState extends State<TvVodPlayerPage> {
             behavior: HitTestBehavior.opaque,
             onTap: _reveal,
             child: OverlayStage(
-              topOverlay: _controlsVisible
+              topOverlay: _controlsVisible && !_trackSelectorOpen
                   ? Align(
                       alignment: Alignment.topCenter,
                       child: FractionallySizedBox(
@@ -160,7 +208,7 @@ class _TvVodPlayerPageState extends State<TvVodPlayerPage> {
                       ),
                     )
                   : null,
-              primaryAction: _controlsVisible
+              primaryAction: _controlsVisible && !_trackSelectorOpen
                   ? FocusableSurface(
                       key: const ValueKey<String>('vod-play-pause'),
                       kind: FocusControlKind.button,
@@ -183,11 +231,10 @@ class _TvVodPlayerPageState extends State<TvVodPlayerPage> {
                   return Stack(
                     fit: StackFit.expand,
                     children: [
-                      if (caption != null && caption.trim().isNotEmpty)
+                      if (showCaption)
                         Positioned(
                           left: AppSpacing.xl,
                           right: AppSpacing.xl,
-                          // Sit just above the ~32% bottom transport band.
                           bottom: constraints.maxHeight * 0.32 + AppSpacing.sm,
                           child: MiSubtitleCaption(
                             key: const ValueKey<String>('vod-subtitle'),
@@ -196,11 +243,12 @@ class _TvVodPlayerPageState extends State<TvVodPlayerPage> {
                           ),
                         ),
                       VodPlayerControlsOverlay(
-                        visible: _controlsVisible,
+                        visible: _controlsVisible && !_trackSelectorOpen,
                         positionLabel: widget.positionLabel,
                         durationLabel: widget.durationLabel,
                         progress: widget.progress,
                         muted: _muted,
+                        trackSelectorLabel: TvTrackSelectorCopy.openLabel,
                         onSeekBackward: () {
                           _reveal();
                           widget.onSeekBackward?.call();
@@ -218,7 +266,26 @@ class _TvVodPlayerPageState extends State<TvVodPlayerPage> {
                           widget.onVolumeUp?.call();
                         },
                         onMuteToggle: _toggleMute,
+                        onOpenTrackSelector: _openTrackSelector,
                       ),
+                      if (_trackSelectorOpen)
+                        TvTrackSelectorPanel(
+                          key: const ValueKey<String>('track-selector-panel'),
+                          preference: _preference,
+                          audioTracks: widget.audioTracks,
+                          subtitleTracks: widget.subtitleTracks,
+                          onAudioSelected: (track) {
+                            _setPreference(
+                              _preference.copyWith(audioTrackId: track.id),
+                            );
+                          },
+                          onSubtitleSelected: (track) {
+                            _setPreference(
+                              _preference.copyWith(subtitleTrackId: track.id),
+                            );
+                          },
+                          onClose: _closeTrackSelector,
+                        ),
                     ],
                   );
                 },

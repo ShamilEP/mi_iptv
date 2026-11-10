@@ -13,7 +13,7 @@
 | Background | Ink `#0A0D14` @ 72% opacity, `AppRadius.sm` |
 | Typeface | Figtree / body family, weight 600 |
 
-Contrast is audited as Cloud on solid Ink (large text AA). Track selection UI is **DSN-064** (out of scope).
+Contrast is audited as Cloud on solid Ink (large text AA). Track selection UI is **DSN-064** — see [audio_subtitle_selector_tv.md](./audio_subtitle_selector_tv.md).
 
 ## OS text-size handling
 
