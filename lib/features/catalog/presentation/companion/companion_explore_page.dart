@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/accessibility/companion_accessibility.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/brand_lockup.dart';
 import '../../../../core/widgets/loading_pattern.dart';
@@ -160,33 +161,35 @@ class _CompanionExplorePageState extends State<CompanionExplorePage> {
     final brand = context.brandColors;
     final textTheme = Theme.of(context).textTheme;
 
-    return Scaffold(
-      backgroundColor: brand.cloud,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.insetPageCompanion),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const BrandLockup(
-                markHeight: AppSpacing.xl,
-                tone: BrandMarkTone.companion,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                CompanionExploreCopy.title,
-                style: textTheme.headlineMedium?.copyWith(color: brand.ink),
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                CompanionExploreCopy.body,
-                style: textTheme.bodyLarge?.copyWith(color: brand.muted),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              Expanded(
-                child: SingleChildScrollView(child: _stateBody(context)),
-              ),
-            ],
+    return CompanionAccessibleScope(
+      child: Scaffold(
+        backgroundColor: brand.cloud,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.insetPageCompanion),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const BrandLockup(
+                  markHeight: AppSpacing.xl,
+                  tone: BrandMarkTone.companion,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Text(
+                  CompanionExploreCopy.title,
+                  style: textTheme.headlineMedium?.copyWith(color: brand.ink),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  CompanionExploreCopy.body,
+                  style: textTheme.bodyLarge?.copyWith(color: brand.muted),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Expanded(
+                  child: SingleChildScrollView(child: _stateBody(context)),
+                ),
+              ],
+            ),
           ),
         ),
       ),

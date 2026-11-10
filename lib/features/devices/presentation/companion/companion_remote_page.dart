@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../../core/accessibility/companion_accessibility.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/brand_lockup.dart';
 import '../../../../core/widgets/mi_icon.dart';
@@ -81,146 +82,156 @@ class _CompanionRemotePageState extends State<CompanionRemotePage> {
     final brand = context.brandColors;
     final textTheme = Theme.of(context).textTheme;
 
-    return Scaffold(
-      backgroundColor: brand.cloud,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.insetPageCompanion),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const BrandLockup(
-                markHeight: AppSpacing.xl,
-                tone: BrandMarkTone.companion,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        CompanionRemoteCopy.title,
-                        style: textTheme.headlineMedium?.copyWith(
-                          color: brand.ink,
+    return CompanionAccessibleScope(
+      child: Scaffold(
+        backgroundColor: brand.cloud,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.insetPageCompanion),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const BrandLockup(
+                  markHeight: AppSpacing.xl,
+                  tone: BrandMarkTone.companion,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          CompanionRemoteCopy.title,
+                          style: textTheme.headlineMedium?.copyWith(
+                            color: brand.ink,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: AppSpacing.xs),
-                      Row(
-                        children: [
-                          Expanded(
+                        const SizedBox(height: AppSpacing.xs),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                widget.tvName,
+                                style: textTheme.titleLarge?.copyWith(
+                                  color: brand.ink,
+                                ),
+                              ),
+                            ),
+                            MiIcon(
+                              role: widget.connected
+                                  ? IconRole.connected
+                                  : IconRole.offline,
+                              color: brand.ink,
+                              size: AppSpacing.lg,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        Semantics(
+                          liveRegion: true,
+                          label: _feedback,
+                          child: KeyedSubtree(
+                            key: const ValueKey<String>('remote-feedback'),
                             child: Text(
-                              widget.tvName,
+                              _feedback,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: textTheme.titleLarge?.copyWith(
                                 color: brand.ink,
                               ),
                             ),
                           ),
-                          MiIcon(
-                            role: widget.connected
-                                ? IconRole.connected
-                                : IconRole.offline,
-                            color: brand.ink,
-                            size: AppSpacing.lg,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      KeyedSubtree(
-                        key: const ValueKey<String>('remote-feedback'),
-                        child: Text(
-                          _feedback,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: textTheme.titleLarge?.copyWith(
-                            color: brand.ink,
-                          ),
                         ),
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                      CompanionRemoteDpad(
-                        onCommand: _command,
-                        onFeedback: widget.onFeedback,
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                      CompanionRemoteCommandRow(
-                        commands: const [
-                          CompanionRemoteCommand.back,
-                          CompanionRemoteCommand.home,
-                        ],
-                        onCommand: _command,
-                        onFeedback: widget.onFeedback,
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      CompanionRemoteCommandRow(
-                        commands: const [
-                          CompanionRemoteCommand.volumeDown,
-                          CompanionRemoteCommand.mute,
-                          CompanionRemoteCommand.volumeUp,
-                        ],
-                        onCommand: _command,
-                        onFeedback: widget.onFeedback,
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      CompanionRemoteCommandRow(
-                        commands: const [
-                          CompanionRemoteCommand.play,
-                          CompanionRemoteCommand.pause,
-                        ],
-                        icons: const {
-                          CompanionRemoteCommand.play: IconRole.play,
-                          CompanionRemoteCommand.pause: IconRole.pause,
-                        },
-                        onCommand: _command,
-                        onFeedback: widget.onFeedback,
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      CompanionRemoteCommandRow(
-                        commands: const [
-                          CompanionRemoteCommand.seekBack,
-                          CompanionRemoteCommand.seekForward,
-                        ],
-                        icons: const {
-                          CompanionRemoteCommand.seekBack: IconRole.seekBack,
-                          CompanionRemoteCommand.seekForward:
-                              IconRole.seekForward,
-                        },
-                        onCommand: _command,
-                        onFeedback: widget.onFeedback,
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                      Text(
-                        CompanionRemoteCopy.keyboardLabel,
-                        style: textTheme.labelLarge?.copyWith(
-                          color: brand.muted,
+                        const SizedBox(height: AppSpacing.lg),
+                        CompanionRemoteDpad(
+                          onCommand: _command,
+                          onFeedback: widget.onFeedback,
                         ),
-                      ),
-                      const SizedBox(height: AppSpacing.xs),
-                      MiTextField(
-                        controller: _keyboard,
-                        label: CompanionRemoteCopy.keyboardLabel,
-                        hint: CompanionRemoteCopy.keyboardHint,
-                      ),
-                      if (_keyboardError != null) ...[
-                        const SizedBox(height: AppSpacing.xs),
+                        const SizedBox(height: AppSpacing.lg),
+                        CompanionRemoteCommandRow(
+                          commands: const [
+                            CompanionRemoteCommand.back,
+                            CompanionRemoteCommand.home,
+                          ],
+                          onCommand: _command,
+                          onFeedback: widget.onFeedback,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        CompanionRemoteCommandRow(
+                          commands: const [
+                            CompanionRemoteCommand.volumeDown,
+                            CompanionRemoteCommand.mute,
+                            CompanionRemoteCommand.volumeUp,
+                          ],
+                          onCommand: _command,
+                          onFeedback: widget.onFeedback,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        CompanionRemoteCommandRow(
+                          commands: const [
+                            CompanionRemoteCommand.play,
+                            CompanionRemoteCommand.pause,
+                          ],
+                          icons: const {
+                            CompanionRemoteCommand.play: IconRole.play,
+                            CompanionRemoteCommand.pause: IconRole.pause,
+                          },
+                          onCommand: _command,
+                          onFeedback: widget.onFeedback,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        CompanionRemoteCommandRow(
+                          commands: const [
+                            CompanionRemoteCommand.seekBack,
+                            CompanionRemoteCommand.seekForward,
+                          ],
+                          icons: const {
+                            CompanionRemoteCommand.seekBack: IconRole.seekBack,
+                            CompanionRemoteCommand.seekForward:
+                                IconRole.seekForward,
+                          },
+                          onCommand: _command,
+                          onFeedback: widget.onFeedback,
+                        ),
+                        const SizedBox(height: AppSpacing.lg),
                         Text(
-                          _keyboardError!,
-                          style: textTheme.bodyLarge?.copyWith(
-                            color: brand.ink,
+                          CompanionRemoteCopy.keyboardLabel,
+                          style: textTheme.labelLarge?.copyWith(
+                            color: brand.muted,
                           ),
+                        ),
+                        const SizedBox(height: AppSpacing.xs),
+                        MiTextField(
+                          controller: _keyboard,
+                          label: CompanionRemoteCopy.keyboardLabel,
+                          hint: CompanionRemoteCopy.keyboardHint,
+                        ),
+                        if (_keyboardError != null) ...[
+                          const SizedBox(height: AppSpacing.xs),
+                          Semantics(
+                            liveRegion: true,
+                            label: _keyboardError,
+                            child: Text(
+                              _keyboardError!,
+                              style: textTheme.bodyLarge?.copyWith(
+                                color: brand.ink,
+                              ),
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: AppSpacing.sm),
+                        CompanionRemoteKey(
+                          label: CompanionRemoteCopy.sendLabel,
+                          onFeedback: widget.onFeedback,
+                          onPressed: _send,
                         ),
                       ],
-                      const SizedBox(height: AppSpacing.sm),
-                      CompanionRemoteKey(
-                        label: CompanionRemoteCopy.sendLabel,
-                        onFeedback: widget.onFeedback,
-                        onPressed: _send,
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -55,6 +55,7 @@ class _CompanionRemoteKeyState extends State<CompanionRemoteKey> {
     return Semantics(
       button: true,
       label: widget.label,
+      excludeSemantics: true,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTapDown: (_) => _down(),

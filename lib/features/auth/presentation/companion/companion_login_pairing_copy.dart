@@ -13,5 +13,7 @@ abstract final class CompanionLoginPairingCopy {
   static const String missingCredentialsMessage =
       'Enter your email and password.';
   static const String emptyTvsMessage = 'No linked TVs on this account.';
+  static const String connectedLabel = 'Connected';
+  static const String offlineLabel = 'Offline';
   static const String demoAccountEmail = 'you@example.com';
 }
