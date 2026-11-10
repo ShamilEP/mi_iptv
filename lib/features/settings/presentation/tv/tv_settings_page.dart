@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/accessibility/tv_accessibility.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/brand_lockup.dart';
 import 'tv_settings_copy.dart';
@@ -74,7 +75,8 @@ class _TvSettingsPageState extends State<TvSettingsPage> {
     final brand = context.brandColors;
     final textTheme = Theme.of(context).textTheme;
 
-    return Scaffold(
+    return TvAccessibleScope(
+      child: Scaffold(
       backgroundColor: brand.ink,
       body: Padding(
         padding: AppOverscan.padding,
@@ -115,6 +117,7 @@ class _TvSettingsPageState extends State<TvSettingsPage> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

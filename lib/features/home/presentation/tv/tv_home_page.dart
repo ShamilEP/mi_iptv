@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/accessibility/tv_accessibility.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/brand_lockup.dart';
 import '../../../../core/widgets/content_card.dart';
@@ -162,28 +163,30 @@ class _TvHomePageState extends State<TvHomePage> {
   Widget build(BuildContext context) {
     final brand = context.brandColors;
 
-    return Scaffold(
-      backgroundColor: brand.ink,
-      body: Padding(
-        padding: AppOverscan.padding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const BrandLockup(markHeight: 56),
-                const SizedBox(width: AppSpacing.lg),
-                Expanded(
-                  child: TvHomeQuickAccess(
-                    onSelected: widget.onQuickAccess,
+    return TvAccessibleScope(
+      child: Scaffold(
+        backgroundColor: brand.ink,
+        body: Padding(
+          padding: AppOverscan.padding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const BrandLockup(markHeight: 56),
+                  const SizedBox(width: AppSpacing.lg),
+                  Expanded(
+                    child: TvHomeQuickAccess(
+                      onSelected: widget.onQuickAccess,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.stack),
-            Expanded(child: _statusBody()),
-          ],
+                ],
+              ),
+              const SizedBox(height: AppSpacing.stack),
+              Expanded(child: _statusBody()),
+            ],
+          ),
         ),
       ),
     );

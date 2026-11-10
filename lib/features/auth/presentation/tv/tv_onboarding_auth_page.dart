@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/accessibility/tv_accessibility.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/brand_lockup.dart';
 import '../../../../core/widgets/control_chrome.dart';
@@ -45,7 +46,8 @@ class _TvOnboardingAuthPageState extends State<TvOnboardingAuthPage> {
     final steps = TvOnboardingAuthStep.values;
     final index = steps.indexOf(_step);
 
-    return Scaffold(
+    return TvAccessibleScope(
+      child: Scaffold(
       backgroundColor: brand.ink,
       body: Padding(
         padding: AppOverscan.padding,
@@ -113,6 +115,7 @@ class _TvOnboardingAuthPageState extends State<TvOnboardingAuthPage> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

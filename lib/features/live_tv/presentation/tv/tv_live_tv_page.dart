@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../../core/accessibility/tv_accessibility.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/channel_info_overlay.dart';
 import '../../../../core/widgets/mi_overlay_panel.dart';
@@ -119,7 +120,8 @@ class _TvLiveTvPageState extends State<TvLiveTvPage> {
     final showList =
         widget.showChannelList && _listVisible && failedChannel == null;
 
-    return Focus(
+    return TvAccessibleScope(
+      child: Focus(
       autofocus: failedChannel == null,
       canRequestFocus: failedChannel == null,
       onKeyEvent: _onKey,
@@ -192,6 +194,7 @@ class _TvLiveTvPageState extends State<TvLiveTvPage> {
             ],
           ),
         ),
+      ),
       ),
     );
   }
