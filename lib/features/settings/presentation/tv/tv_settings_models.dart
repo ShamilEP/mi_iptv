@@ -1,5 +1,5 @@
-/// Settings category for hierarchical TV Settings (DSN-038).
-enum TvSettingsCategory { playback, account, sources, diagnostics }
+/// Settings category for the Android TV Settings shell (TV-080).
+enum TvSettingsCategory { account, sources, network, language, playback }
 
 /// One settings field with a visible current value.
 class TvSettingsValue {
@@ -9,43 +9,41 @@ class TvSettingsValue {
   final String value;
 }
 
-/// Catalog / IPTV source row with priority order.
-class TvSettingsSource {
-  const TvSettingsSource({
-    required this.id,
-    required this.name,
-    required this.kind,
-    required this.priority,
-  });
-
-  final String id;
-  final String name;
-  final String kind;
-  final int priority;
-
-  TvSettingsSource copyWith({int? priority}) {
-    return TvSettingsSource(
-      id: id,
-      name: name,
-      kind: kind,
-      priority: priority ?? this.priority,
-    );
-  }
-}
-
-/// Diagnostics snapshot shown in Settings.
-class TvSettingsDiagnostics {
-  const TvSettingsDiagnostics({
+/// Snapshot of hierarchical Settings values shown in the shell.
+class TvSettingsSnapshot {
+  const TvSettingsSnapshot({
+    required this.account,
+    required this.sources,
     required this.network,
-    required this.source,
-    required this.latency,
-    required this.buffer,
-    required this.version,
+    required this.language,
+    required this.playback,
   });
 
-  final String network;
-  final String source;
-  final String latency;
-  final String buffer;
-  final String version;
+  final List<TvSettingsValue> account;
+  final List<TvSettingsValue> sources;
+  final List<TvSettingsValue> network;
+  final List<TvSettingsValue> language;
+  final List<TvSettingsValue> playback;
+
+  List<TvSettingsValue> valuesFor(TvSettingsCategory category) {
+    switch (category) {
+      case TvSettingsCategory.account:
+        return account;
+      case TvSettingsCategory.sources:
+        return sources;
+      case TvSettingsCategory.network:
+        return network;
+      case TvSettingsCategory.language:
+        return language;
+      case TvSettingsCategory.playback:
+        return playback;
+    }
+  }
+
+  /// Compact summary shown on the category rail (first value).
+  String summaryFor(TvSettingsCategory category) {
+    final values = valuesFor(category);
+    if (values.isEmpty) return '';
+    return values.first.value;
+  }
 }
