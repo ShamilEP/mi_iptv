@@ -26,3 +26,7 @@ Brand + quick access stay visible. The rail stack is replaced by a DSN-017 patte
 - Live TV stays in the header quick-access rail (primary emphasis).
 - Predictable initial focus: first Continue Watching card after first frame (ready only).
 - Focus map / Back / restore: [focus_maps.md](./focus_maps.md) (DSN-040).
+
+## Release 2
+
+Personalized recommendation rows + compact hero (Live TV still header-bound): [home_personalized_tv.md](./home_personalized_tv.md) (DSN-070).
