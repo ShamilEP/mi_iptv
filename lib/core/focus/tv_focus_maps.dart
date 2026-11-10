@@ -3,8 +3,7 @@ import 'tv_focus_map.dart';
 /// Catalog of MVP TV focus maps (DSN-040).
 ///
 /// Each entry locks first focus, D-pad edges, Back behavior, and restore
-/// targets for screens that already have hi-fi shells. Favorites and other
-/// not-yet-designed screens stay out until their DSN lands.
+/// targets for screens that already have hi-fi shells.
 abstract final class TvFocusMaps {
   static const List<TvFocusMap> all = <TvFocusMap>[
     splash,
@@ -13,6 +12,7 @@ abstract final class TvFocusMaps {
     liveTv,
     liveTvStreamFailure,
     search,
+    favorites,
     settings,
     vodPlayer,
   ];
@@ -232,6 +232,46 @@ abstract final class TvFocusMaps {
     backBehavior: TvFocusBackBehavior.exitScreen,
     restoreFocusId: 'osk',
     notes: 'Empty state swaps results for Clear; OSK remains left column.',
+  );
+
+  static const TvFocusMap favorites = TvFocusMap(
+    screen: TvFocusScreen.favorites,
+    title: 'Favorites',
+    firstFocusId: 'open-first',
+    nodes: <TvFocusNodeSpec>[
+      TvFocusNodeSpec(id: 'open-first', label: 'Open first favorite'),
+      TvFocusNodeSpec(id: 'remove-first', label: 'Remove first favorite'),
+      TvFocusNodeSpec(id: 'channels-group', label: 'Channels group'),
+      TvFocusNodeSpec(id: 'vod-group', label: 'VOD group'),
+      TvFocusNodeSpec(id: 'empty-browse', label: 'Browse catalog'),
+    ],
+    traversals: <TvFocusTraversal>[
+      TvFocusTraversal(
+        fromId: 'open-first',
+        right: 'remove-first',
+        down: 'vod-group',
+      ),
+      TvFocusTraversal(
+        fromId: 'remove-first',
+        left: 'open-first',
+        down: 'vod-group',
+      ),
+      TvFocusTraversal(
+        fromId: 'channels-group',
+        down: 'vod-group',
+        right: 'open-first',
+      ),
+      TvFocusTraversal(
+        fromId: 'vod-group',
+        up: 'channels-group',
+      ),
+      TvFocusTraversal(
+        fromId: 'empty-browse',
+      ),
+    ],
+    backBehavior: TvFocusBackBehavior.exitScreen,
+    restoreFocusId: 'open-first',
+    notes: 'Channels above VOD; Open/Remove are row quick actions (DSN-036).',
   );
 
   static const TvFocusMap settings = TvFocusMap(

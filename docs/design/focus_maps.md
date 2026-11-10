@@ -20,6 +20,7 @@ Each MVP TV hi-fi screen locks:
 | Live TV | Channel list | exit | Channel list |
 | Live TV failure | Retry | dismiss overlay → channels | Retry |
 | Search | OSK | exit | OSK |
+| Favorites | Open first row | exit | Open first row |
 | Settings | Account category | exit | Account category |
 | VOD player | Play / Pause | exit | Play / Pause |
 
@@ -29,11 +30,10 @@ Each MVP TV hi-fi screen locks:
 Splash --hold--> Home | Onboarding
 Home --Live TV--> Live TV --failure--> Retry / Switch / Back to channels
 Home --Search--> Search
+Home --Favorites--> Favorites
 Home --Settings--> Settings
 Home --Continue watching / VOD--> VOD player
 ```
-
-Favorites is **out of catalog** until DSN-036.
 
 ## Rules
 
