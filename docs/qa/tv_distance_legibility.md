@@ -18,4 +18,4 @@ Living-room TV UI is validated for **2–3 m** (about 6–10 ft).
 ## Notes
 
 - Companion Dynamic Type / TalkBack remain under CMP-063.
-- Broader TV accessibility pass (TalkBack routes, full screen audit) → TV-123.
+- Broader TV accessibility pass (text scale scopes, subtitles, surface audit) → [TV-123](tv_accessibility.md).

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/accessibility/tv_accessibility.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/brand_lockup.dart';
 import '../../../../core/widgets/tv_on_screen_keyboard.dart';
@@ -103,7 +104,8 @@ class _TvSearchPageState extends State<TvSearchPage> {
         ? TvSearchCopy.fieldHint
         : _query.text.trim();
 
-    return Scaffold(
+    return TvAccessibleScope(
+      child: Scaffold(
       backgroundColor: brand.ink,
       body: Padding(
         padding: AppOverscan.padding,
@@ -158,6 +160,7 @@ class _TvSearchPageState extends State<TvSearchPage> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

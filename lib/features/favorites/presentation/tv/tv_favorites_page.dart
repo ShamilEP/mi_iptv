@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/accessibility/tv_accessibility.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/brand_lockup.dart';
 import 'tv_favorites_copy.dart';
@@ -86,37 +87,39 @@ class _TvFavoritesPageState extends State<TvFavoritesPage> {
     final brand = context.brandColors;
     final textTheme = Theme.of(context).textTheme;
 
-    return Scaffold(
-      backgroundColor: brand.ink,
-      body: Padding(
-        padding: AppOverscan.padding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const BrandLockup(markHeight: AppSpacing.xxl),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              TvFavoritesCopy.title,
-              style: textTheme.headlineMedium?.copyWith(color: brand.cloud),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              TvFavoritesCopy.body,
-              style: textTheme.bodyLarge?.copyWith(color: brand.mist),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Expanded(
-              child: SingleChildScrollView(
-                child: TvFavoritesCatalog(
-                  channels: _channels,
-                  vod: _vod,
-                  onOpen: _open,
-                  onRemove: _remove,
-                  onBrowseCatalog: widget.onBrowseCatalog,
+    return TvAccessibleScope(
+      child: Scaffold(
+        backgroundColor: brand.ink,
+        body: Padding(
+          padding: AppOverscan.padding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const BrandLockup(markHeight: AppSpacing.xxl),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                TvFavoritesCopy.title,
+                style: textTheme.headlineMedium?.copyWith(color: brand.cloud),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                TvFavoritesCopy.body,
+                style: textTheme.bodyLarge?.copyWith(color: brand.mist),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: TvFavoritesCatalog(
+                    channels: _channels,
+                    vod: _vod,
+                    onOpen: _open,
+                    onRemove: _remove,
+                    onBrowseCatalog: widget.onBrowseCatalog,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
