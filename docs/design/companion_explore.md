@@ -9,6 +9,10 @@ Executable UI: [`CompanionExplorePage`](../../lib/features/catalog/presentation/
 3. **Reproducir en TV** — prominent Ember / companionLive CTA (`ControlEmphasis.sendToTv`). Confirms send with a status line.
 4. **No player** — copy states that video does not play on the phone. There is no video stage or playback chrome.
 
+## Mandatory surface states (CMP-045)
+
+`CompanionExplorePage(surfaceState: …)` covers DSN-010 Loading, Empty, Error, Offline, Syncing, and Sync Conflict via `LoadingPattern`, `EmptyPattern` / `ErrorPattern` / `OfflinePattern`, `SyncingPattern`, and `SyncConflictBanner`.
+
 ## Notes
 
 - Design shell only: Send-to-TV does not call a devices or cast API.

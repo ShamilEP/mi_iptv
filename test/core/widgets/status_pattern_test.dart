@@ -18,16 +18,18 @@ void main() {
     );
   }
 
-  testWidgets('EmptyPattern.favorites locks DoD copy and action', (tester) async {
+  testWidgets('EmptyPattern.favorites locks DoD copy and action', (
+    tester,
+  ) async {
     var tapped = false;
-    await pump(
-      tester,
-      EmptyPattern.favorites(onAction: () => tapped = true),
-    );
+    await pump(tester, EmptyPattern.favorites(onAction: () => tapped = true));
 
     expect(find.text('No hay favoritos'), findsOneWidget);
     expect(find.text('Empty'), findsOneWidget);
-    expect(find.text(StatusPatternCopy.favoritesEmpty.actionLabel), findsOneWidget);
+    expect(
+      find.text(StatusPatternCopy.favoritesEmpty.actionLabel),
+      findsOneWidget,
+    );
     expect(find.byIcon(Icons.favorite_border), findsOneWidget);
 
     await tester.tap(find.text(StatusPatternCopy.favoritesEmpty.actionLabel));
@@ -37,10 +39,7 @@ void main() {
 
   testWidgets('ErrorPattern shows error cue and retry', (tester) async {
     var retried = false;
-    await pump(
-      tester,
-      ErrorPattern(onAction: () => retried = true),
-    );
+    await pump(tester, ErrorPattern(onAction: () => retried = true));
 
     expect(find.text('Error'), findsOneWidget);
     expect(find.text(StatusPatternCopy.genericError.title), findsOneWidget);
@@ -53,10 +52,7 @@ void main() {
 
   testWidgets('OfflinePattern shows offline cue and try again', (tester) async {
     var tried = false;
-    await pump(
-      tester,
-      OfflinePattern(onAction: () => tried = true),
-    );
+    await pump(tester, OfflinePattern(onAction: () => tried = true));
 
     expect(find.text('Offline'), findsOneWidget);
     expect(find.text(StatusPatternCopy.genericOffline.title), findsOneWidget);
@@ -68,8 +64,35 @@ void main() {
   });
 
   test('StatusPatternCopy defaults cover empty error offline', () {
-    expect(StatusPatternCopy.defaultsFor(UiState.empty).actionLabel, isNotEmpty);
+    expect(
+      StatusPatternCopy.defaultsFor(UiState.empty).actionLabel,
+      isNotEmpty,
+    );
     expect(StatusPatternCopy.defaultsFor(UiState.error).actionLabel, 'Retry');
-    expect(StatusPatternCopy.defaultsFor(UiState.offline).actionLabel, 'Try again');
+    expect(
+      StatusPatternCopy.defaultsFor(UiState.offline).actionLabel,
+      'Try again',
+    );
+  });
+
+  testWidgets('StatusPattern uses ink title on companion light', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.companionLight(),
+        home: Scaffold(
+          backgroundColor: AppColors.cloud,
+          body: Center(
+            child: EmptyPattern(copy: StatusPatternCopy.exploreEmpty),
+          ),
+        ),
+      ),
+    );
+
+    final title = tester.widget<Text>(
+      find.text(StatusPatternCopy.exploreEmpty.title),
+    );
+    expect(title.style?.color, AppColors.ink);
   });
 }

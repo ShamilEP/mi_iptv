@@ -37,6 +37,13 @@ class StatusPatternCopy {
     actionLabel: 'Try again',
   );
 
+  /// Companion Explore empty catalog (CMP-045).
+  static const StatusPatternCopy exploreEmpty = StatusPatternCopy(
+    title: 'No titles to explore',
+    message: 'When catalog items sync, they will appear here for Send-to-TV.',
+    actionLabel: 'Refresh',
+  );
+
   static StatusPatternCopy defaultsFor(UiState state) {
     switch (state) {
       case UiState.empty:
