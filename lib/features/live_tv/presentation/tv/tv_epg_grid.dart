@@ -11,7 +11,6 @@ class TvEpgGrid extends StatelessWidget {
     required this.channels,
     required this.windowMinutes,
     required this.pixelsPerMinute,
-    required this.focusedEventId,
     required this.onEventFocused,
     required this.onEventSelected,
     required this.focusNodes,
@@ -21,7 +20,6 @@ class TvEpgGrid extends StatelessWidget {
   final List<TvEpgChannel> channels;
   final int windowMinutes;
   final double pixelsPerMinute;
-  final String? focusedEventId;
   final ValueChanged<TvEpgEvent> onEventFocused;
   final ValueChanged<TvEpgEvent> onEventSelected;
   final Map<String, FocusNode> focusNodes;

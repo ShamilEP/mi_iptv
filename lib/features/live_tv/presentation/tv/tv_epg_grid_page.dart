@@ -202,7 +202,6 @@ class _TvEpgGridPageState extends State<TvEpgGridPage> {
                   channels: widget.channels,
                   windowMinutes: widget.windowMinutes,
                   pixelsPerMinute: widget.pixelsPerMinute,
-                  focusedEventId: _focusedId,
                   focusNodes: _nodes,
                   onEventFocused: _onFocused,
                   onEventSelected: _onSelected,
