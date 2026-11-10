@@ -10,6 +10,10 @@ Executable UI: [`TvVodPlayerPage`](../../lib/features/player/presentation/tv/tv_
 4. **Large controls** — seek −10 s / +10 s and volume down / mute / volume up with oversized focusable targets.
 5. **Primary action** — play/pause stays in `OverlayStage.primaryAction` so the bottom band never covers it (DSN-015 rule).
 
+## Captions (DSN-021)
+
+Optional lower-third [`MiSubtitleCaption`](../../lib/core/widgets/mi_subtitle_caption.dart) uses locked Cloud-on-Ink-scrim defaults. See [subtitle_style.md](./subtitle_style.md).
+
 ## Notes
 
 - Design shell only: seeks and volume callbacks do not drive a real player.
