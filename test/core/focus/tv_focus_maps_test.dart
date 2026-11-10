@@ -67,5 +67,13 @@ void main() {
         'Search',
       );
     });
+
+    test('Favorites first focus is Open on the first row', () {
+      final favorites = TvFocusMaps.favorites;
+      expect(favorites.firstFocusId, 'open-first');
+      expect(favorites.restoreFocusId, 'open-first');
+      expect(favorites.traversalFor('open-first')?.right, 'remove-first');
+      expect(favorites.traversalFor('channels-group')?.down, 'vod-group');
+    });
   });
 }

@@ -6,6 +6,7 @@ enum TvFocusScreen {
   liveTv,
   liveTvStreamFailure,
   search,
+  favorites,
   settings,
   vodPlayer,
 }
