@@ -26,5 +26,6 @@ Companion light pairs used by body text, muted copy, primary CTAs, remote keys, 
 
 ## Out of scope
 
-- TV 2–3 m legibility → TV-123 / QA-037
+- TV 2–3 m legibility / focus visibility → [QA-037](tv_distance_legibility.md)
+- Broader TV accessibility pass → TV-123
 - Subtitle style / player captions → DSN-021
