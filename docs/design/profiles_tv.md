@@ -19,5 +19,6 @@ Executable UI: [`TvProfilePickerPage`](../../lib/features/profiles/presentation/
 
 ## Notes
 
-- Design shell only: no profile API / PIN / multi-profile sync.
+- Design shell only: no profile API / multi-profile sync.
+- Parental PIN flows → [parental_pin.md](./parental_pin.md) (DSN-062).
 - `TvAccessibleScope` wraps the page (TV-123).
