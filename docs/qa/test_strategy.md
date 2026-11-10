@@ -61,6 +61,7 @@ Backend/infra availability is an **entry** dependency, not owned by this repo.
 
 - Theme, typography, focus, content cards/rows, controls, overlays contracts.
 - Accessibility contrast pairs locked in tests (`color_contrast_test.dart`).
+- TV 2–3 m legibility, contrast, and focus visibility (`tv_distance_legibility_test.dart`, QA-037).
 
 **Exit**
 
