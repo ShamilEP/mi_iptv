@@ -6,64 +6,45 @@ import 'tv_settings_copy.dart';
 import 'tv_settings_models.dart';
 import 'tv_settings_panels.dart';
 
-/// TV Settings, Sources, and Diagnostics hi-fi shell (DSN-038).
+/// Android TV Settings shell (TV-080).
 ///
-/// Hierarchical categories show current values. Sources support priority
-/// reordering. Diagnostics surfaces network, source, latency, buffer, version.
+/// Hierarchical categories — Account, Sources, Network, Language, Playback —
+/// each showing current values on the rail and in the detail panel.
 class TvSettingsPage extends StatefulWidget {
   const TvSettingsPage({
     super.key,
-    this.initialCategory = TvSettingsCategory.playback,
-    this.playbackValues = demoPlaybackValues,
-    this.accountValues = demoAccountValues,
-    this.sources = demoSources,
-    this.diagnostics = demoDiagnostics,
+    this.initialCategory = TvSettingsCategory.account,
+    this.snapshot = demoSnapshot,
   });
 
   final TvSettingsCategory initialCategory;
-  final List<TvSettingsValue> playbackValues;
-  final List<TvSettingsValue> accountValues;
-  final List<TvSettingsSource> sources;
-  final TvSettingsDiagnostics diagnostics;
+  final TvSettingsSnapshot snapshot;
 
-  static const List<TvSettingsValue> demoPlaybackValues = <TvSettingsValue>[
-    TvSettingsValue(label: 'Stream quality', value: 'Auto'),
-    TvSettingsValue(label: 'Audio language', value: 'Original'),
-    TvSettingsValue(label: 'Subtitles', value: 'Off'),
-  ];
-
-  static const List<TvSettingsValue> demoAccountValues = <TvSettingsValue>[
-    TvSettingsValue(label: 'Signed in as', value: 'you@example.com'),
-    TvSettingsValue(label: 'Devices linked', value: '2'),
-  ];
-
-  static const List<TvSettingsSource> demoSources = <TvSettingsSource>[
-    TvSettingsSource(
-      id: 'src-xtream',
-      name: 'Home Xtream',
-      kind: 'xtream',
-      priority: 1,
-    ),
-    TvSettingsSource(
-      id: 'src-m3u',
-      name: 'M3U Playlist',
-      kind: 'm3u',
-      priority: 2,
-    ),
-    TvSettingsSource(
-      id: 'src-catalog',
-      name: 'Mi Catalog',
-      kind: 'proprietary',
-      priority: 3,
-    ),
-  ];
-
-  static const TvSettingsDiagnostics demoDiagnostics = TvSettingsDiagnostics(
-    network: 'Wi‑Fi · Good',
-    source: 'Home Xtream',
-    latency: '42 ms',
-    buffer: '3.2 s',
-    version: '0.1.0+mvp',
+  static const TvSettingsSnapshot demoSnapshot = TvSettingsSnapshot(
+    account: <TvSettingsValue>[
+      TvSettingsValue(label: 'Signed in as', value: 'you@example.com'),
+      TvSettingsValue(label: 'Devices linked', value: '2'),
+      TvSettingsValue(label: 'Profile', value: 'Default'),
+    ],
+    sources: <TvSettingsValue>[
+      TvSettingsValue(label: 'Home Xtream', value: 'xtream · priority 1'),
+      TvSettingsValue(label: 'M3U Playlist', value: 'm3u · priority 2'),
+      TvSettingsValue(label: 'Mi Catalog', value: 'proprietary · priority 3'),
+    ],
+    network: <TvSettingsValue>[
+      TvSettingsValue(label: 'Connection', value: 'Wi‑Fi · Good'),
+      TvSettingsValue(label: 'IP mode', value: 'DHCP'),
+    ],
+    language: <TvSettingsValue>[
+      TvSettingsValue(label: 'App language', value: 'English'),
+      TvSettingsValue(label: 'Audio preference', value: 'Original'),
+      TvSettingsValue(label: 'Subtitles', value: 'Off'),
+    ],
+    playback: <TvSettingsValue>[
+      TvSettingsValue(label: 'Stream quality', value: 'Auto'),
+      TvSettingsValue(label: 'Start muted', value: 'Off'),
+      TvSettingsValue(label: 'Resume playback', value: 'On'),
+    ],
   );
 
   @override
@@ -72,66 +53,19 @@ class TvSettingsPage extends StatefulWidget {
 
 class _TvSettingsPageState extends State<TvSettingsPage> {
   late TvSettingsCategory _category = widget.initialCategory;
-  late List<TvSettingsSource> _sources = List<TvSettingsSource>.of(
-    widget.sources,
-  );
 
-  void _moveUp(int index) {
-    if (index <= 0) return;
-    setState(() {
-      final ordered = [..._sources]
-        ..sort((a, b) => a.priority.compareTo(b.priority));
-      final current = ordered[index];
-      final above = ordered[index - 1];
-      _sources = _sources
-          .map((source) {
-            if (source.id == current.id) {
-              return source.copyWith(priority: above.priority);
-            }
-            if (source.id == above.id) {
-              return source.copyWith(priority: current.priority);
-            }
-            return source;
-          })
-          .toList(growable: false);
-    });
-  }
-
-  void _moveDown(int index) {
-    setState(() {
-      final ordered = [..._sources]
-        ..sort((a, b) => a.priority.compareTo(b.priority));
-      if (index < 0 || index >= ordered.length - 1) return;
-      final current = ordered[index];
-      final below = ordered[index + 1];
-      _sources = _sources
-          .map((source) {
-            if (source.id == current.id) {
-              return source.copyWith(priority: below.priority);
-            }
-            if (source.id == below.id) {
-              return source.copyWith(priority: current.priority);
-            }
-            return source;
-          })
-          .toList(growable: false);
-    });
-  }
-
-  Widget _detail() {
-    switch (_category) {
-      case TvSettingsCategory.playback:
-        return TvSettingsValuesPanel(values: widget.playbackValues);
+  String _categoryLabel(TvSettingsCategory category) {
+    switch (category) {
       case TvSettingsCategory.account:
-        return TvSettingsValuesPanel(values: widget.accountValues);
+        return TvSettingsCopy.account;
       case TvSettingsCategory.sources:
-        return TvSettingsSourcesPanel(
-          sources: _sources,
-          onMoveUp: _moveUp,
-          onMoveDown: _moveDown,
-        );
-      case TvSettingsCategory.diagnostics:
-        return TvSettingsDiagnosticsPanel(diagnostics: widget.diagnostics);
+        return TvSettingsCopy.sources;
+      case TvSettingsCategory.network:
+        return TvSettingsCopy.network;
+      case TvSettingsCategory.language:
+        return TvSettingsCopy.language;
+      case TvSettingsCategory.playback:
+        return TvSettingsCopy.playback;
     }
   }
 
@@ -159,15 +93,23 @@ class _TvSettingsPageState extends State<TvSettingsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    width: 320,
+                    width: 360,
                     child: TvSettingsCategoryList(
                       selected: _category,
+                      snapshot: widget.snapshot,
                       onSelected: (category) =>
                           setState(() => _category = category),
                     ),
                   ),
                   const SizedBox(width: AppGrid.railGap),
-                  Expanded(child: SingleChildScrollView(child: _detail())),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: TvSettingsValuesPanel(
+                        categoryLabel: _categoryLabel(_category),
+                        values: widget.snapshot.valuesFor(_category),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
