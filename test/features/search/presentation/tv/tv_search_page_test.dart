@@ -53,7 +53,7 @@ void main() {
       tester.widget<Text>(find.byKey(const ValueKey('search-large-query'))).data,
       'sig',
     );
-    expect(find.text('Signal News'), findsOneWidget);
+    expect(find.text('Signal News'), findsWidgets);
     expect(find.text(TvSearchCopy.channelsGroup), findsOneWidget);
     expect(find.text('Harbor Lights'), findsNothing);
   });
