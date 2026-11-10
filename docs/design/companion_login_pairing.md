@@ -12,4 +12,5 @@ Executable UI: [`CompanionLoginPairingPage`](../../lib/features/auth/presentatio
 ## Notes
 
 - Companion light surface (`cloud` background, `ink` text, companion lockup).
+- Host chrome uses [`CompanionPlatformShell`](../../lib/core/platform/companion_platform_shell.dart) (SafeArea, system keyboard dismiss — DSN-054).
 - Design shell only: Log in does not call `/api/v1/auth/*` or a pairing API.

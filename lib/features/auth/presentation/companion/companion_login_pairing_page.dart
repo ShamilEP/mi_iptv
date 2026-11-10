@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/accessibility/companion_accessibility.dart';
+import '../../../../core/platform/companion_platform_shell.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/brand_lockup.dart';
 import '../../../../core/widgets/mi_text_field.dart';
@@ -91,41 +91,31 @@ class _CompanionLoginPairingPageState extends State<CompanionLoginPairingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final brand = context.brandColors;
-
-    return CompanionAccessibleScope(
-      child: Scaffold(
-        backgroundColor: brand.cloud,
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.insetPageCompanion),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const BrandLockup(
-                  markHeight: AppSpacing.xxl,
-                  tone: BrandMarkTone.companion,
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: _step == CompanionLoginPairingStep.login
-                        ? CompanionLoginPanel(
-                            email: _email,
-                            password: _password,
-                            formError: _formError,
-                            onSignIn: _signIn,
-                          )
-                        : CompanionLinkedTvList(
-                            accountEmail: _accountEmail,
-                            tvs: widget.linkedTvs,
-                          ),
-                  ),
-                ),
-              ],
+    return CompanionPlatformShell(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const BrandLockup(
+            markHeight: AppSpacing.xxl,
+            tone: BrandMarkTone.companion,
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          Expanded(
+            child: SingleChildScrollView(
+              child: _step == CompanionLoginPairingStep.login
+                  ? CompanionLoginPanel(
+                      email: _email,
+                      password: _password,
+                      formError: _formError,
+                      onSignIn: _signIn,
+                    )
+                  : CompanionLinkedTvList(
+                      accountEmail: _accountEmail,
+                      tvs: widget.linkedTvs,
+                    ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
