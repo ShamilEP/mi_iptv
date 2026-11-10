@@ -20,11 +20,11 @@ class StatusPattern extends StatelessWidget {
     this.onAction,
     this.icon,
   }) : assert(
-          state == UiState.empty ||
-              state == UiState.error ||
-              state == UiState.offline,
-          'StatusPattern only supports empty, error, and offline',
-        );
+         state == UiState.empty ||
+             state == UiState.error ||
+             state == UiState.offline,
+         'StatusPattern only supports empty, error, and offline',
+       );
 
   factory StatusPattern.fromCopy({
     Key? key,
@@ -82,6 +82,9 @@ class StatusPattern extends StatelessWidget {
   Widget build(BuildContext context) {
     final brand = context.brandColors;
     final textTheme = Theme.of(context).textTheme;
+    final companion = Theme.of(context).brightness == Brightness.light;
+    final titleColor = companion ? brand.ink : brand.cloud;
+    final messageColor = companion ? brand.muted : brand.mist;
     final accent = accentFor(context, state);
     final catalog = UiStateCatalog.of(state);
     final resolvedIcon = icon ?? defaultIconFor(state);
@@ -109,13 +112,13 @@ class StatusPattern extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: textTheme.headlineMedium?.copyWith(color: brand.cloud),
+              style: textTheme.headlineMedium?.copyWith(color: titleColor),
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: textTheme.bodyLarge?.copyWith(color: brand.mist),
+              style: textTheme.bodyLarge?.copyWith(color: messageColor),
             ),
             if (onAction != null) ...[
               const SizedBox(height: AppSpacing.lg),
@@ -142,12 +145,9 @@ class EmptyPattern extends StatelessWidget {
   }) : _favoritesPreset = false;
 
   /// Favorites empty preset from tracker DoD (`No hay favoritos`).
-  const EmptyPattern.favorites({
-    super.key,
-    this.onAction,
-    this.icon,
-  })  : copy = StatusPatternCopy.favoritesEmpty,
-        _favoritesPreset = true;
+  const EmptyPattern.favorites({super.key, this.onAction, this.icon})
+    : copy = StatusPatternCopy.favoritesEmpty,
+      _favoritesPreset = true;
 
   final StatusPatternCopy copy;
   final VoidCallback? onAction;
@@ -160,7 +160,8 @@ class EmptyPattern extends StatelessWidget {
       state: UiState.empty,
       copy: copy,
       onAction: onAction,
-      icon: icon ??
+      icon:
+          icon ??
           (_favoritesPreset ? Icons.favorite_border : Icons.inbox_outlined),
     );
   }

@@ -8,11 +8,7 @@ import 'ui_state_catalog.dart';
 ///
 /// Uses a fixed [minHeight] so replacing this with content does not jump.
 class LoadingPattern extends StatelessWidget {
-  const LoadingPattern({
-    super.key,
-    this.label,
-    this.minHeight = 48,
-  });
+  const LoadingPattern({super.key, this.label, this.minHeight = 48});
 
   final String? label;
   final double minHeight;
@@ -20,6 +16,7 @@ class LoadingPattern extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final brand = context.brandColors;
+    final companion = Theme.of(context).brightness == Brightness.light;
     final catalogLabel = UiStateCatalog.of(UiState.loading).label;
     final text = label ?? catalogLabel;
 
@@ -42,9 +39,8 @@ class LoadingPattern extends StatelessWidget {
             const SizedBox(width: AppSpacing.sm),
             Text(
               text,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: brand.cloud,
-                  ),
+              style: Theme.of(context).textTheme.labelLarge
+                  ?.copyWith(color: companion ? brand.ink : brand.cloud),
             ),
           ],
         ),

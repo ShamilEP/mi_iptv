@@ -2,14 +2,21 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/brand_lockup.dart';
+import '../../../../core/widgets/loading_pattern.dart';
+import '../../../../core/widgets/status_pattern.dart';
+import '../../../../core/widgets/status_pattern_copy.dart';
+import '../../../../core/widgets/sync_conflict_banner.dart';
+import '../../../../core/widgets/syncing_pattern.dart';
 import 'companion_explore_copy.dart';
 import 'companion_explore_item.dart';
 import 'companion_explore_panels.dart';
 
-/// Companion Explore showcase catalog and Send-to-TV (DSN-052).
+/// Companion Explore showcase catalog and Send-to-TV (DSN-052 / CMP-045).
 ///
 /// Browse Featured, Live, and Movies. Open a title for details and a
 /// prominent Ember **Reproducir en TV** action. There is no local video player.
+/// [surfaceState] exercises Loading, Empty, Error, Offline, Syncing, and
+/// Sync Conflict on this companion surface.
 class CompanionExplorePage extends StatefulWidget {
   const CompanionExplorePage({
     super.key,
@@ -17,14 +24,20 @@ class CompanionExplorePage extends StatefulWidget {
     this.live = demoLive,
     this.movies = demoMovies,
     this.tvName = CompanionExploreCopy.demoTvName,
+    this.surfaceState = CompanionExploreSurfaceState.ready,
     this.onSendToTv,
+    this.onRetry,
+    this.onResolveConflict,
   });
 
   final List<CompanionExploreItem> featured;
   final List<CompanionExploreItem> live;
   final List<CompanionExploreItem> movies;
   final String tvName;
+  final CompanionExploreSurfaceState surfaceState;
   final ValueChanged<CompanionExploreItem>? onSendToTv;
+  final VoidCallback? onRetry;
+  final VoidCallback? onResolveConflict;
 
   static const List<CompanionExploreItem> demoFeatured = <CompanionExploreItem>[
     CompanionExploreItem(
@@ -102,11 +115,50 @@ class _CompanionExplorePageState extends State<CompanionExplorePage> {
     });
   }
 
+  Widget _stateBody(BuildContext context) {
+    switch (widget.surfaceState) {
+      case CompanionExploreSurfaceState.loading:
+        return const Center(child: LoadingPattern(minHeight: AppSpacing.xxxl));
+      case CompanionExploreSurfaceState.empty:
+        return EmptyPattern(
+          copy: StatusPatternCopy.exploreEmpty,
+          onAction: widget.onRetry,
+        );
+      case CompanionExploreSurfaceState.error:
+        return ErrorPattern(onAction: widget.onRetry);
+      case CompanionExploreSurfaceState.offline:
+        return OfflinePattern(onAction: widget.onRetry);
+      case CompanionExploreSurfaceState.syncing:
+        return const Center(child: SyncingPattern(minHeight: AppSpacing.xxxl));
+      case CompanionExploreSurfaceState.syncConflict:
+        return SyncConflictBanner(
+          message: CompanionExploreCopy.syncConflictMessage,
+          onResolve: widget.onResolveConflict,
+        );
+      case CompanionExploreSurfaceState.ready:
+        final selected = _selected;
+        if (selected == null) {
+          return CompanionExploreCatalog(
+            featured: widget.featured,
+            live: widget.live,
+            movies: widget.movies,
+            onSelect: _select,
+          );
+        }
+        return CompanionExploreDetail(
+          item: selected,
+          tvName: widget.tvName,
+          sentLabel: _sentLabel,
+          onSendToTv: _send,
+          onBack: _back,
+        );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final brand = context.brandColors;
     final textTheme = Theme.of(context).textTheme;
-    final selected = _selected;
 
     return Scaffold(
       backgroundColor: brand.cloud,
@@ -132,22 +184,7 @@ class _CompanionExplorePageState extends State<CompanionExplorePage> {
               ),
               const SizedBox(height: AppSpacing.lg),
               Expanded(
-                child: SingleChildScrollView(
-                  child: selected == null
-                      ? CompanionExploreCatalog(
-                          featured: widget.featured,
-                          live: widget.live,
-                          movies: widget.movies,
-                          onSelect: _select,
-                        )
-                      : CompanionExploreDetail(
-                          item: selected,
-                          tvName: widget.tvName,
-                          sentLabel: _sentLabel,
-                          onSendToTv: _send,
-                          onBack: _back,
-                        ),
-                ),
+                child: SingleChildScrollView(child: _stateBody(context)),
               ),
             ],
           ),
