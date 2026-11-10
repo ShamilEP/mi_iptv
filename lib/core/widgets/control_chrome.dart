@@ -5,13 +5,7 @@ import 'ui_state.dart';
 import 'ui_state_catalog.dart';
 
 /// Visual role for shared control chrome (DSN-013).
-enum ControlRole {
-  button,
-  chip,
-  toggle,
-  listRow,
-  textField,
-}
+enum ControlRole { button, chip, toggle, listRow, textField }
 
 /// Fill emphasis for buttons / chips.
 enum ControlEmphasis {
@@ -20,6 +14,9 @@ enum ControlEmphasis {
 
   /// Neutral panel / surface.
   secondary,
+
+  /// Send-to-TV / LIVE alert fill (Ember / companionLive) (DSN-052).
+  sendToTv,
 }
 
 /// Resolved paint + non-color cues for a control [UiState] (DSN-013 / DSN-010).
@@ -65,15 +62,21 @@ class ControlChrome {
     final def = UiStateCatalog.of(state);
     final companion = Theme.of(context).brightness == Brightness.light;
 
-    final baseFill = emphasis == ControlEmphasis.primary
-        ? brand.primary
-        : (role == ControlRole.listRow || role == ControlRole.textField
+    final Color baseFill;
+    final Color baseFg;
+    switch (emphasis) {
+      case ControlEmphasis.primary:
+        baseFill = brand.primary;
+        baseFg = companion ? brand.cloud : brand.ink;
+      case ControlEmphasis.sendToTv:
+        baseFill = brand.live;
+        baseFg = brand.cloud;
+      case ControlEmphasis.secondary:
+        baseFill = role == ControlRole.listRow || role == ControlRole.textField
             ? (companion ? brand.cloud : brand.surface)
-            : brand.panel);
-
-    final baseFg = emphasis == ControlEmphasis.primary
-        ? (companion ? brand.cloud : brand.ink)
-        : (companion ? brand.ink : brand.cloud);
+            : brand.panel;
+        baseFg = companion ? brand.ink : brand.cloud;
+    }
 
     var fill = baseFill;
     var foreground = baseFg;
@@ -127,9 +130,11 @@ class ControlChrome {
         icon = Icons.play_arrow;
         statusLabel = def.label;
       case UiState.selected:
-        fill = emphasis == ControlEmphasis.primary
-            ? brand.primary
-            : (companion ? brand.cloud : brand.surface);
+        fill = switch (emphasis) {
+          ControlEmphasis.primary => brand.primary,
+          ControlEmphasis.sendToTv => brand.live,
+          ControlEmphasis.secondary => companion ? brand.cloud : brand.surface,
+        };
         border = brand.primary;
         icon = Icons.check;
         statusLabel = def.label;
