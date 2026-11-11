@@ -10,13 +10,15 @@ See [`AGENTS.md`](AGENTS.md) and [`.cursor/rules/`](.cursor/rules/) for architec
 
 ```bash
 flutter pub get
+# Android (flavors required)
+flutter run --flavor tv -t lib/main_tv.dart
+flutter run --flavor companion -t lib/main_companion.dart
+# iOS (entrypoint targets; see ios/Flutter/*.xcconfig)
 flutter run -t lib/main_tv.dart
 flutter run -t lib/main_companion.dart
 ```
 
-Default `flutter run` uses the TV entry (`lib/main.dart` → `main_tv.dart`).
-
-Stack decision: [ADR-001](docs/architecture/adr-001-companion-stack-shared-domain.md) (Flutter Companion + one shared Dart package).
+Stack: [ADR-001](docs/architecture/adr-001-companion-stack-shared-domain.md) · Scaffold: [CMP-002](docs/architecture/cmp-002-android-ios-scaffold.md)
 
 ## Structure
 

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../core/accessibility/companion_accessibility.dart';
 import '../core/theme/theme.dart';
-import '../features/catalog/presentation/companion/companion_explore_page.dart';
-import '../features/home/presentation/tv/tv_home_page.dart';
 import 'client_kind.dart';
+import 'navigation/app_navigator.dart';
+import 'navigation/app_routes.dart';
 
 /// Root application widget. [clientKind] selects TV vs Companion (ADR-001).
 class MiIptvApp extends StatelessWidget {
@@ -17,7 +17,7 @@ class MiIptvApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Mi IPTV',
+      title: _isCompanion ? 'Mi IPTV Companion' : 'Mi IPTV',
       debugShowCheckedModeBanner: false,
       theme: _isCompanion ? AppTheme.companionLight() : AppTheme.tvDark(),
       builder: _isCompanion
@@ -25,9 +25,11 @@ class MiIptvApp extends StatelessWidget {
                 child: child ?? const SizedBox.shrink(),
               )
           : null,
-      home: _isCompanion
-          ? const CompanionExplorePage()
-          : const TvHomePage(),
+      initialRoute: AppRoutes.home,
+      onGenerateRoute: (settings) => AppNavigator.onGenerateRoute(
+        settings,
+        clientKind: clientKind,
+      ),
     );
   }
 }
