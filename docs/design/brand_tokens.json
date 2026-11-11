@@ -1,0 +1,118 @@
+{
+  "meta": {
+    "name": "Mi IPTV Brand Theme 2026–27",
+    "task": "DSN-008",
+    "authority": "lib/core/theme",
+    "handoff": "docs/design/design_system_handoff.md",
+    "note": "Machine export for developer handoff. Dart token classes remain source of truth."
+  },
+  "color": {
+    "ink": "#0A0D14",
+    "surface": "#1A2130",
+    "panel": "#11161F",
+    "border": "#2A3447",
+    "cloud": "#F0EEE9",
+    "mist": "#A3AFC4",
+    "signal": "#2BD9C8",
+    "ember": "#FF7A4D",
+    "success": "#6FDC8C",
+    "warning": "#FFC857",
+    "error": "#FF6B7A",
+    "companionPrimary": "#0A6F68",
+    "companionLive": "#B8431B",
+    "companionMuted": "#3B4658"
+  },
+  "typography": {
+    "families": {
+      "display": "Bricolage Grotesque",
+      "body": "Figtree",
+      "data": "JetBrains Mono"
+    },
+    "tv": {
+      "display": { "size": 56, "line": 64, "weight": 800 },
+      "headline": { "size": 40, "line": 48, "weight": 700 },
+      "title": { "size": 28, "line": 36, "weight": 700 },
+      "body": { "size": 20, "line": 28, "weight": 400 },
+      "uiEmphasis": { "weight": 600 },
+      "label": { "size": 16, "line": 24, "weight": 600 },
+      "data": { "size": 16, "line": 24, "weight": 500 }
+    },
+    "companion": {
+      "display": { "size": 36, "line": 44, "weight": 800 },
+      "headline": { "size": 28, "line": 36, "weight": 700 },
+      "title": { "size": 20, "line": 28, "weight": 700 },
+      "body": { "size": 16, "line": 24, "weight": 400 },
+      "uiEmphasis": { "weight": 600 },
+      "label": { "size": 13, "line": 20, "weight": 600 },
+      "data": { "size": 13, "line": 20, "weight": 500 }
+    }
+  },
+  "spacing": {
+    "xxs": 4,
+    "xs": 8,
+    "sm": 12,
+    "md": 16,
+    "lg": 24,
+    "xl": 32,
+    "xxl": 48,
+    "xxxl": 64,
+    "stackTight": 8,
+    "stack": 24,
+    "insetCard": 16,
+    "insetPageTv": 48,
+    "insetPageCompanion": 16
+  },
+  "grid": {
+    "gutter": 16,
+    "rowGap": 24,
+    "railGap": 32
+  },
+  "overscan": {
+    "inset": 48
+  },
+  "radius": {
+    "xs": 8,
+    "sm": 12,
+    "md": 16,
+    "lg": 24,
+    "full": 999
+  },
+  "elevation": {
+    "raised": { "blur": 16, "offsetY": 6, "alpha": 0.35 },
+    "overlay": { "blur": 28, "offsetY": 12, "alpha": 0.5 }
+  },
+  "motion": {
+    "fastMs": 120,
+    "normalMs": 200,
+    "slowMs": 320,
+    "channelInfoAutoHideMs": 4000,
+    "playerControlsAutoHideMs": 4000,
+    "splashHoldMs": 600,
+    "curves": ["emphasized", "standard"]
+  },
+  "focus": {
+    "scale": 1.05,
+    "ringWidth": 4,
+    "ringColor": "#F0EEE9",
+    "glowColor": "#2BD9C8",
+    "glowSpread": 10,
+    "glowAlpha": 0.45
+  },
+  "brand": {
+    "viewBoxWidth": 72,
+    "viewBoxHeight": 64,
+    "strokeWidth": 7,
+    "liveDotRadius": 5.5,
+    "clearSpaceUnit": 11,
+    "minMarkSize": 24,
+    "wordmarkText": "iptv",
+    "wordmarkTrackingEm": -0.03
+  },
+  "contentCard": {
+    "poster": { "aspect": "2:3", "width": 160 },
+    "landscape": { "aspect": "16:9", "width": 280 },
+    "channelTile": { "aspect": "1:1", "width": 120 },
+    "continueWatching": { "aspect": "16:9", "width": 280 },
+    "progressTrackHeight": 4
+  }
+}
