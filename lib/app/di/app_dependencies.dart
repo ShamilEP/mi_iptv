@@ -21,8 +21,8 @@ import '../client_kind.dart';
 ///
 /// [secureStorage] defaults to [MemorySecureStorage] for unit tests.
 /// Device [bootstrap] injects [FlutterSecureStorageAdapter] (CMP-005).
-/// [localMediaStore] defaults to [MemoryLocalMediaStore] until SQLite/Drift
-/// is approved (TV-007).
+/// [localMediaStore] defaults to [MemoryLocalMediaStore] for unit tests;
+/// device [bootstrap] injects [DriftLocalMediaStore] (TV-007).
 final class AppDependencies {
   factory AppDependencies({
     required ClientKind clientKind,

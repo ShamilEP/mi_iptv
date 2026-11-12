@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 
+import '../core/persistence/drift/app_database.dart';
+import '../core/persistence/drift/drift_local_media_store.dart';
 import '../core/storage/flutter_secure_storage_adapter.dart';
 import 'app.dart';
 import 'app_environment.dart';
@@ -13,12 +15,15 @@ Future<void> bootstrap({
 }) async {
   WidgetsFlutterBinding.ensureInitialized();
   final resolvedEnv = environment ?? AppEnvironment.fromDartDefine();
+  final mediaDb = AppDatabase.defaults();
   AppDependencies.mount(
     AppDependencies(
       clientKind: clientKind,
       environment: resolvedEnv,
       // CMP-005: device builds use Keystore/Keychain; unit tests inject memory.
       secureStorage: FlutterSecureStorageAdapter(),
+      // TV-007: durable SQLite via Drift; unit tests keep MemoryLocalMediaStore.
+      localMediaStore: DriftLocalMediaStore(mediaDb),
     ),
   );
   runApp(MiIptvApp(clientKind: clientKind));
