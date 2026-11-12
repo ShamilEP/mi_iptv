@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../theme/theme.dart';
 
-/// Finite, anchored vertical stack of content rails (DSN-012 / SRS §12).
+/// Finite, anchored vertical stack of content rails (TV-031 / DSN-012 / SRS §12).
 ///
 /// Requires an explicit [rowCount] — never an unbounded / infinite generator.
-/// Vertical rhythm uses [AppGrid.rowGap].
+/// Callers must know the row set up front (or swap in [ContentRowSkeleton]
+/// rails while loading). Vertical rhythm uses [AppGrid.rowGap].
 class ContentRowList extends StatelessWidget {
   const ContentRowList({
     super.key,

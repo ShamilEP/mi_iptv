@@ -14,10 +14,12 @@ typedef ContentRowItemBuilder = Widget Function(
 );
 
 /// Horizontal catalog rail with title, position cue, and last-focus memory
-/// (DSN-012 / SRS §12).
+/// (TV-031 / DSN-012 / SRS §12).
 ///
 /// Spacing uses [AppGrid.gutter]. Lazy-load slots use [ContentCardSkeleton]
-/// (DSN-016) so rail height stays stable.
+/// (DSN-016) so rail height stays stable. Full-rail loading uses
+/// [ContentRowSkeleton]. Call [onNearEnd] to fetch the next page while
+/// [placeholderCount] shows trailing stubs — never an unanchored infinite list.
 class ContentRow extends StatefulWidget {
   const ContentRow({
     super.key,
@@ -29,15 +31,18 @@ class ContentRow extends StatefulWidget {
     this.showPositionCue = true,
     this.storageId,
     this.cardWidth,
+    this.onNearEnd,
+    this.nearEndThreshold = 2,
   })  : assert(itemCount >= 0, 'itemCount must be >= 0'),
-        assert(placeholderCount >= 0, 'placeholderCount must be >= 0');
+        assert(placeholderCount >= 0, 'placeholderCount must be >= 0'),
+        assert(nearEndThreshold >= 1, 'nearEndThreshold must be >= 1');
 
   final String title;
   final ContentCardKind kind;
   final int itemCount;
   final ContentRowItemBuilder itemBuilder;
 
-  /// Trailing lazy-load stubs after real items.
+  /// Trailing lazy-load stubs after real items (skeletons while paging).
   final int placeholderCount;
 
   /// When a child is focused, show `i / n` beside the title.
@@ -47,6 +52,13 @@ class ContentRow extends StatefulWidget {
   final String? storageId;
 
   final double? cardWidth;
+
+  /// Fired once when focus enters the last [nearEndThreshold] real items.
+  /// Reset when [itemCount] grows so the next page can request again.
+  final VoidCallback? onNearEnd;
+
+  /// How many trailing real items count as "near end" for [onNearEnd].
+  final int nearEndThreshold;
 
   @override
   State<ContentRow> createState() => ContentRowState();
@@ -64,6 +76,7 @@ class ContentRowState extends State<ContentRow> {
   int _lastFocusedIndex = 0;
   int? _activeIndex;
   bool _restoredStorage = false;
+  bool _nearEndFired = false;
 
   Object get _storageId => widget.storageId ?? widget.title;
 
@@ -94,6 +107,10 @@ class ContentRowState extends State<ContentRow> {
       if (_lastFocusedIndex >= widget.itemCount) {
         _lastFocusedIndex =
             widget.itemCount == 0 ? 0 : widget.itemCount - 1;
+      }
+      // Allow another page request after the catalog grows.
+      if (widget.itemCount > oldWidget.itemCount) {
+        _nearEndFired = false;
       }
     }
   }
@@ -158,12 +175,23 @@ class ContentRowState extends State<ContentRow> {
         index,
         identifier: '$_storageId$focusStorageSuffix',
       );
+      _maybeFireNearEnd(index);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         _ensureVisible(index);
       });
     } else if (_activeIndex == index) {
       setState(() => _activeIndex = null);
+    }
+  }
+
+  void _maybeFireNearEnd(int index) {
+    final callback = widget.onNearEnd;
+    if (callback == null || _nearEndFired || widget.itemCount == 0) return;
+    final triggerFrom = widget.itemCount - widget.nearEndThreshold;
+    if (index >= triggerFrom.clamp(0, widget.itemCount - 1)) {
+      _nearEndFired = true;
+      callback();
     }
   }
 

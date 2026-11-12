@@ -25,7 +25,7 @@ void main() {
     );
   }
 
-  group('ContentRow DSN-012', () {
+  group('ContentRow DSN-012 / TV-031', () {
     testWidgets('renders title and cards', (tester) async {
       await pumpRow(
         tester,
@@ -148,9 +148,50 @@ void main() {
       expect(find.text('Only'), findsOneWidget);
       expect(find.bySemanticsLabel('Loading'), findsNWidgets(2));
     });
+
+    testWidgets('onNearEnd resets after itemCount grows', (tester) async {
+      var nearEndCount = 0;
+      final nodes = <FocusNode>[];
+      var itemCount = 3;
+
+      Future<void> pumpRail() async {
+        nodes.clear();
+        await pumpRow(
+          tester,
+          child: ContentRow(
+            title: 'Grow',
+            storageId: 'grow-row',
+            kind: ContentCardKind.poster,
+            itemCount: itemCount,
+            nearEndThreshold: 1,
+            onNearEnd: () => nearEndCount++,
+            itemBuilder: (context, index, focusNode) {
+              if (nodes.length == index) nodes.add(focusNode);
+              return ContentCard(
+                kind: ContentCardKind.poster,
+                title: 'G$index',
+                focusNode: focusNode,
+              );
+            },
+          ),
+        );
+        await tester.pumpAndSettle();
+      }
+
+      await pumpRail();
+      nodes[2].requestFocus();
+      await tester.pumpAndSettle();
+      expect(nearEndCount, 1);
+
+      itemCount = 5;
+      await pumpRail();
+      nodes[4].requestFocus();
+      await tester.pumpAndSettle();
+      expect(nearEndCount, 2);
+    });
   });
 
-  group('ContentRowList DSN-012', () {
+  group('ContentRowList DSN-012 / TV-031', () {
     testWidgets('anchors a finite number of rows', (tester) async {
       await pumpRow(
         tester,
