@@ -75,5 +75,14 @@ void main() {
       expect(favorites.traversalFor('open-first')?.right, 'remove-first');
       expect(favorites.traversalFor('channels-group')?.down, 'vod-group');
     });
+
+    test('Content detail first focus is Play with Related below', () {
+      final detail = TvFocusMaps.contentDetail;
+      expect(detail.firstFocusId, 'play');
+      expect(detail.restoreFocusId, 'play');
+      expect(detail.traversalFor('play')?.right, 'resume');
+      expect(detail.traversalFor('play')?.down, 'related-0');
+      expect(detail.traversalFor('favorite')?.left, 'resume');
+    });
   });
 }

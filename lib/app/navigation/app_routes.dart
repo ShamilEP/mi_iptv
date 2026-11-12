@@ -11,6 +11,7 @@ abstract final class AppRoutes {
   static const String tvLive = '/tv/live';
   static const String tvSearch = '/tv/search';
   static const String tvFavorites = '/tv/favorites';
+  static const String tvContentDetail = '/tv/content-detail';
   static const String tvSettings = '/tv/settings';
   /// VOD playback shell (catalog item → player). Design scaffold until Media3.
   static const String tvVodPlayer = '/tv/vod';
@@ -24,6 +25,7 @@ abstract final class AppRoutes {
           tvLive,
           tvSearch,
           tvFavorites,
+          tvContentDetail,
           tvSettings,
           tvVodPlayer,
         ];

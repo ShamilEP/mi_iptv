@@ -12,6 +12,10 @@ void main() {
   test('AppRoutes.forClient splits TV and Companion', () {
     expect(AppRoutes.forClient(ClientKind.tv), contains(AppRoutes.tvLive));
     expect(AppRoutes.forClient(ClientKind.tv), contains(AppRoutes.tvFavorites));
+    expect(
+      AppRoutes.forClient(ClientKind.tv),
+      contains(AppRoutes.tvContentDetail),
+    );
     expect(AppRoutes.forClient(ClientKind.tv), contains(AppRoutes.tvVodPlayer));
     expect(
       AppRoutes.forClient(ClientKind.tv),

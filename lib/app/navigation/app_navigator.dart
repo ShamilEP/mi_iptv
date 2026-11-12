@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../features/auth/presentation/companion/companion_login_pairing_page.dart';
 import '../../features/catalog/presentation/companion/companion_explore_page.dart';
+import '../../features/catalog/presentation/tv/tv_content_detail_page.dart';
 import '../../features/devices/presentation/companion/companion_remote_page.dart';
 import '../../features/favorites/presentation/tv/tv_favorites_page.dart';
 import '../../features/home/presentation/tv/tv_home_page.dart';
@@ -57,6 +58,11 @@ abstract final class AppNavigator {
         return MaterialPageRoute<void>(
           settings: settings,
           builder: (_) => const TvFavoritesPage(),
+        );
+      case AppRoutes.tvContentDetail:
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => const TvContentDetailPage(),
         );
       case AppRoutes.tvSettings:
         return MaterialPageRoute<void>(
