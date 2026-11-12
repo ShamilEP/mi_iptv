@@ -1,7 +1,8 @@
 # Design system handoff (DSN-008)
 
 Sprint 0 developer handoff for **TV + Companion**, without a separate Figma library.  
-**Source of truth:** executable Brand Theme tokens and shared widgets in this repo — not invented mockups.
+**Source of truth:** executable Brand Theme tokens and shared widgets in this repo — not invented mockups.  
+**TV client integration:** [tv-004-design-system-tv.md](../architecture/tv-004-design-system-tv.md) (TV-004).
 
 | Layer | Authority |
 |---|---|
