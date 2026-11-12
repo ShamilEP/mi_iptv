@@ -26,17 +26,21 @@ void main() {
     expect(AppDependencies.instance.environment, AppEnvironment.dev);
   });
 
-  test('TV and Companion share catalog and sync graph types', () {
+  test('TV and Companion share catalog, sync, and secure-storage graph types', () {
     AppDependencies.mount(AppDependencies(clientKind: ClientKind.tv));
     final tv = AppDependencies.instance;
     expect(tv.catalogRepository, isA<InMemoryCatalogRepository>());
     expect(tv.syncRepository, isA<InMemorySyncRepository>());
     expect(tv.syncConflictResolver, isA<ResolveSyncConflict>());
+    expect(tv.secureStorage, isNotNull);
+    expect(tv.sessionTokenStore, isNotNull);
+    expect(tv.pairingSecureStore, isNotNull);
 
     AppDependencies.mount(AppDependencies(clientKind: ClientKind.companion));
     final companion = AppDependencies.instance;
     expect(companion.catalogRepository, isA<InMemoryCatalogRepository>());
     expect(companion.syncRepository, isA<InMemorySyncRepository>());
+    expect(companion.sessionTokenStore, isNotNull);
   });
 
   test('instance throws before mount', () {
