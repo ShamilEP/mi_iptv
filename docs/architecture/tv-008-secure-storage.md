@@ -34,3 +34,11 @@ This meets the security intent of the ESP + Keystore requirement.
 - Never log raw tokens, passwords, or bearer headers.
 - `SessionTokens` / `SourceCredentials` `toString()` are redacted.
 - Route debug output through `AppLog.d` (applies `SecretRedactor`).
+
+## Backup / data extraction (SEC-021)
+
+- Application `android:allowBackup="false"`.
+- [`backup_rules.xml`](../../android/app/src/main/res/xml/backup_rules.xml) and
+  [`data_extraction_rules.xml`](../../android/app/src/main/res/xml/data_extraction_rules.xml)
+  exclude `FlutterSecureStorage` shared preferences.
+- Review write-up: [android_tv_local_storage_review.md](../security/android_tv_local_storage_review.md).

@@ -6,7 +6,7 @@
 
 Each control below is an **acceptance criterion**: attach the control ID to the relevant tracker task DoD / Notes, and re-check at every sprint review (§5).
 
-Related: [incident response runbook](./incident_response_runbook.md) (SEC-052), [QA release go/no-go](../qa/release_checklist.md) (A6 secrets bar), [defect tracking](../qa/defect_tracking.md).
+Related: [incident response runbook](./incident_response_runbook.md) (SEC-052), [Android TV local storage review](./android_tv_local_storage_review.md) (SEC-021), [QA release go/no-go](../qa/release_checklist.md) (A6 secrets bar), [defect tracking](../qa/defect_tracking.md).
 
 ---
 

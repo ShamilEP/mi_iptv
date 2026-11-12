@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SEC-021: Auto Backup exclusions for secret-bearing prefs (API ≤ 30). -->
+<full-backup-content>
+    <exclude
+        domain="sharedpref"
+        path="FlutterSecureStorage" />
+    <exclude
+        domain="sharedpref"
+        path="FlutterSecureStorage.xml" />
+</full-backup-content>
