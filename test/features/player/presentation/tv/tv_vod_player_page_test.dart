@@ -18,7 +18,7 @@ void main() {
     await tester.pump();
   }
 
-  testWidgets('DSN-037 shows timeline, large seek, and volume chrome', (
+  testWidgets('TV-062 / DSN-037 shows timeline, large seek, and volume chrome', (
     tester,
   ) async {
     await pump(tester);
@@ -75,5 +75,59 @@ void main() {
     expect(seekBack, 1);
     expect(seekForward, 1);
     expect(muted, 1);
+  });
+
+  testWidgets('Back exits the player route', (tester) async {
+    var exited = 0;
+    await tester.binding.setSurfaceSize(const Size(1920, 1080));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.tvDark(),
+        home: Builder(
+          builder: (context) {
+            return Scaffold(
+              body: TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => TvVodPlayerPage(
+                        onExit: () => exited++,
+                      ),
+                    ),
+                  );
+                },
+                child: const Text('open'),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+    expect(find.text(TvVodPlayerPage.demoTitle), findsOneWidget);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+
+    expect(find.text(TvVodPlayerPage.demoTitle), findsNothing);
+    expect(exited, 1);
+  });
+
+  testWidgets('hold Left accelerates seek on the timeline', (tester) async {
+    await pump(tester);
+    expect(find.text('12:40'), findsOneWidget);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.arrowLeft);
+    await tester.pump();
+    expect(find.text('12:30'), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.arrowLeft);
+    await tester.pump();
+
+    expect(find.text('12:40'), findsNothing);
+    expect(find.text('12:30'), findsNothing);
   });
 }
