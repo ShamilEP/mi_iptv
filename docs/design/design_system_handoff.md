@@ -78,7 +78,7 @@ Prefer these atoms for MVP chrome (TV Leanback + Companion). Feature screens sho
 | `MiTextField` | `lib/core/widgets/mi_text_field.dart` | Companion / form input |
 | `MiIcon` | `lib/core/widgets/mi_icon.dart` | Catalog glyphs + required labels |
 | `ContentCard` | `lib/core/widgets/content_card.dart` | Poster / landscape / channel / CW |
-| `ContentRow` / `ContentRowList` | `lib/core/widgets/content_row*.dart` | Horizontal rails |
+| `ContentRow` / `ContentRowList` | `lib/core/widgets/content_row*.dart` | Horizontal rails (TV-031) |
 | `StatusBadge` | `lib/core/widgets/status_badge.dart` | LIVE / sync / warning chips |
 | `BrandMark` / `BrandWordmark` / `BrandLockup` | `lib/core/widgets/brand_*.dart` | Logo kit only |
 | Skeletons | `*_skeleton.dart`, `list_skeleton.dart` | Loading placeholders |
