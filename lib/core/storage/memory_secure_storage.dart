@@ -2,8 +2,8 @@ import 'secure_storage.dart';
 
 /// Process-local [SecureStorage] for unit tests and pre-plugin wiring.
 ///
-/// Not durable and not Keystore/Keychain — production uses the approved
-/// platform adapter (see CMP-005 package proposal).
+/// Not durable and not Keystore/Keychain — production uses
+/// [FlutterSecureStorageAdapter] (CMP-005 / TV-008).
 final class MemorySecureStorage implements SecureStorage {
   final Map<String, String> _values = <String, String>{};
 

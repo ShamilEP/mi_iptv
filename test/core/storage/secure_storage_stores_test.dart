@@ -4,6 +4,8 @@ import 'package:mi_iptv/features/auth/data/repositories/secure_session_token_sto
 import 'package:mi_iptv/features/auth/domain/entities/session_tokens.dart';
 import 'package:mi_iptv/features/devices/data/repositories/secure_pairing_store.dart';
 import 'package:mi_iptv/features/devices/domain/entities/pairing_secure_data.dart';
+import 'package:mi_iptv/features/sources/data/repositories/secure_source_credential_store.dart';
+import 'package:mi_iptv/features/sources/domain/entities/source_credentials.dart';
 
 void main() {
   late MemorySecureStorage storage;
@@ -23,6 +25,7 @@ void main() {
     final read = await store.read();
     expect(read?.accessToken, tokens.accessToken);
     expect(read?.refreshToken, tokens.refreshToken);
+    expect(tokens.toString(), isNot(contains('access-test-value')));
 
     await store.clear();
     expect(await store.read(), isNull);
@@ -44,9 +47,31 @@ void main() {
     expect(await store.read(), isNull);
   });
 
-  test('session and pairing share one vault instance', () async {
+  test('source credentials round-trip with redacted toString', () async {
+    final store = SecureSourceCredentialStore(storage);
+    const credentials = SourceCredentials(
+      sourceId: 'src-1',
+      username: 'viewer',
+      password: 'xtream-secret',
+      token: 'm3u-token',
+    );
+
+    await store.save(credentials);
+    final read = await store.read('src-1');
+    expect(read?.username, 'viewer');
+    expect(read?.password, 'xtream-secret');
+    expect(read?.token, 'm3u-token');
+    expect(credentials.toString(), isNot(contains('xtream-secret')));
+    expect(credentials.toString(), isNot(contains('m3u-token')));
+
+    await store.delete('src-1');
+    expect(await store.read('src-1'), isNull);
+  });
+
+  test('session, pairing, and source credentials share one vault', () async {
     final sessions = SecureSessionTokenStore(storage);
     final pairing = SecurePairingStore(storage);
+    final sources = SecureSourceCredentialStore(storage);
 
     await sessions.save(
       const SessionTokens(accessToken: 'a', refreshToken: 'r'),
@@ -57,12 +82,17 @@ void main() {
         sessionSecret: 's',
       ),
     );
+    await sources.save(
+      const SourceCredentials(sourceId: 'src-1', password: 'p'),
+    );
 
     expect(await sessions.read(), isNotNull);
     expect(await pairing.read(), isNotNull);
+    expect(await sources.read('src-1'), isNotNull);
 
     await storage.clear();
     expect(await sessions.read(), isNull);
     expect(await pairing.read(), isNull);
+    expect(await sources.read('src-1'), isNull);
   });
 }

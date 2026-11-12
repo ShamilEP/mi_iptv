@@ -8,19 +8,21 @@ import '../../features/catalog/data/repositories/in_memory_catalog_repository.da
 import '../../features/catalog/domain/repositories/catalog_repository.dart';
 import '../../features/devices/data/repositories/secure_pairing_store.dart';
 import '../../features/devices/domain/repositories/pairing_secure_store.dart';
+import '../../features/sources/data/repositories/secure_source_credential_store.dart';
+import '../../features/sources/domain/repositories/source_credential_store.dart';
 import '../../features/sync/data/repositories/in_memory_sync_repository.dart';
 import '../../features/sync/domain/repositories/sync_repository.dart';
 import '../../features/sync/domain/usecases/resolve_sync_conflict.dart';
 import '../app_environment.dart';
 import '../client_kind.dart';
 
-/// Manual composition root (CMP-002 / TV-002 / TV-005 / CMP-005 / TV-007).
+/// Manual composition root (CMP-002 / TV-002 / TV-005 / CMP-005 / TV-007 / TV-008).
 ///
 /// TV and Companion mount the **same** shared domain graph; only [clientKind]
 /// (and later surface adapters) differ. No third-party DI until approved.
 ///
 /// [secureStorage] defaults to [MemorySecureStorage] for unit tests.
-/// Device [bootstrap] injects [FlutterSecureStorageAdapter] (CMP-005).
+/// Device [bootstrap] injects [FlutterSecureStorageAdapter] (CMP-005 / TV-008).
 /// [localMediaStore] defaults to [MemoryLocalMediaStore] for unit tests;
 /// device [bootstrap] injects [DriftLocalMediaStore] (TV-007).
 final class AppDependencies {
@@ -32,6 +34,7 @@ final class AppDependencies {
     SecureStorage? secureStorage,
     SessionTokenStore? sessionTokenStore,
     PairingSecureStore? pairingSecureStore,
+    SourceCredentialStore? sourceCredentialStore,
     LocalMediaStore? localMediaStore,
     ResolveSyncConflict syncConflictResolver = const ResolveSyncConflict(),
   }) {
@@ -48,6 +51,8 @@ final class AppDependencies {
           sessionTokenStore ?? SecureSessionTokenStore(storage),
       pairingSecureStore:
           pairingSecureStore ?? SecurePairingStore(storage),
+      sourceCredentialStore:
+          sourceCredentialStore ?? SecureSourceCredentialStore(storage),
       localMediaStore: localMediaStore ?? MemoryLocalMediaStore(),
     );
   }
@@ -61,6 +66,7 @@ final class AppDependencies {
     required this.secureStorage,
     required this.sessionTokenStore,
     required this.pairingSecureStore,
+    required this.sourceCredentialStore,
     required this.localMediaStore,
   });
 
@@ -72,6 +78,7 @@ final class AppDependencies {
   final SecureStorage secureStorage;
   final SessionTokenStore sessionTokenStore;
   final PairingSecureStore pairingSecureStore;
+  final SourceCredentialStore sourceCredentialStore;
   final LocalMediaStore localMediaStore;
 
   static AppDependencies? _mounted;

@@ -11,4 +11,8 @@ final class SessionTokens {
   final String refreshToken;
 
   bool get isEmpty => accessToken.isEmpty && refreshToken.isEmpty;
+
+  /// Redacted — safe for accidental logging / debug dumps (TV-008).
+  @override
+  String toString() => 'SessionTokens(***)';
 }
