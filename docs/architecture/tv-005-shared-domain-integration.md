@@ -25,7 +25,7 @@ Companion and Android TV share **one** root package (`mi_iptv`). Domain entities
 1. **LWW** using **server** `updatedAtServer`, then `syncVersion` (never device clock).
 2. **Playback progress** inside a short window (`ResolveSyncConflict.defaultPlaybackShortWindow`, 30s Sprint 0 default): higher `position` wins unless `forceReset` selects a side.
 
-Durable Room/SQLite and network sync adapters are later tasks (TV-007 / CMP-006); this task wires the shared domain graph TV already consumes through DI.
+Durable SQLite (TV-007) and Companion cache (CMP-006) adapters build on this graph; see [tv-007-local-persistence.md](./tv-007-local-persistence.md).
 
 ## Bootstrap
 
