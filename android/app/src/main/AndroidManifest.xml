@@ -2,8 +2,8 @@
     <application
         android:label="@string/app_name"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
-        android:banner="@drawable/tv_banner">
+        android:icon="@mipmap/ic_launcher">
+        <!-- android:banner is owned by the tv flavor (TV-003 Leanback launcher). -->
         <activity
             android:name=".MainActivity"
             android:exported="true"

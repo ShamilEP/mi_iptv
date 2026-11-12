@@ -25,7 +25,7 @@ PRD-010 closed the product gap. This ADR records that decision for the Flutter c
 
 - TV APK / AAB built with `--flavor tv` requires API 34+.
 - QA matrix and lab devices must run API 34+ ([android_tv_device_matrix.md](../qa/android_tv_device_matrix.md)).
-- Leanback **launcher** wiring (`LEANBACK_LAUNCHER`, banner) stays with TV launcher tasks (e.g. TV-003), not this ADR.
+- Leanback **launcher** wiring (`LEANBACK_LAUNCHER`, banner) is owned by [TV-003](./tv-003-android-tv-launcher.md).
 - Rejected alternatives: Kotlin Leanback-only app, Compose for TV as the primary UI toolkit, minSdk &lt; 34 for the TV flavor.
 
 ## Executable anchors
