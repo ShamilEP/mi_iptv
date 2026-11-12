@@ -3,11 +3,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'secure_storage.dart';
 
 /// Keystore / Keychain-backed [SecureStorage] via `flutter_secure_storage`
-/// (CMP-005 / TV-008).
+/// (CMP-005 / TV-008 / SEC-022).
 ///
 /// **Android:** AES-GCM data cipher with RSA-OAEP key wrap in Android Keystore
 /// (flutter_secure_storage 11.x — successor to EncryptedSharedPreferences).
-/// **iOS:** Keychain via default [IOSOptions].
+/// **iOS:** Keychain with [KeychainAccessibility.first_unlock_this_device]
+/// (available after first unlock; does not migrate to a new device) and
+/// iCloud Keychain sync disabled.
 ///
 /// Only this adapter (and tests' [MemorySecureStorage]) may touch the plugin.
 /// Never log [write]/[read] payloads (SEC-C02 / SEC-C06 / NFR-005).
@@ -20,7 +22,10 @@ final class FlutterSecureStorageAdapter implements SecureStorage {
                     KeyCipherAlgorithm.RSA_ECB_OAEPwithSHA_256andMGF1Padding,
                 storageCipherAlgorithm: StorageCipherAlgorithm.AES_GCM_NoPadding,
               ),
-              iOptions: IOSOptions(),
+              iOptions: IOSOptions(
+                accessibility: KeychainAccessibility.first_unlock_this_device,
+                synchronizable: false,
+              ),
             );
 
   final FlutterSecureStorage _plugin;

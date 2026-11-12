@@ -24,9 +24,11 @@ Widgets / use cases call `SessionTokenStore` / `PairingSecureStore` only — nev
 
 ## Platform notes
 
-- **Android:** default `AndroidOptions` (AES-GCM + Keystore key wrap). minSdk stays Flutter default (≥24) / TV 34.
-- **iOS:** default `IOSOptions` (Keychain).
+- **Android:** `AndroidOptions` AES-GCM + Keystore key wrap. Auto Backup disabled + secure-pref exclusions (SEC-021).
+- **iOS:** `IOSOptions(accessibility: first_unlock_this_device, synchronizable: false)` — Keychain after first unlock; no iCloud sync / no migrate (SEC-022).
 - **Logout:** clear via `sessionTokenStore.clear()` / `pairingSecureStore.clear()` / `secureStorage.clear()` — never log values.
+
+Review: [companion_local_storage_review.md](../security/companion_local_storage_review.md) (SEC-022).
 
 ## Package
 
