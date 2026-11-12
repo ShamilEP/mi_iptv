@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../core/storage/flutter_secure_storage_adapter.dart';
 import 'app.dart';
 import 'app_environment.dart';
 import 'client_kind.dart';
@@ -13,7 +14,12 @@ Future<void> bootstrap({
   WidgetsFlutterBinding.ensureInitialized();
   final resolvedEnv = environment ?? AppEnvironment.fromDartDefine();
   AppDependencies.mount(
-    AppDependencies(clientKind: clientKind, environment: resolvedEnv),
+    AppDependencies(
+      clientKind: clientKind,
+      environment: resolvedEnv,
+      // CMP-005: device builds use Keystore/Keychain; unit tests inject memory.
+      secureStorage: FlutterSecureStorageAdapter(),
+    ),
   );
   runApp(MiIptvApp(clientKind: clientKind));
 }

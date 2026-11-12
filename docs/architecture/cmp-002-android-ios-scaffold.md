@@ -58,3 +58,4 @@ GitHub Actions: [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml) —
 |---|---|---|
 | DI | `get_it` | Manual root is enough for Sprint 0 |
 | Navigation | `go_router` | Named `Navigator` covers MVP shell |
+| Secure storage | `flutter_secure_storage` | **Approved / installed** for CMP-005 ([cmp-005-secure-storage.md](./cmp-005-secure-storage.md)) |
