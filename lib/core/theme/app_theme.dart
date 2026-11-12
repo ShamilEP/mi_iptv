@@ -33,6 +33,7 @@ abstract final class AppTheme {
     );
   }
 
+  /// Companion light theme (CMP-003). Dark companion theme is optional / out of MVP.
   static ThemeData companionLight() {
     final brand = MiBrandColors.companion();
     final base = ThemeData(
@@ -56,6 +57,8 @@ abstract final class AppTheme {
 
     return base.copyWith(
       textTheme: AppTypography.companionTextTheme(base.textTheme),
+      dividerColor: AppColors.border.withValues(alpha: 0.35),
+      cardColor: AppColors.cloud,
     );
   }
 }

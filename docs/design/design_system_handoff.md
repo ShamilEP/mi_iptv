@@ -2,7 +2,8 @@
 
 Sprint 0 developer handoff for **TV + Companion**, without a separate Figma library.  
 **Source of truth:** executable Brand Theme tokens and shared widgets in this repo — not invented mockups.  
-**TV client integration:** [tv-004-design-system-tv.md](../architecture/tv-004-design-system-tv.md) (TV-004).
+**TV client integration:** [tv-004-design-system-tv.md](../architecture/tv-004-design-system-tv.md) (TV-004).  
+**Companion light theme:** [cmp-003-companion-light-theme.md](../architecture/cmp-003-companion-light-theme.md) (CMP-003).
 
 | Layer | Authority |
 |---|---|
