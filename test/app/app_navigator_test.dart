@@ -6,6 +6,7 @@ import 'package:mi_iptv/app/navigation/app_routes.dart';
 import 'package:mi_iptv/core/theme/theme.dart';
 import 'package:mi_iptv/features/catalog/presentation/companion/companion_explore_page.dart';
 import 'package:mi_iptv/features/devices/presentation/companion/companion_remote_page.dart';
+import 'package:mi_iptv/features/home/presentation/tv/tv_home_connectivity_binder.dart';
 import 'package:mi_iptv/features/home/presentation/tv/tv_home_page.dart';
 
 void main() {
@@ -46,6 +47,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    expect(find.byType(TvHomeConnectivityBinder), findsOneWidget);
     expect(find.byType(TvHomePage), findsOneWidget);
   });
 

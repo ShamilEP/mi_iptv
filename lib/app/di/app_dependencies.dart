@@ -1,3 +1,6 @@
+import '../../core/network/connectivity_monitor.dart';
+import '../../core/network/memory_connectivity_monitor.dart';
+import '../../core/network/offline_mode_resolver.dart';
 import '../../core/persistence/local_media_store.dart';
 import '../../core/persistence/memory_local_media_store.dart';
 import '../../core/storage/memory_secure_storage.dart';
@@ -20,7 +23,8 @@ import '../../features/sync/domain/usecases/resolve_sync_conflict.dart';
 import '../app_environment.dart';
 import '../client_kind.dart';
 
-/// Manual composition root (CMP-002 / TV-002 / TV-005 / CMP-005 / TV-007 / TV-008 / TV-050 / TV-054).
+/// Manual composition root (CMP-002 / TV-002 / TV-005 / CMP-005 / TV-007 /
+/// TV-008 / TV-010 / TV-050 / TV-054).
 ///
 /// TV and Companion mount the **same** shared domain graph; only [clientKind]
 /// (and later surface adapters) differ. No third-party DI until approved.
@@ -29,6 +33,8 @@ import '../client_kind.dart';
 /// Device [bootstrap] injects [FlutterSecureStorageAdapter] (CMP-005 / TV-008).
 /// [localMediaStore] defaults to [MemoryLocalMediaStore] for unit tests;
 /// device [bootstrap] injects [DriftLocalMediaStore] (TV-007).
+/// [connectivity] defaults to [MemoryConnectivityMonitor] for unit tests;
+/// device [bootstrap] injects [PollingConnectivityMonitor] (TV-010).
 /// [mediaPlayer] defaults to [MemoryMediaPlayerController]; TV [bootstrap]
 /// injects [Media3PlayerAdapter] (TV-050). Lifecycle is owned here / native
 /// engine — not by player screens.
@@ -44,6 +50,7 @@ final class AppDependencies {
     PairingSecureStore? pairingSecureStore,
     SourceCredentialStore? sourceCredentialStore,
     LocalMediaStore? localMediaStore,
+    ConnectivityMonitor? connectivity,
     MediaPlayerController? mediaPlayer,
     PlaybackRetryCoordinator? playbackRetry,
     PlaybackRetryPolicy retryPolicy = PlaybackRetryPolicy.defaults,
@@ -51,6 +58,8 @@ final class AppDependencies {
   }) {
     final storage = secureStorage ?? MemorySecureStorage();
     final player = mediaPlayer ?? MemoryMediaPlayerController();
+    final mediaStore = localMediaStore ?? MemoryLocalMediaStore();
+    final network = connectivity ?? MemoryConnectivityMonitor();
     return AppDependencies._(
       clientKind: clientKind,
       environment: environment,
@@ -65,7 +74,12 @@ final class AppDependencies {
           pairingSecureStore ?? SecurePairingStore(storage),
       sourceCredentialStore:
           sourceCredentialStore ?? SecureSourceCredentialStore(storage),
-      localMediaStore: localMediaStore ?? MemoryLocalMediaStore(),
+      localMediaStore: mediaStore,
+      connectivity: network,
+      offlineMode: OfflineModeResolver(
+        connectivity: network,
+        localMediaStore: mediaStore,
+      ),
       mediaPlayer: player,
       playbackRetry: playbackRetry ??
           PlaybackRetryCoordinator(player: player, policy: retryPolicy),
@@ -83,6 +97,8 @@ final class AppDependencies {
     required this.pairingSecureStore,
     required this.sourceCredentialStore,
     required this.localMediaStore,
+    required this.connectivity,
+    required this.offlineMode,
     required this.mediaPlayer,
     required this.playbackRetry,
   });
@@ -97,6 +113,8 @@ final class AppDependencies {
   final PairingSecureStore pairingSecureStore;
   final SourceCredentialStore sourceCredentialStore;
   final LocalMediaStore localMediaStore;
+  final ConnectivityMonitor connectivity;
+  final OfflineModeResolver offlineMode;
   final MediaPlayerController mediaPlayer;
   final PlaybackRetryCoordinator playbackRetry;
 

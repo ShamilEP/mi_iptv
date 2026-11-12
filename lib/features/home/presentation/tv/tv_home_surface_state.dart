@@ -1,4 +1,4 @@
-/// Home content surface states beyond the ready rails (TV-033 / DSN-017).
+/// Home content surface states beyond the ready rails (TV-033 / TV-010 / DSN-017).
 enum TvHomeSurfaceState {
   /// Continue watching / Featured / Live channels rails.
   ready,
@@ -9,6 +9,9 @@ enum TvHomeSurfaceState {
   /// Sources exist but the catalog has nothing to show.
   emptyCatalog,
 
-  /// Device cannot reach the network / backend.
+  /// Device cannot reach the network / backend and cache is empty.
   offline,
+
+  /// Offline with usable local cache — banner + cached rails (TV-010).
+  offlineCached,
 }

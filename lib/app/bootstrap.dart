@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../core/network/polling_connectivity_monitor.dart';
 import '../core/persistence/drift/app_database.dart';
 import '../core/persistence/drift/drift_local_media_store.dart';
 import '../core/storage/flutter_secure_storage_adapter.dart';
@@ -19,6 +20,7 @@ Future<void> bootstrap({
   WidgetsFlutterBinding.ensureInitialized();
   final resolvedEnv = environment ?? AppEnvironment.fromDartDefine();
   final mediaDb = AppDatabase.defaults();
+  final connectivity = PollingConnectivityMonitor();
   AppDependencies.mount(
     AppDependencies(
       clientKind: clientKind,
@@ -27,10 +29,13 @@ Future<void> bootstrap({
       secureStorage: FlutterSecureStorageAdapter(),
       // TV-007: durable SQLite via Drift; unit tests keep MemoryLocalMediaStore.
       localMediaStore: DriftLocalMediaStore(mediaDb),
+      // TV-010: DNS polling probe (no connectivity_plus until approved).
+      connectivity: connectivity,
       // TV-050: Media3 on TV; Companion keeps memory (no MVP video playback).
       mediaPlayer: _mediaPlayerFor(clientKind),
     ),
   );
+  await connectivity.start();
   runApp(MiIptvApp(clientKind: clientKind));
 }
 
