@@ -17,8 +17,8 @@ import '../client_kind.dart';
 /// TV and Companion mount the **same** shared domain graph; only [clientKind]
 /// (and later surface adapters) differ. No third-party DI until approved.
 ///
-/// [secureStorage] defaults to [MemorySecureStorage] until Product approves a
-/// Keystore/Keychain plugin adapter (CMP-005).
+/// [secureStorage] defaults to [MemorySecureStorage] for unit tests.
+/// Device [bootstrap] injects [FlutterSecureStorageAdapter] (CMP-005).
 final class AppDependencies {
   factory AppDependencies({
     required ClientKind clientKind,
