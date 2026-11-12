@@ -10,8 +10,9 @@
 |---|---|
 | Client stack | Flutter (not native Leanback/Compose) |
 | Minimum OS / API | **Android 14 / API 34** |
-| Target SDK | **Latest** stable Android / Flutter `targetSdk` |
+| Target SDK | **Latest** stable Android / Flutter `targetSdk` (see Gradle) |
 | Lowest hardware class | ~**5-year-old** living-room TV / stick class (performance envelope) |
+| Gradle (TV-001) | `tv` flavor `minSdk = 34`; `targetSdk` / `compileSdk` = `flutter.*SdkVersion` ([ADR-002](../architecture/adr-002-tv-toolkit-sdk.md)) |
 
 **Lab implication:** Every physical or virtual device used for MVP TV certification must run **API 34+**. “5-year-old tier” describes **RAM/SoC/thermal class**, not permission to ship on older OS versions.
 
@@ -99,7 +100,7 @@ Update the **Status** column in this table when hardware is checked out (owner +
 - [ ] Secure or emulate ≥ 1 low-memory stick-class profile (TV-L1 or TV-E1 with 2 GB).
 - [ ] Record device model, serial (internally), API level, RAM, and SoC in the team inventory (not in git if serials are sensitive).
 - [ ] Confirm Play services / Google TV channel available for sideload or internal track installs.
-- [ ] Revisit matrix when TV-001 lands exact `minSdk` / `targetSdk` in Gradle.
+- [x] TV-001 landed exact `minSdk` / `targetSdk` in Gradle (`tv` minSdk 34; target/compile via Flutter toolchain — ADR-002).
 
 ---
 

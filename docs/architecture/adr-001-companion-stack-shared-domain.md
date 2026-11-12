@@ -14,7 +14,7 @@ This repository already hosts Flutter clients and Clean Architecture feature fol
 ## Decision
 
 1. **Companion technology:** **Flutter** for **Android and iOS** (not native-only, not React Native, not a separate KMP app).
-2. **TV technology (aligned):** **Flutter** Android TV / Google TV client in the **same** repo/package (see also PRD-010 / TV-001 for SDK levels).
+2. **TV technology (aligned):** **Flutter** Android TV / Google TV client in the **same** repo/package (see [ADR-002](./adr-002-tv-toolkit-sdk.md) / PRD-010 for SDK levels).
 3. **Shared domain:** **One Dart package** — the root package `mi_iptv` — owns domain and application use cases under `lib/features/<feature>/domain` (and shared contracts in `lib/core` where appropriate). TV and Companion **do not** duplicate domain models in separate native modules.
 4. **UI split:** Presentation stays surface-specific:
    - TV: `lib/features/*/presentation/tv`

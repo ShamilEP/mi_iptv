@@ -6,6 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.mi_iptv"
+    // TV-001 / PRD-010: compile + target track Flutter's latest stable SDK.
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -24,11 +25,13 @@ android {
     }
 
     // CMP-002: TV vs Companion Android variants (pair with -t main_*.dart).
+    // TV-001 / ADR-002: TV flavor minSdk = API 34; Companion keeps Flutter default.
     flavorDimensions += "client"
     productFlavors {
         create("tv") {
             dimension = "client"
             applicationIdSuffix = ".tv"
+            minSdk = 34
         }
         create("companion") {
             dimension = "client"
