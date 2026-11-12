@@ -1,3 +1,5 @@
+import '../../core/persistence/local_media_store.dart';
+import '../../core/persistence/memory_local_media_store.dart';
 import '../../core/storage/memory_secure_storage.dart';
 import '../../core/storage/secure_storage.dart';
 import '../../features/auth/data/repositories/secure_session_token_store.dart';
@@ -12,13 +14,15 @@ import '../../features/sync/domain/usecases/resolve_sync_conflict.dart';
 import '../app_environment.dart';
 import '../client_kind.dart';
 
-/// Manual composition root (CMP-002 / TV-002 / TV-005 / CMP-005).
+/// Manual composition root (CMP-002 / TV-002 / TV-005 / CMP-005 / TV-007).
 ///
 /// TV and Companion mount the **same** shared domain graph; only [clientKind]
 /// (and later surface adapters) differ. No third-party DI until approved.
 ///
 /// [secureStorage] defaults to [MemorySecureStorage] for unit tests.
 /// Device [bootstrap] injects [FlutterSecureStorageAdapter] (CMP-005).
+/// [localMediaStore] defaults to [MemoryLocalMediaStore] until SQLite/Drift
+/// is approved (TV-007).
 final class AppDependencies {
   factory AppDependencies({
     required ClientKind clientKind,
@@ -28,6 +32,7 @@ final class AppDependencies {
     SecureStorage? secureStorage,
     SessionTokenStore? sessionTokenStore,
     PairingSecureStore? pairingSecureStore,
+    LocalMediaStore? localMediaStore,
     ResolveSyncConflict syncConflictResolver = const ResolveSyncConflict(),
   }) {
     final storage = secureStorage ?? MemorySecureStorage();
@@ -43,6 +48,7 @@ final class AppDependencies {
           sessionTokenStore ?? SecureSessionTokenStore(storage),
       pairingSecureStore:
           pairingSecureStore ?? SecurePairingStore(storage),
+      localMediaStore: localMediaStore ?? MemoryLocalMediaStore(),
     );
   }
 
@@ -55,6 +61,7 @@ final class AppDependencies {
     required this.secureStorage,
     required this.sessionTokenStore,
     required this.pairingSecureStore,
+    required this.localMediaStore,
   });
 
   final ClientKind clientKind;
@@ -65,6 +72,7 @@ final class AppDependencies {
   final SecureStorage secureStorage;
   final SessionTokenStore sessionTokenStore;
   final PairingSecureStore pairingSecureStore;
+  final LocalMediaStore localMediaStore;
 
   static AppDependencies? _mounted;
 

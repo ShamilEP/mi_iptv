@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mi_iptv/app/app_environment.dart';
 import 'package:mi_iptv/app/client_kind.dart';
 import 'package:mi_iptv/app/di/app_dependencies.dart';
+import 'package:mi_iptv/core/persistence/memory_local_media_store.dart';
 import 'package:mi_iptv/features/catalog/data/repositories/in_memory_catalog_repository.dart';
 import 'package:mi_iptv/features/sync/data/repositories/in_memory_sync_repository.dart';
 import 'package:mi_iptv/features/sync/domain/usecases/resolve_sync_conflict.dart';
@@ -35,6 +36,7 @@ void main() {
     expect(tv.secureStorage, isNotNull);
     expect(tv.sessionTokenStore, isNotNull);
     expect(tv.pairingSecureStore, isNotNull);
+    expect(tv.localMediaStore, isA<MemoryLocalMediaStore>());
 
     AppDependencies.mount(AppDependencies(clientKind: ClientKind.companion));
     final companion = AppDependencies.instance;
