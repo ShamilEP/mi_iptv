@@ -9,15 +9,16 @@ Executable UI: [`TvHomePage`](../../lib/features/home/presentation/tv/tv_home_pa
 3. **Featured** — basic poster row.  
 4. **Live channels** — basic channel tiles.
 
-## Empty / offline (TV-033)
+## Empty / offline (TV-033 / TV-010)
 
-Brand + quick access stay visible. The rail stack is replaced by a DSN-017 pattern:
+Brand + quick access stay visible. Empty / full-offline replace the rail stack with a DSN-017 pattern; offline-with-cache keeps rails under an Offline banner (TV-010).
 
 | `TvHomeSurfaceState` | Pattern | Action |
 | --- | --- | --- |
 | `noSources` | Empty — “No sources” | Add source |
 | `emptyCatalog` | Empty — “Catalog is empty” | Refresh |
 | `offline` | Offline — “You are offline” | Try again |
+| `offlineCached` | Offline banner + rails labeled `(cached)` | Try again |
 
 ## Rules (DoD)
 

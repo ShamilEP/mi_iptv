@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mi_iptv/core/theme/theme.dart';
+import 'package:mi_iptv/core/widgets/offline_banner.dart';
 import 'package:mi_iptv/core/widgets/status_pattern.dart';
 import 'package:mi_iptv/core/widgets/status_pattern_copy.dart';
 import 'package:mi_iptv/features/home/presentation/tv/tv_home_page.dart';
@@ -127,5 +128,27 @@ void main() {
     await tester.tap(find.text(StatusPatternCopy.homeOffline.actionLabel));
     await tester.pumpAndSettle();
     expect(actioned, isTrue);
+  });
+
+  testWidgets('TV-010 offlineCached keeps rails under OfflineBanner', (
+    tester,
+  ) async {
+    var retried = false;
+    await pump(
+      tester,
+      home: TvHomePage(
+        surfaceState: TvHomeSurfaceState.offlineCached,
+        onStatusAction: () => retried = true,
+      ),
+    );
+
+    expect(find.byType(OfflineBanner), findsOneWidget);
+    expect(find.textContaining('(cached)'), findsWidgets);
+    expect(find.text('Evening news'), findsOneWidget);
+    expect(find.byType(OfflinePattern), findsNothing);
+
+    await tester.tap(find.text('Try again'));
+    await tester.pumpAndSettle();
+    expect(retried, isTrue);
   });
 }

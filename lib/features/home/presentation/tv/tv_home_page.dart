@@ -6,17 +6,19 @@ import '../../../../core/widgets/brand_lockup.dart';
 import '../../../../core/widgets/content_card.dart';
 import '../../../../core/widgets/content_row.dart';
 import '../../../../core/widgets/content_row_list.dart';
+import '../../../../core/widgets/offline_banner.dart';
 import '../../../../core/widgets/status_pattern.dart';
 import '../../../../core/widgets/status_pattern_copy.dart';
 import 'tv_home_quick_access.dart';
 import 'tv_home_surface_state.dart';
 
-/// TV Home hi-fi shell (DSN-032 / TV-033).
+/// TV Home hi-fi shell (DSN-032 / TV-033 / TV-010).
 ///
 /// Continue Watching is the first rail. Quick access exposes Live TV, Favorites,
 /// Search, and Settings without a hero that pushes Live TV away. Initial focus
-/// lands on the first Continue Watching card when [surfaceState] is ready.
-/// Empty and offline surfaces reuse DSN-017 patterns with Home-specific copy.
+/// lands on the first Continue Watching card when [surfaceState] is ready or
+/// [TvHomeSurfaceState.offlineCached]. Empty and offline surfaces reuse DSN-017
+/// patterns; offline-with-cache keeps rails usable under an [OfflineBanner].
 class TvHomePage extends StatefulWidget {
   const TvHomePage({
     super.key,
@@ -27,7 +29,7 @@ class TvHomePage extends StatefulWidget {
 
   final ValueChanged<TvHomeQuickDestination>? onQuickAccess;
 
-  /// Ready rails, or no-sources / empty-catalog / offline panels (TV-033).
+  /// Ready rails, or no-sources / empty-catalog / offline panels (TV-033 / TV-010).
   final TvHomeSurfaceState surfaceState;
 
   /// Fired from empty / offline primary actions (Add source, Refresh, Try again).
@@ -65,74 +67,101 @@ class _TvHomePageState extends State<TvHomePage> {
     'Channel 4',
   ];
 
+  bool get _focusRails =>
+      widget.surfaceState == TvHomeSurfaceState.ready ||
+      widget.surfaceState == TvHomeSurfaceState.offlineCached;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      if (widget.surfaceState != TvHomeSurfaceState.ready) return;
+      if (!_focusRails) return;
       _continueRowKey.currentState?.requestFocusAt(0);
     });
+  }
+
+  Widget _rails({required bool cached}) {
+    final continueTitle = cached
+        ? '${TvHomePage.continueWatchingTitle} (cached)'
+        : TvHomePage.continueWatchingTitle;
+    final featuredTitle = cached
+        ? '${TvHomePage.featuredTitle} (cached)'
+        : TvHomePage.featuredTitle;
+    final liveTitle = cached
+        ? '${TvHomePage.liveChannelsTitle} (cached)'
+        : TvHomePage.liveChannelsTitle;
+
+    return ContentRowList(
+      rowCount: 3,
+      rowBuilder: (context, rowIndex) {
+        switch (rowIndex) {
+          case 0:
+            return ContentRow(
+              key: _continueRowKey,
+              title: continueTitle,
+              storageId: 'home-continue-watching',
+              kind: ContentCardKind.continueWatching,
+              itemCount: _continueWatching.length,
+              itemBuilder: (context, index, focusNode) {
+                final item = _continueWatching[index];
+                return ContentCard(
+                  kind: ContentCardKind.continueWatching,
+                  title: item.title,
+                  subtitle: item.subtitle,
+                  progress: item.progress,
+                  focusNode: focusNode,
+                  onPressed: () {},
+                );
+              },
+            );
+          case 1:
+            return ContentRow(
+              title: featuredTitle,
+              storageId: 'home-featured',
+              kind: ContentCardKind.poster,
+              itemCount: _featured.length,
+              itemBuilder: (context, index, focusNode) {
+                return ContentCard(
+                  kind: ContentCardKind.poster,
+                  title: _featured[index],
+                  focusNode: focusNode,
+                  onPressed: () {},
+                );
+              },
+            );
+          default:
+            return ContentRow(
+              title: liveTitle,
+              storageId: 'home-live-channels',
+              kind: ContentCardKind.channelTile,
+              itemCount: _liveChannels.length,
+              itemBuilder: (context, index, focusNode) {
+                return ContentCard(
+                  kind: ContentCardKind.channelTile,
+                  title: _liveChannels[index],
+                  focusNode: focusNode,
+                  onPressed: () {},
+                );
+              },
+            );
+        }
+      },
+    );
   }
 
   Widget _statusBody() {
     switch (widget.surfaceState) {
       case TvHomeSurfaceState.ready:
-        return ContentRowList(
-          rowCount: 3,
-          rowBuilder: (context, rowIndex) {
-            switch (rowIndex) {
-              case 0:
-                return ContentRow(
-                  key: _continueRowKey,
-                  title: TvHomePage.continueWatchingTitle,
-                  storageId: 'home-continue-watching',
-                  kind: ContentCardKind.continueWatching,
-                  itemCount: _continueWatching.length,
-                  itemBuilder: (context, index, focusNode) {
-                    final item = _continueWatching[index];
-                    return ContentCard(
-                      kind: ContentCardKind.continueWatching,
-                      title: item.title,
-                      subtitle: item.subtitle,
-                      progress: item.progress,
-                      focusNode: focusNode,
-                      onPressed: () {},
-                    );
-                  },
-                );
-              case 1:
-                return ContentRow(
-                  title: TvHomePage.featuredTitle,
-                  storageId: 'home-featured',
-                  kind: ContentCardKind.poster,
-                  itemCount: _featured.length,
-                  itemBuilder: (context, index, focusNode) {
-                    return ContentCard(
-                      kind: ContentCardKind.poster,
-                      title: _featured[index],
-                      focusNode: focusNode,
-                      onPressed: () {},
-                    );
-                  },
-                );
-              default:
-                return ContentRow(
-                  title: TvHomePage.liveChannelsTitle,
-                  storageId: 'home-live-channels',
-                  kind: ContentCardKind.channelTile,
-                  itemCount: _liveChannels.length,
-                  itemBuilder: (context, index, focusNode) {
-                    return ContentCard(
-                      kind: ContentCardKind.channelTile,
-                      title: _liveChannels[index],
-                      focusNode: focusNode,
-                      onPressed: () {},
-                    );
-                  },
-                );
-            }
-          },
+        return _rails(cached: false);
+      case TvHomeSurfaceState.offlineCached:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            OfflineBanner(onRetry: widget.onStatusAction),
+            const SizedBox(height: AppSpacing.md),
+            Expanded(child: _rails(cached: true)),
+          ],
         );
       case TvHomeSurfaceState.noSources:
         return Center(
