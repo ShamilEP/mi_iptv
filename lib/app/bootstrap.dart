@@ -3,6 +3,9 @@ import 'package:flutter/widgets.dart';
 import '../core/persistence/drift/app_database.dart';
 import '../core/persistence/drift/drift_local_media_store.dart';
 import '../core/storage/flutter_secure_storage_adapter.dart';
+import '../features/player/data/adapters/media3_player_adapter.dart';
+import '../features/player/data/adapters/memory_media_player_controller.dart';
+import '../features/player/domain/repositories/media_player_controller.dart';
 import 'app.dart';
 import 'app_environment.dart';
 import 'client_kind.dart';
@@ -24,7 +27,16 @@ Future<void> bootstrap({
       secureStorage: FlutterSecureStorageAdapter(),
       // TV-007: durable SQLite via Drift; unit tests keep MemoryLocalMediaStore.
       localMediaStore: DriftLocalMediaStore(mediaDb),
+      // TV-050: Media3 on TV; Companion keeps memory (no MVP video playback).
+      mediaPlayer: _mediaPlayerFor(clientKind),
     ),
   );
   runApp(MiIptvApp(clientKind: clientKind));
+}
+
+MediaPlayerController _mediaPlayerFor(ClientKind clientKind) {
+  return switch (clientKind) {
+    ClientKind.tv => Media3PlayerAdapter(),
+    ClientKind.companion => MemoryMediaPlayerController(),
+  };
 }

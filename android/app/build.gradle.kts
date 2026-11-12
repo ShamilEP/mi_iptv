@@ -71,3 +71,12 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+// TV-050: Media3 / ExoPlayer native host (approved Option A — no pub.dev player package).
+dependencies {
+    implementation(platform("androidx.media3:media3-bom:1.5.1"))
+    implementation("androidx.media3:media3-exoplayer")
+    implementation("androidx.media3:media3-exoplayer-hls")
+    implementation("androidx.media3:media3-exoplayer-dash")
+    implementation("androidx.media3:media3-common")
+}
