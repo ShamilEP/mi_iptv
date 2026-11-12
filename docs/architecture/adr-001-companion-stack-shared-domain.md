@@ -41,3 +41,4 @@ This repository already hosts Flutter clients and Clean Architecture feature fol
 | Root app | `lib/app/app.dart` |
 | TV entry | `lib/main_tv.dart` / `lib/main.dart` |
 | Companion entry | `lib/main_companion.dart` |
+| TV shared-domain wiring | [tv-005-shared-domain-integration.md](./tv-005-shared-domain-integration.md) |
