@@ -8,6 +8,8 @@ import '../../features/catalog/data/repositories/in_memory_catalog_repository.da
 import '../../features/catalog/domain/repositories/catalog_repository.dart';
 import '../../features/devices/data/repositories/secure_pairing_store.dart';
 import '../../features/devices/domain/repositories/pairing_secure_store.dart';
+import '../../features/player/data/adapters/memory_media_player_controller.dart';
+import '../../features/player/domain/repositories/media_player_controller.dart';
 import '../../features/sources/data/repositories/secure_source_credential_store.dart';
 import '../../features/sources/domain/repositories/source_credential_store.dart';
 import '../../features/sync/data/repositories/in_memory_sync_repository.dart';
@@ -16,7 +18,7 @@ import '../../features/sync/domain/usecases/resolve_sync_conflict.dart';
 import '../app_environment.dart';
 import '../client_kind.dart';
 
-/// Manual composition root (CMP-002 / TV-002 / TV-005 / CMP-005 / TV-007 / TV-008).
+/// Manual composition root (CMP-002 / TV-002 / TV-005 / CMP-005 / TV-007 / TV-008 / TV-050).
 ///
 /// TV and Companion mount the **same** shared domain graph; only [clientKind]
 /// (and later surface adapters) differ. No third-party DI until approved.
@@ -25,6 +27,9 @@ import '../client_kind.dart';
 /// Device [bootstrap] injects [FlutterSecureStorageAdapter] (CMP-005 / TV-008).
 /// [localMediaStore] defaults to [MemoryLocalMediaStore] for unit tests;
 /// device [bootstrap] injects [DriftLocalMediaStore] (TV-007).
+/// [mediaPlayer] defaults to [MemoryMediaPlayerController]; TV [bootstrap]
+/// injects [Media3PlayerAdapter] (TV-050). Lifecycle is owned here / native
+/// engine — not by player screens.
 final class AppDependencies {
   factory AppDependencies({
     required ClientKind clientKind,
@@ -36,6 +41,7 @@ final class AppDependencies {
     PairingSecureStore? pairingSecureStore,
     SourceCredentialStore? sourceCredentialStore,
     LocalMediaStore? localMediaStore,
+    MediaPlayerController? mediaPlayer,
     ResolveSyncConflict syncConflictResolver = const ResolveSyncConflict(),
   }) {
     final storage = secureStorage ?? MemorySecureStorage();
@@ -54,6 +60,7 @@ final class AppDependencies {
       sourceCredentialStore:
           sourceCredentialStore ?? SecureSourceCredentialStore(storage),
       localMediaStore: localMediaStore ?? MemoryLocalMediaStore(),
+      mediaPlayer: mediaPlayer ?? MemoryMediaPlayerController(),
     );
   }
 
@@ -68,6 +75,7 @@ final class AppDependencies {
     required this.pairingSecureStore,
     required this.sourceCredentialStore,
     required this.localMediaStore,
+    required this.mediaPlayer,
   });
 
   final ClientKind clientKind;
@@ -80,6 +88,7 @@ final class AppDependencies {
   final PairingSecureStore pairingSecureStore;
   final SourceCredentialStore sourceCredentialStore;
   final LocalMediaStore localMediaStore;
+  final MediaPlayerController mediaPlayer;
 
   static AppDependencies? _mounted;
 

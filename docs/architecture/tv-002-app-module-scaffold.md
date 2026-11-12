@@ -15,7 +15,7 @@ Implements Sprint 0 TV foundations on the shared Flutter package (depends on TV-
 | Search | `features/search` | TV search shell |
 | Favorites | `features/favorites` | TV favorites shell |
 | Settings | `features/settings` | TV settings shell |
-| Playback core | `features/player/domain/.../media_player_controller.dart` | Port only; Media3 adapter waits on package approval |
+| Playback core | `features/player` + Media3 host | Port + [`Media3PlayerAdapter`](./tv-050-media3-player.md) (TV-050) |
 | Data / domain | per-feature `data/` + `domain/` | Folders reserved (`.gitkeep`); entities/adapters land with feature tasks |
 
 ## DI
@@ -52,6 +52,6 @@ flutter run --flavor tvProd -t lib/main_tv.dart --dart-define=APP_ENV=prod
 
 | Need | Candidate | Why wait |
 |---|---|---|
-| Player engine | Media3 / `media_kit` / etc. | Needs explicit approval; keep `MediaPlayerController` port |
+| Player engine | Media3 via MethodChannel (Option A) | Landed in TV-050 — see [tv-050-media3-player.md](./tv-050-media3-player.md) |
 | DI | `get_it` | Manual root is enough for Sprint 0 |
 | Navigation | `go_router` | Named `Navigator` covers MVP shell |
