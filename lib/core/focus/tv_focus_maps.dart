@@ -13,6 +13,7 @@ abstract final class TvFocusMaps {
     liveTvStreamFailure,
     search,
     favorites,
+    contentDetail,
     settings,
     vodPlayer,
   ];
@@ -272,6 +273,52 @@ abstract final class TvFocusMaps {
     backBehavior: TvFocusBackBehavior.exitScreen,
     restoreFocusId: 'open-first',
     notes: 'Channels above VOD; Open/Remove are row quick actions (DSN-036).',
+  );
+
+  static const TvFocusMap contentDetail = TvFocusMap(
+    screen: TvFocusScreen.contentDetail,
+    title: 'Content detail',
+    firstFocusId: 'play',
+    nodes: <TvFocusNodeSpec>[
+      TvFocusNodeSpec(id: 'play', label: 'Play'),
+      TvFocusNodeSpec(id: 'resume', label: 'Resume'),
+      TvFocusNodeSpec(id: 'favorite', label: 'Favorite'),
+      TvFocusNodeSpec(id: 'related-0', label: 'Related first card'),
+      TvFocusNodeSpec(id: 'related-rail', label: 'Related rail'),
+    ],
+    traversals: <TvFocusTraversal>[
+      TvFocusTraversal(
+        fromId: 'play',
+        right: 'resume',
+        down: 'related-0',
+      ),
+      TvFocusTraversal(
+        fromId: 'resume',
+        left: 'play',
+        right: 'favorite',
+        down: 'related-0',
+      ),
+      TvFocusTraversal(
+        fromId: 'favorite',
+        left: 'resume',
+        down: 'related-0',
+      ),
+      TvFocusTraversal(
+        fromId: 'related-0',
+        up: 'play',
+        right: 'related-rail',
+      ),
+      TvFocusTraversal(
+        fromId: 'related-rail',
+        up: 'play',
+        left: 'related-0',
+      ),
+    ],
+    backBehavior: TvFocusBackBehavior.exitScreen,
+    restoreFocusId: 'play',
+    notes:
+        'Play is first focus; Resume sits between Play and Favorite when shown '
+        '(DSN-034). Series episode nodes are deferred (PRD-013).',
   );
 
   static const TvFocusMap settings = TvFocusMap(
