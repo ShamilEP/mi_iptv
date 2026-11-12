@@ -17,8 +17,16 @@ final class SyncFailure extends Failure {
 }
 
 final class PlaybackFailure extends Failure {
-  const PlaybackFailure([super.message = 'Playback failed']);
+  const PlaybackFailure([
+    super.message = 'Playback failed',
+    this.kind = PlaybackFailureKind.unknown,
+  ]);
+
+  /// Coarse taxonomy aligned with TV-054 player errors.
+  final PlaybackFailureKind kind;
 }
+
+enum PlaybackFailureKind { network, source, decoder, unknown }
 
 final class UnexpectedFailure extends Failure {
   const UnexpectedFailure([super.message = 'Unexpected error']);
