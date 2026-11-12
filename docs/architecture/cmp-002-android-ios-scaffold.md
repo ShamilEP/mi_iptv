@@ -28,12 +28,14 @@ Navigator 1.0 named routes: [`AppRoutes`](../../lib/app/navigation/app_routes.da
 
 ### Android
 
+Client × env flavors (TV-002). Combined Flutter flavor names, e.g. `tvDev`:
+
 ```bash
-flutter run --flavor tv -t lib/main_tv.dart
-flutter run --flavor companion -t lib/main_companion.dart
+flutter run --flavor tvDev -t lib/main_tv.dart --dart-define=APP_ENV=dev
+flutter run --flavor companionDev -t lib/main_companion.dart --dart-define=APP_ENV=dev
 ```
 
-Product flavors set `applicationIdSuffix` (`.tv` / `.companion`) and `app_name`.
+Product flavors set `applicationIdSuffix` (`.tv` / `.companion`, plus `.dev` / `.qa` when non-prod) and `app_name`. See [tv-002-app-module-scaffold.md](./tv-002-app-module-scaffold.md).
 
 ### iOS
 

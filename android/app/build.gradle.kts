@@ -24,9 +24,11 @@ android {
         versionName = flutter.versionName
     }
 
-    // CMP-002: TV vs Companion Android variants (pair with -t main_*.dart).
+    // CMP-002: client dimension (TV vs Companion; pair with -t main_*.dart).
     // TV-001 / ADR-002: TV flavor minSdk = API 34; Companion keeps Flutter default.
+    // TV-002: env dimension (dev / qa / prod). Combined flavor e.g. tvDev, companionQa.
     flavorDimensions += "client"
+    flavorDimensions += "env"
     productFlavors {
         create("tv") {
             dimension = "client"
@@ -36,6 +38,18 @@ android {
         create("companion") {
             dimension = "client"
             applicationIdSuffix = ".companion"
+        }
+        create("dev") {
+            dimension = "env"
+            applicationIdSuffix = ".dev"
+        }
+        create("qa") {
+            dimension = "env"
+            applicationIdSuffix = ".qa"
+        }
+        create("prod") {
+            dimension = "env"
+            // No env suffix — store-bound applicationId ends at client suffix.
         }
     }
 

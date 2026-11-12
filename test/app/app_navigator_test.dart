@@ -11,6 +11,8 @@ import 'package:mi_iptv/features/home/presentation/tv/tv_home_page.dart';
 void main() {
   test('AppRoutes.forClient splits TV and Companion', () {
     expect(AppRoutes.forClient(ClientKind.tv), contains(AppRoutes.tvLive));
+    expect(AppRoutes.forClient(ClientKind.tv), contains(AppRoutes.tvFavorites));
+    expect(AppRoutes.forClient(ClientKind.tv), contains(AppRoutes.tvVodPlayer));
     expect(
       AppRoutes.forClient(ClientKind.tv),
       isNot(contains(AppRoutes.companionRemote)),

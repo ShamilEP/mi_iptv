@@ -51,8 +51,9 @@ jobs:
       - name: Pub get
         run: flutter pub get
 
-      - name: Build TV debug APK
-        run: flutter build apk --debug --flavor tv -t lib/main_tv.dart
+      # TV-002: client × env flavors; CI compiles the local/dev graph.
+      - name: Build TV dev debug APK
+        run: flutter build apk --debug --flavor tvDev -t lib/main_tv.dart --dart-define=APP_ENV=dev
 
-      - name: Build Companion debug APK
-        run: flutter build apk --debug --flavor companion -t lib/main_companion.dart
+      - name: Build Companion dev debug APK
+        run: flutter build apk --debug --flavor companionDev -t lib/main_companion.dart --dart-define=APP_ENV=dev
