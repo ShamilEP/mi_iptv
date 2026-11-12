@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mi_iptv/features/player/data/adapters/media3_player_adapter.dart';
+import 'package:mi_iptv/features/player/domain/entities/playback_request.dart';
+import 'package:mi_iptv/features/player/domain/entities/stream_protocol.dart';
 import 'package:mi_iptv/features/player/domain/repositories/media_player_controller.dart';
 
 void main() {
@@ -50,7 +52,9 @@ void main() {
     final adapter = Media3PlayerAdapter();
     addTearDown(adapter.dispose);
 
-    await adapter.play(Uri.parse('https://example.com/stream.m3u8'));
+    await adapter.play(
+      PlaybackRequest(streamUri: Uri.parse('https://example.com/stream.m3u8')),
+    );
     await adapter.pause();
     await adapter.seek(const Duration(seconds: 12));
     await adapter.stop();
@@ -58,8 +62,34 @@ void main() {
     expect(calls.map((c) => c.method), <String>['play', 'pause', 'seek', 'stop']);
     expect(calls.first.arguments, <String, Object?>{
       'uri': 'https://example.com/stream.m3u8',
+      'protocol': 'hls',
+      'headers': <String, String>{},
+      'userAgent': null,
     });
     expect(calls[2].arguments, <String, Object?>{'positionMs': 12000});
+  });
+
+  test('play wires sniffed protocol, headers, and user-agent', () async {
+    final adapter = Media3PlayerAdapter();
+    addTearDown(adapter.dispose);
+
+    await adapter.play(
+      PlaybackRequest(
+        streamUri: Uri.parse('http://iptv.example/user/key/playlist'),
+        protocolHint: StreamProtocol.unknown,
+        headers: const <String, String>{'Referer': 'https://portal.example/'},
+        userAgent: 'MiIPTV-TV/1.0',
+      ),
+    );
+
+    expect(calls, hasLength(1));
+    expect(calls.single.method, 'play');
+    expect(calls.single.arguments, <String, Object?>{
+      'uri': 'http://iptv.example/user/key/playlist',
+      'protocol': 'hls',
+      'headers': <String, String>{'Referer': 'https://portal.example/'},
+      'userAgent': 'MiIPTV-TV/1.0',
+    });
   });
 
   test('status events map Media3 phases onto domain status', () async {
@@ -95,7 +125,9 @@ void main() {
     final sub = adapter.status.listen(statuses.add);
     addTearDown(sub.cancel);
 
-    await adapter.play(Uri.parse('https://example.com/a.mp4'));
+    await adapter.play(
+      PlaybackRequest(streamUri: Uri.parse('https://example.com/a.mp4')),
+    );
     await Future<void>.delayed(Duration.zero);
 
     expect(statuses.last.phase, MediaPlayerPhase.error);

@@ -1,6 +1,10 @@
+import '../entities/playback_request.dart';
+
 /// Playback port. Media3/ExoPlayer (or approved engine) implements this in data/adapters.
 abstract interface class MediaPlayerController {
-  Future<void> play(Uri streamUri);
+  /// Starts playback for [request] (HLS / DASH / progressive TS|MP4).
+  Future<void> play(PlaybackRequest request);
+
   Future<void> pause();
   Future<void> seek(Duration position);
   Future<void> stop();

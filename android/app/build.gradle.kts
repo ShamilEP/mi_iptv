@@ -72,11 +72,12 @@ flutter {
     source = "../.."
 }
 
-// TV-050: Media3 / ExoPlayer native host (approved Option A — no pub.dev player package).
+// TV-050 / TV-051: Media3 host — HLS/DASH/progressive + HTTP redirects/headers.
 dependencies {
     implementation(platform("androidx.media3:media3-bom:1.5.1"))
     implementation("androidx.media3:media3-exoplayer")
     implementation("androidx.media3:media3-exoplayer-hls")
     implementation("androidx.media3:media3-exoplayer-dash")
+    implementation("androidx.media3:media3-datasource")
     implementation("androidx.media3:media3-common")
 }
