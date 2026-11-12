@@ -24,17 +24,18 @@ void main() {
         File('android/app/src/tv/AndroidManifest.xml').readAsStringSync();
     expect(manifest, contains('TV-003'));
     expect(manifest, contains('android.software.leanback'));
-    expect(
-      manifest,
-      contains(
-        'android:name="android.software.leanback"\n'
-        '        android:required="true"',
-      ),
-    );
+    expect(manifest, contains('android:required="true"'));
     expect(manifest, contains('android.hardware.touchscreen'));
     expect(manifest, contains('android:required="false"'));
     expect(manifest, contains('LEANBACK_LAUNCHER'));
     expect(manifest, contains('@drawable/tv_banner'));
+    // Leanback must be required=true (TV-only APK), not false.
+    final leanbackBlock = RegExp(
+      r'android\.software\.leanback"\s+android:required="(true|false)"',
+      multiLine: true,
+    ).firstMatch(manifest.replaceAll('\r\n', '\n'));
+    expect(leanbackBlock, isNotNull);
+    expect(leanbackBlock!.group(1), 'true');
   });
 
   test('main manifest does not own TV banner; drawable exists at 320x180 path', () {
