@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import '../../features/auth/presentation/companion/companion_login_pairing_page.dart';
 import '../../features/catalog/presentation/companion/companion_explore_page.dart';
 import '../../features/devices/presentation/companion/companion_remote_page.dart';
+import '../../features/favorites/presentation/tv/tv_favorites_page.dart';
 import '../../features/home/presentation/tv/tv_home_page.dart';
 import '../../features/live_tv/presentation/tv/tv_live_tv_page.dart';
+import '../../features/player/presentation/tv/tv_vod_player_page.dart';
 import '../../features/search/presentation/tv/tv_search_page.dart';
 import '../../features/settings/presentation/tv/tv_settings_page.dart';
 import '../client_kind.dart';
 import 'app_routes.dart';
 
-/// Builds [MaterialPageRoute]s for [AppRoutes] (CMP-002).
+/// Builds [MaterialPageRoute]s for [AppRoutes] (CMP-002 / TV-002).
 abstract final class AppNavigator {
   static Route<dynamic> onGenerateRoute(
     RouteSettings settings, {
@@ -50,10 +52,20 @@ abstract final class AppNavigator {
           settings: settings,
           builder: (_) => const TvSearchPage(),
         );
+      case AppRoutes.tvFavorites:
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => const TvFavoritesPage(),
+        );
       case AppRoutes.tvSettings:
         return MaterialPageRoute<void>(
           settings: settings,
           builder: (_) => const TvSettingsPage(),
+        );
+      case AppRoutes.tvVodPlayer:
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => const TvVodPlayerPage(),
         );
       default:
         return _unknown(settings, 'Unknown route $name');
