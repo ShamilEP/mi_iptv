@@ -5,6 +5,7 @@ import 'package:mi_iptv/app/di/app_dependencies.dart';
 import 'package:mi_iptv/core/persistence/memory_local_media_store.dart';
 import 'package:mi_iptv/features/catalog/data/repositories/in_memory_catalog_repository.dart';
 import 'package:mi_iptv/features/player/data/adapters/memory_media_player_controller.dart';
+import 'package:mi_iptv/features/player/domain/services/playback_retry_coordinator.dart';
 import 'package:mi_iptv/features/sync/data/repositories/in_memory_sync_repository.dart';
 import 'package:mi_iptv/features/sync/domain/usecases/resolve_sync_conflict.dart';
 
@@ -40,6 +41,7 @@ void main() {
     expect(tv.sourceCredentialStore, isNotNull);
     expect(tv.localMediaStore, isA<MemoryLocalMediaStore>());
     expect(tv.mediaPlayer, isA<MemoryMediaPlayerController>());
+    expect(tv.playbackRetry, isA<PlaybackRetryCoordinator>());
 
     AppDependencies.mount(AppDependencies(clientKind: ClientKind.companion));
     final companion = AppDependencies.instance;
@@ -47,6 +49,7 @@ void main() {
     expect(companion.syncRepository, isA<InMemorySyncRepository>());
     expect(companion.sessionTokenStore, isNotNull);
     expect(companion.mediaPlayer, isA<MemoryMediaPlayerController>());
+    expect(companion.playbackRetry, isA<PlaybackRetryCoordinator>());
   });
 
   test('instance throws before mount', () {

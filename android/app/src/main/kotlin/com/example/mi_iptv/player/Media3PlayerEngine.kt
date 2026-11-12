@@ -42,6 +42,7 @@ internal class Media3PlayerEngine(
 
         override fun onPlayerError(error: PlaybackException) {
             // Do not include stream credentials, headers, or license payloads.
+            // TV-054: errorCodeName feeds Dart PlaybackErrorClassifier.
             emitStatus(
                 phase = "error",
                 message = error.errorCodeName,
