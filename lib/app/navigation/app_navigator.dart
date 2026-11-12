@@ -10,6 +10,7 @@ import '../../features/player/presentation/tv/tv_vod_player_page.dart';
 import '../../features/search/presentation/tv/tv_search_page.dart';
 import '../../features/settings/presentation/tv/tv_settings_page.dart';
 import '../client_kind.dart';
+import '../di/app_dependencies.dart';
 import 'app_routes.dart';
 
 /// Builds [MaterialPageRoute]s for [AppRoutes] (CMP-002 / TV-002).
@@ -65,7 +66,13 @@ abstract final class AppNavigator {
       case AppRoutes.tvVodPlayer:
         return MaterialPageRoute<void>(
           settings: settings,
-          builder: (_) => const TvVodPlayerPage(),
+          builder: (_) {
+            // TV-062: wire Media3 when the composition root is mounted.
+            final player = AppDependencies.isMounted
+                ? AppDependencies.instance.mediaPlayer
+                : null;
+            return TvVodPlayerPage(mediaPlayer: player);
+          },
         );
       default:
         return _unknown(settings, 'Unknown route $name');
