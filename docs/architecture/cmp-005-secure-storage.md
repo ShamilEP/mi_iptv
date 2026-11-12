@@ -1,7 +1,7 @@
 # CMP-005 — Companion secure storage
 
 **Status:** Implemented (platform adapter + ports).  
-**Refs:** Security §3.2; SEC-C06; tracker CMP-005. Related: TV-008 (reuse adapter).
+**Refs:** Security §3.2; SEC-C06; tracker CMP-005. Related: [TV-008](./tv-008-secure-storage.md) (tokens + source credentials + Logcat redaction).
 
 ## Goal
 

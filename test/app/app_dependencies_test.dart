@@ -36,6 +36,7 @@ void main() {
     expect(tv.secureStorage, isNotNull);
     expect(tv.sessionTokenStore, isNotNull);
     expect(tv.pairingSecureStore, isNotNull);
+    expect(tv.sourceCredentialStore, isNotNull);
     expect(tv.localMediaStore, isA<MemoryLocalMediaStore>());
 
     AppDependencies.mount(AppDependencies(clientKind: ClientKind.companion));
