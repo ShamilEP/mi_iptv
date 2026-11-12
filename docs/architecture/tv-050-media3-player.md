@@ -31,6 +31,10 @@ Provide a UI-independent playback port with a Media3/ExoPlayer implementation wh
 MVP schemes are **ClearKey + Widevine L3**. This task lands the Media3 host and controller
 adapter; license session wiring is deferred to dedicated playback/DRM follow-ups.
 
+## Follow-up
+
+Stream formats (HLS / DASH / progressive), sniffing, headers, and redirects: [tv-051-stream-formats.md](./tv-051-stream-formats.md).
+
 ## Validation
 
 - `test/features/player/data/media3_player_adapter_test.dart`

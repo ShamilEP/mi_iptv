@@ -1,6 +1,9 @@
 import 'dart:async';
 
+import '../../domain/entities/playback_request.dart';
+import '../../domain/entities/stream_protocol.dart';
 import '../../domain/repositories/media_player_controller.dart';
+import '../../domain/services/stream_format_sniffer.dart';
 
 /// In-memory [MediaPlayerController] for unit tests and non-TV surfaces
 /// (Companion has no MVP video playback).
@@ -11,20 +14,31 @@ final class MemoryMediaPlayerController implements MediaPlayerController {
 
   final _controller = StreamController<MediaPlayerStatus>.broadcast();
   MediaPlayerStatus _status = const MediaPlayerStatus(phase: MediaPlayerPhase.idle);
+  PlaybackRequest? _lastRequest;
+  StreamProtocol? _lastProtocol;
 
   MediaPlayerStatus get currentStatus => _status;
+
+  PlaybackRequest? get lastRequest => _lastRequest;
+
+  StreamProtocol? get lastProtocol => _lastProtocol;
 
   @override
   Stream<MediaPlayerStatus> get status => _controller.stream;
 
   @override
-  Future<void> play(Uri streamUri) async {
+  Future<void> play(PlaybackRequest request) async {
+    _lastRequest = request;
+    _lastProtocol = StreamFormatSniffer.sniff(
+      request.streamUri,
+      protocolHint: request.protocolHint,
+    );
     _emit(
       MediaPlayerStatus(
         phase: MediaPlayerPhase.playing,
         position: Duration.zero,
         duration: const Duration(minutes: 1),
-        message: streamUri.scheme.isEmpty ? 'invalid_uri' : null,
+        message: request.streamUri.scheme.isEmpty ? 'invalid_uri' : null,
       ),
     );
   }

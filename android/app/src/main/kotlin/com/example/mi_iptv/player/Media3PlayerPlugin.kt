@@ -6,7 +6,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
 /**
- * Flutter ↔ Media3 bridge (TV-050).
+ * Flutter ↔ Media3 bridge (TV-050 / TV-051).
  *
  * Registers channels on the Flutter engine so [Media3PlayerEngine] outlives
  * individual Flutter routes / screens.
@@ -24,7 +24,6 @@ class Media3PlayerPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Event
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         engine = Media3PlayerEngine(binding.applicationContext) { status ->
-            // EventChannel must be used on the platform thread that created the sink.
             eventSink?.success(status)
         }
         methodChannel = MethodChannel(binding.binaryMessenger, METHOD_CHANNEL).also {
@@ -58,7 +57,22 @@ class Media3PlayerPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Event
                     result.error("bad_args", "uri required", null)
                     return
                 }
-                player.play(uri)
+                val protocol = call.argument<String>("protocol")
+                val userAgent = call.argument<String>("userAgent")
+                @Suppress("UNCHECKED_CAST")
+                val rawHeaders = call.argument<Map<*, *>>("headers")
+                val headers = linkedMapOf<String, String>()
+                rawHeaders?.forEach { (key, value) ->
+                    if (key is String && value is String) {
+                        headers[key] = value
+                    }
+                }
+                player.play(
+                    uri = uri,
+                    protocol = protocol,
+                    headers = headers,
+                    userAgent = userAgent,
+                )
                 result.success(null)
             }
             "pause" -> {
