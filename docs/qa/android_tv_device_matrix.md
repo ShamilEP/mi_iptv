@@ -110,7 +110,7 @@ Update the **Status** column in this table when hardware is checked out (owner +
 |---|---|---|
 | Focus / D-pad / overscan | M (+ L) | Widget tests; [tv_accessibility.md](./tv_accessibility.md) |
 | 2–3 m legibility | M on 1080p panel | [tv_distance_legibility.md](./tv_distance_legibility.md) |
-| Memory / image cache | L | Manual soak on stick |
+| Memory / image cache | L | Manual soak on stick; [live_playback_soak.md](./live_playback_soak.md) (QA-042) |
 | Live TV channel change QoE | M | Manual + future device tests |
 | DRM smoke (ClearKey / WV L3) | M or H | Player tasks (TV-050+) on physical device |
 | 4K | H | Release 1 preference |
