@@ -16,6 +16,7 @@ import '../features/player/data/adapters/memory_media_player_controller.dart';
 import '../features/player/data/adapters/memory_playback_session_host.dart';
 import '../features/player/domain/repositories/media_player_controller.dart';
 import '../features/player/domain/repositories/playback_session_host.dart';
+import '../features/player/domain/services/abr_buffer_policy.dart';
 import 'app.dart';
 import 'app_environment.dart';
 import 'client_kind.dart';
@@ -50,8 +51,8 @@ Future<void> bootstrap({
     oemCompatibility: oem,
     // TV-012: bounded ImageCache + thumbnail decode.
     imagePipeline: imagePipeline,
-    // TV-050: Media3 on TV; Companion keeps memory (no MVP video playback).
-    mediaPlayer: _mediaPlayerFor(clientKind),
+    // TV-050 / TV-053: Media3 on TV with OEM-aware ABR; Companion keeps memory.
+    mediaPlayer: _mediaPlayerFor(clientKind, oem),
     // TV-052: audio focus / keep-screen-on / HDMI (TV only).
     playbackSessionHost: sessionHost,
   );
@@ -72,9 +73,14 @@ Future<OemCompatibility> _oemFor(ClientKind clientKind) async {
   return OemCompatibility.forIdentity(identity);
 }
 
-MediaPlayerController _mediaPlayerFor(ClientKind clientKind) {
+MediaPlayerController _mediaPlayerFor(
+  ClientKind clientKind,
+  OemCompatibility oem,
+) {
   return switch (clientKind) {
-    ClientKind.tv => Media3PlayerAdapter(),
+    ClientKind.tv => Media3PlayerAdapter(
+        abrPolicy: AbrBufferPolicy(oem: oem.profile),
+      ),
     ClientKind.companion => MemoryMediaPlayerController(),
   };
 }

@@ -8,16 +8,20 @@ import androidx.media3.common.MimeTypes
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.trackselection.AdaptiveTrackSelection
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 
 /**
- * Owns a single [ExoPlayer] instance for the Flutter process (TV-050 / TV-051).
+ * Owns a single [ExoPlayer] instance for the Flutter process (TV-050 / TV-051 / TV-053).
  *
  * Lifecycle is tied to the Flutter engine plugin — not to Flutter screens.
  * Supports HLS, DASH, progressive TS/MP4 with content-type sniffing for
  * extension-less IPTV URLs, custom headers / User-Agent, and cross-protocol
- * redirects. DRM (ClearKey / Widevine L3) hooks land in later playback tasks.
+ * redirects. ABR / buffer profiles (live vs VOD, device ceilings) land via
+ * [AbrBufferConfig] (TV-053 / NFR-QOE-04).
  */
 internal class Media3PlayerEngine(
     context: Context,
@@ -29,6 +33,7 @@ internal class Media3PlayerEngine(
     private var positionTicker: Runnable? = null
     private var lastHeaders: Map<String, String> = emptyMap()
     private var lastUserAgent: String? = null
+    private var lastAbr: AbrBufferConfig = AbrBufferConfig.vodDefault
 
     private val listener = object : Player.Listener {
         override fun onPlaybackStateChanged(playbackState: Int) {
@@ -56,9 +61,14 @@ internal class Media3PlayerEngine(
         protocol: String?,
         headers: Map<String, String>,
         userAgent: String?,
+        abr: AbrBufferConfig,
     ) {
         runOnMain {
-            val exo = ensurePlayer(headers = headers, userAgent = userAgent)
+            val exo = ensurePlayer(
+                headers = headers,
+                userAgent = userAgent,
+                abr = abr,
+            )
             val item = MediaItem.Builder()
                 .setUri(uri)
                 .apply {
@@ -105,9 +115,14 @@ internal class Media3PlayerEngine(
     private fun ensurePlayer(
         headers: Map<String, String>,
         userAgent: String?,
+        abr: AbrBufferConfig,
     ): ExoPlayer {
         val existing = player
-        if (existing != null && headers == lastHeaders && userAgent == lastUserAgent) {
+        if (existing != null &&
+            headers == lastHeaders &&
+            userAgent == lastUserAgent &&
+            abr == lastAbr
+        ) {
             return existing
         }
         if (existing != null) {
@@ -115,6 +130,7 @@ internal class Media3PlayerEngine(
         }
         lastHeaders = headers
         lastUserAgent = userAgent
+        lastAbr = abr
 
         val httpFactory = DefaultHttpDataSource.Factory()
             .setAllowCrossProtocolRedirects(true)
@@ -130,8 +146,32 @@ internal class Media3PlayerEngine(
         val mediaSourceFactory = DefaultMediaSourceFactory(appContext)
             .setDataSourceFactory(httpFactory)
 
+        val loadControl = DefaultLoadControl.Builder()
+            .setBufferDurationsMs(
+                abr.minBufferMs,
+                abr.maxBufferMs,
+                abr.bufferForPlaybackMs,
+                abr.bufferForPlaybackAfterRebufferMs,
+            )
+            .build()
+
+        val adaptiveFactory = AdaptiveTrackSelection.Factory(
+            abr.minDurationForQualityIncreaseMs,
+            /* maxDurationForQualityDecreaseMs */ 25_000,
+            /* minDurationToRetainAfterDiscardMs */ 25_000,
+            abr.bandwidthFraction,
+        )
+        val trackSelector = DefaultTrackSelector(appContext, adaptiveFactory)
+        trackSelector.parameters = trackSelector.buildUponParameters()
+            .setMaxVideoBitrate(abr.maxVideoBitrateBps)
+            .setMaxVideoSize(abr.maxWidth, abr.maxHeight)
+            .setForceHighestSupportedBitrate(false)
+            .build()
+
         return ExoPlayer.Builder(appContext)
             .setMediaSourceFactory(mediaSourceFactory)
+            .setLoadControl(loadControl)
+            .setTrackSelector(trackSelector)
             .build()
             .also {
                 it.addListener(listener)
@@ -208,6 +248,77 @@ internal class Media3PlayerEngine(
             block()
         } else {
             mainHandler.post(block)
+        }
+    }
+}
+
+/** Wire mirror of Dart [AbrBufferProfile] (TV-053). */
+internal data class AbrBufferConfig(
+    val minBufferMs: Int,
+    val maxBufferMs: Int,
+    val bufferForPlaybackMs: Int,
+    val bufferForPlaybackAfterRebufferMs: Int,
+    val maxVideoBitrateBps: Int,
+    val maxWidth: Int,
+    val maxHeight: Int,
+    val bandwidthFraction: Float,
+    val minDurationForQualityIncreaseMs: Int,
+) {
+    companion object {
+        val vodDefault = AbrBufferConfig(
+            minBufferMs = 5_000,
+            maxBufferMs = 50_000,
+            bufferForPlaybackMs = 2_500,
+            bufferForPlaybackAfterRebufferMs = 5_000,
+            maxVideoBitrateBps = 6_000_000,
+            maxWidth = 1920,
+            maxHeight = 1080,
+            bandwidthFraction = 0.85f,
+            minDurationForQualityIncreaseMs = 10_000,
+        )
+
+        fun fromMap(raw: Map<*, *>?): AbrBufferConfig {
+            if (raw == null) return vodDefault
+            fun intOf(key: String, fallback: Int): Int {
+                val value = raw[key]
+                return when (value) {
+                    is Number -> value.toInt()
+                    else -> fallback
+                }
+            }
+            fun floatOf(key: String, fallback: Float): Float {
+                val value = raw[key]
+                return when (value) {
+                    is Number -> value.toFloat()
+                    else -> fallback
+                }
+            }
+            return AbrBufferConfig(
+                minBufferMs = intOf("minBufferMs", vodDefault.minBufferMs),
+                maxBufferMs = intOf("maxBufferMs", vodDefault.maxBufferMs),
+                bufferForPlaybackMs = intOf(
+                    "bufferForPlaybackMs",
+                    vodDefault.bufferForPlaybackMs,
+                ),
+                bufferForPlaybackAfterRebufferMs = intOf(
+                    "bufferForPlaybackAfterRebufferMs",
+                    vodDefault.bufferForPlaybackAfterRebufferMs,
+                ),
+                maxVideoBitrateBps = intOf(
+                    "maxVideoBitrateBps",
+                    vodDefault.maxVideoBitrateBps,
+                ),
+                maxWidth = intOf("maxWidth", vodDefault.maxWidth),
+                maxHeight = intOf("maxHeight", vodDefault.maxHeight),
+                bandwidthFraction = floatOf(
+                    "bandwidthFraction",
+                    vodDefault.bandwidthFraction,
+                ),
+                minDurationForQualityIncreaseMs = intOf(
+                    "minDurationForQualityIncreaseMs",
+                    vodDefault.minDurationForQualityIncreaseMs,
+                ),
+            )
         }
     }
 }
