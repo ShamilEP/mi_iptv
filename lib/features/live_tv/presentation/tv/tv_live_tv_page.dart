@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/accessibility/tv_accessibility.dart';
+import '../../../../core/oem/tv_remote_action.dart';
+import '../../../../core/oem/tv_remote_key_mapper.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/channel_info_overlay.dart';
 import '../../../../core/widgets/mi_overlay_panel.dart';
@@ -16,6 +18,7 @@ import 'tv_live_tv_channel_list.dart';
 /// shows name, number, logo, and source; LIVE + active-source badges indicate
 /// status. When [streamFailed] is true, [StreamFailureRecoveryOverlay] keeps
 /// that channel context and offers recovery actions (DSN-039).
+/// CH+/CH− (and OEM aliases via [keyMapper]) zap channels (TV-011).
 class TvLiveTvPage extends StatefulWidget {
   const TvLiveTvPage({
     super.key,
@@ -27,6 +30,7 @@ class TvLiveTvPage extends StatefulWidget {
     this.onRetry,
     this.onSwitchSource,
     this.onBackToChannels,
+    this.keyMapper = const TvRemoteKeyMapper(),
   });
 
   final List<TvLiveTvChannel> channels;
@@ -47,6 +51,9 @@ class TvLiveTvPage extends StatefulWidget {
 
   /// Called when Back to channels is activated on the recovery overlay.
   final VoidCallback? onBackToChannels;
+
+  /// OEM-aware remote key map (TV-011). Defaults to standard CH+/CH− only.
+  final TvRemoteKeyMapper keyMapper;
 
   static const List<TvLiveTvChannel> demoChannels = <TvLiveTvChannel>[
     TvLiveTvChannel(
@@ -96,6 +103,17 @@ class _TvLiveTvPageState extends State<TvLiveTvPage> {
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
     if (widget.streamFailed) return KeyEventResult.ignored;
     if (event is! KeyDownEvent) return KeyEventResult.ignored;
+
+    final remote = widget.keyMapper.actionFor(event.logicalKey);
+    if (remote == TvRemoteAction.channelUp) {
+      _select(_selectedIndex + 1);
+      return KeyEventResult.handled;
+    }
+    if (remote == TvRemoteAction.channelDown) {
+      _select(_selectedIndex - 1);
+      return KeyEventResult.handled;
+    }
+
     if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
       _select(_selectedIndex - 1);
       return KeyEventResult.handled;

@@ -3,6 +3,7 @@ import 'package:mi_iptv/app/app_environment.dart';
 import 'package:mi_iptv/app/client_kind.dart';
 import 'package:mi_iptv/app/di/app_dependencies.dart';
 import 'package:mi_iptv/core/network/memory_connectivity_monitor.dart';
+import 'package:mi_iptv/core/oem/oem_compatibility.dart';
 import 'package:mi_iptv/core/persistence/memory_local_media_store.dart';
 import 'package:mi_iptv/features/catalog/data/repositories/in_memory_catalog_repository.dart';
 import 'package:mi_iptv/features/player/data/adapters/memory_media_player_controller.dart';
@@ -43,6 +44,7 @@ void main() {
     expect(tv.localMediaStore, isA<MemoryLocalMediaStore>());
     expect(tv.connectivity, isA<MemoryConnectivityMonitor>());
     expect(tv.offlineMode, isNotNull);
+    expect(tv.oemCompatibility, isA<OemCompatibility>());
     expect(tv.mediaPlayer, isA<MemoryMediaPlayerController>());
     expect(tv.playbackRetry, isA<PlaybackRetryCoordinator>());
 

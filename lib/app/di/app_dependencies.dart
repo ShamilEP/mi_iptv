@@ -1,6 +1,7 @@
 import '../../core/network/connectivity_monitor.dart';
 import '../../core/network/memory_connectivity_monitor.dart';
 import '../../core/network/offline_mode_resolver.dart';
+import '../../core/oem/oem_compatibility.dart';
 import '../../core/persistence/local_media_store.dart';
 import '../../core/persistence/memory_local_media_store.dart';
 import '../../core/storage/memory_secure_storage.dart';
@@ -24,7 +25,7 @@ import '../app_environment.dart';
 import '../client_kind.dart';
 
 /// Manual composition root (CMP-002 / TV-002 / TV-005 / CMP-005 / TV-007 /
-/// TV-008 / TV-010 / TV-050 / TV-054).
+/// TV-008 / TV-010 / TV-011 / TV-050 / TV-054).
 ///
 /// TV and Companion mount the **same** shared domain graph; only [clientKind]
 /// (and later surface adapters) differ. No third-party DI until approved.
@@ -35,6 +36,8 @@ import '../client_kind.dart';
 /// device [bootstrap] injects [DriftLocalMediaStore] (TV-007).
 /// [connectivity] defaults to [MemoryConnectivityMonitor] for unit tests;
 /// device [bootstrap] injects [PollingConnectivityMonitor] (TV-010).
+/// [oemCompatibility] defaults to [OemCompatibility.unknown]; TV [bootstrap]
+/// resolves from Android `Build.*` (TV-011).
 /// [mediaPlayer] defaults to [MemoryMediaPlayerController]; TV [bootstrap]
 /// injects [Media3PlayerAdapter] (TV-050). Lifecycle is owned here / native
 /// engine — not by player screens.
@@ -51,6 +54,7 @@ final class AppDependencies {
     SourceCredentialStore? sourceCredentialStore,
     LocalMediaStore? localMediaStore,
     ConnectivityMonitor? connectivity,
+    OemCompatibility? oemCompatibility,
     MediaPlayerController? mediaPlayer,
     PlaybackRetryCoordinator? playbackRetry,
     PlaybackRetryPolicy retryPolicy = PlaybackRetryPolicy.defaults,
@@ -80,6 +84,7 @@ final class AppDependencies {
         connectivity: network,
         localMediaStore: mediaStore,
       ),
+      oemCompatibility: oemCompatibility ?? OemCompatibility.unknown(),
       mediaPlayer: player,
       playbackRetry: playbackRetry ??
           PlaybackRetryCoordinator(player: player, policy: retryPolicy),
@@ -99,6 +104,7 @@ final class AppDependencies {
     required this.localMediaStore,
     required this.connectivity,
     required this.offlineMode,
+    required this.oemCompatibility,
     required this.mediaPlayer,
     required this.playbackRetry,
   });
@@ -115,6 +121,7 @@ final class AppDependencies {
   final LocalMediaStore localMediaStore;
   final ConnectivityMonitor connectivity;
   final OfflineModeResolver offlineMode;
+  final OemCompatibility oemCompatibility;
   final MediaPlayerController mediaPlayer;
   final PlaybackRetryCoordinator playbackRetry;
 

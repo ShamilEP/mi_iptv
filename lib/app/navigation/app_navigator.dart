@@ -6,6 +6,7 @@ import '../../features/catalog/presentation/tv/tv_content_detail_page.dart';
 import '../../features/devices/presentation/companion/companion_remote_page.dart';
 import '../../features/favorites/presentation/tv/tv_favorites_page.dart';
 import '../../features/home/presentation/tv/tv_home_connectivity_binder.dart';
+import '../../core/oem/tv_remote_key_mapper.dart';
 import '../../features/live_tv/presentation/tv/tv_live_tv_page.dart';
 import '../../features/player/presentation/tv/tv_vod_player_page.dart';
 import '../../features/search/presentation/tv/tv_search_page.dart';
@@ -47,7 +48,13 @@ abstract final class AppNavigator {
       case AppRoutes.tvLive:
         return MaterialPageRoute<void>(
           settings: settings,
-          builder: (_) => const TvLiveTvPage(),
+          builder: (_) {
+            // TV-011: OEM CH+/CH− (+ quirk aliases) from composition root.
+            final keyMapper = AppDependencies.isMounted
+                ? AppDependencies.instance.oemCompatibility.keyMapper
+                : null;
+            return TvLiveTvPage(keyMapper: keyMapper ?? const TvRemoteKeyMapper());
+          },
         );
       case AppRoutes.tvSearch:
         return MaterialPageRoute<void>(
