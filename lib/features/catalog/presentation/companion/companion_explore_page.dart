@@ -4,6 +4,7 @@ import '../../../../core/accessibility/companion_accessibility.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/brand_lockup.dart';
 import '../../../../core/widgets/loading_pattern.dart';
+import '../../../../core/widgets/offline_banner.dart';
 import '../../../../core/widgets/status_pattern.dart';
 import '../../../../core/widgets/status_pattern_copy.dart';
 import '../../../../core/widgets/sync_conflict_banner.dart';
@@ -12,18 +13,19 @@ import 'companion_explore_copy.dart';
 import 'companion_explore_item.dart';
 import 'companion_explore_panels.dart';
 
-/// Companion Explore showcase catalog and Send-to-TV (DSN-052 / CMP-045).
+/// Companion Explore showcase catalog and Send-to-TV (DSN-052 / CMP-045 / CMP-006).
 ///
-/// Browse Featured, Live, and Movies. Open a title for details and a
+/// Browse Featured, Live, Movies, and Favorites. Open a title for details and a
 /// prominent Ember **Reproducir en TV** action. There is no local video player.
-/// [surfaceState] exercises Loading, Empty, Error, Offline, Syncing, and
-/// Sync Conflict on this companion surface.
+/// [surfaceState] exercises Loading, Empty, Error, Offline, Offline-cached,
+/// Syncing, and Sync Conflict on this companion surface.
 class CompanionExplorePage extends StatefulWidget {
   const CompanionExplorePage({
     super.key,
     this.featured = demoFeatured,
     this.live = demoLive,
     this.movies = demoMovies,
+    this.favorites = const <CompanionExploreItem>[],
     this.tvName = CompanionExploreCopy.demoTvName,
     this.surfaceState = CompanionExploreSurfaceState.ready,
     this.onSendToTv,
@@ -34,6 +36,7 @@ class CompanionExplorePage extends StatefulWidget {
   final List<CompanionExploreItem> featured;
   final List<CompanionExploreItem> live;
   final List<CompanionExploreItem> movies;
+  final List<CompanionExploreItem> favorites;
   final String tvName;
   final CompanionExploreSurfaceState surfaceState;
   final ValueChanged<CompanionExploreItem>? onSendToTv;
@@ -129,6 +132,8 @@ class _CompanionExplorePageState extends State<CompanionExplorePage> {
         return ErrorPattern(onAction: widget.onRetry);
       case CompanionExploreSurfaceState.offline:
         return OfflinePattern(onAction: widget.onRetry);
+      case CompanionExploreSurfaceState.offlineCached:
+        return _catalogOrDetail(cached: true);
       case CompanionExploreSurfaceState.syncing:
         return const Center(child: SyncingPattern(minHeight: AppSpacing.xxxl));
       case CompanionExploreSurfaceState.syncConflict:
@@ -137,23 +142,41 @@ class _CompanionExplorePageState extends State<CompanionExplorePage> {
           onResolve: widget.onResolveConflict,
         );
       case CompanionExploreSurfaceState.ready:
-        final selected = _selected;
-        if (selected == null) {
-          return CompanionExploreCatalog(
-            featured: widget.featured,
-            live: widget.live,
-            movies: widget.movies,
-            onSelect: _select,
-          );
-        }
-        return CompanionExploreDetail(
-          item: selected,
-          tvName: widget.tvName,
-          sentLabel: _sentLabel,
-          onSendToTv: _send,
-          onBack: _back,
-        );
+        return _catalogOrDetail(cached: false);
     }
+  }
+
+  Widget _catalogOrDetail({required bool cached}) {
+    final selected = _selected;
+    final catalog = CompanionExploreCatalog(
+      featured: widget.featured,
+      live: widget.live,
+      movies: widget.movies,
+      favorites: widget.favorites,
+      onSelect: _select,
+      cachedLabels: cached,
+    );
+    if (selected == null) {
+      if (!cached) return catalog;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          OfflineBanner(
+            message: CompanionExploreCopy.offlineCachedBanner,
+            onRetry: widget.onRetry,
+          ),
+          const SizedBox(height: AppSpacing.md),
+          catalog,
+        ],
+      );
+    }
+    return CompanionExploreDetail(
+      item: selected,
+      tvName: widget.tvName,
+      sentLabel: _sentLabel,
+      onSendToTv: _send,
+      onBack: _back,
+    );
   }
 
   @override

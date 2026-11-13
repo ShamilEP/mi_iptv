@@ -14,4 +14,4 @@ class CompanionExploreItem {
 }
 
 /// Showcase row kinds on Explore.
-enum CompanionExploreKind { featured, live, movies }
+enum CompanionExploreKind { featured, live, movies, favorites }
