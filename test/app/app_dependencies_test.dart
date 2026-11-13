@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mi_iptv/app/app_environment.dart';
 import 'package:mi_iptv/app/client_kind.dart';
 import 'package:mi_iptv/app/di/app_dependencies.dart';
+import 'package:mi_iptv/core/images/image_pipeline.dart';
 import 'package:mi_iptv/core/network/memory_connectivity_monitor.dart';
 import 'package:mi_iptv/core/oem/oem_compatibility.dart';
 import 'package:mi_iptv/core/persistence/memory_local_media_store.dart';
@@ -45,6 +46,7 @@ void main() {
     expect(tv.connectivity, isA<MemoryConnectivityMonitor>());
     expect(tv.offlineMode, isNotNull);
     expect(tv.oemCompatibility, isA<OemCompatibility>());
+    expect(tv.imagePipeline, isA<ImagePipeline>());
     expect(tv.mediaPlayer, isA<MemoryMediaPlayerController>());
     expect(tv.playbackRetry, isA<PlaybackRetryCoordinator>());
 

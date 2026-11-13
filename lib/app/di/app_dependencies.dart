@@ -1,3 +1,5 @@
+import '../../core/images/image_pipeline.dart';
+import '../../core/images/image_pipeline_config.dart';
 import '../../core/network/connectivity_monitor.dart';
 import '../../core/network/memory_connectivity_monitor.dart';
 import '../../core/network/offline_mode_resolver.dart';
@@ -25,7 +27,7 @@ import '../app_environment.dart';
 import '../client_kind.dart';
 
 /// Manual composition root (CMP-002 / TV-002 / TV-005 / CMP-005 / TV-007 /
-/// TV-008 / TV-010 / TV-011 / TV-050 / TV-054).
+/// TV-008 / TV-010 / TV-011 / TV-012 / TV-050 / TV-054).
 ///
 /// TV and Companion mount the **same** shared domain graph; only [clientKind]
 /// (and later surface adapters) differ. No third-party DI until approved.
@@ -38,6 +40,7 @@ import '../client_kind.dart';
 /// device [bootstrap] injects [PollingConnectivityMonitor] (TV-010).
 /// [oemCompatibility] defaults to [OemCompatibility.unknown]; TV [bootstrap]
 /// resolves from Android `Build.*` (TV-011).
+/// [imagePipeline] defaults from OEM / Companion budgets (TV-012).
 /// [mediaPlayer] defaults to [MemoryMediaPlayerController]; TV [bootstrap]
 /// injects [Media3PlayerAdapter] (TV-050). Lifecycle is owned here / native
 /// engine — not by player screens.
@@ -55,6 +58,7 @@ final class AppDependencies {
     LocalMediaStore? localMediaStore,
     ConnectivityMonitor? connectivity,
     OemCompatibility? oemCompatibility,
+    ImagePipeline? imagePipeline,
     MediaPlayerController? mediaPlayer,
     PlaybackRetryCoordinator? playbackRetry,
     PlaybackRetryPolicy retryPolicy = PlaybackRetryPolicy.defaults,
@@ -64,6 +68,13 @@ final class AppDependencies {
     final player = mediaPlayer ?? MemoryMediaPlayerController();
     final mediaStore = localMediaStore ?? MemoryLocalMediaStore();
     final network = connectivity ?? MemoryConnectivityMonitor();
+    final oem = oemCompatibility ?? OemCompatibility.unknown();
+    final images = imagePipeline ??
+        ImagePipeline(
+          config: clientKind == ClientKind.companion
+              ? ImagePipelineConfig.companionDefault
+              : ImagePipelineConfig.forOem(oem.profile),
+        );
     return AppDependencies._(
       clientKind: clientKind,
       environment: environment,
@@ -84,7 +95,8 @@ final class AppDependencies {
         connectivity: network,
         localMediaStore: mediaStore,
       ),
-      oemCompatibility: oemCompatibility ?? OemCompatibility.unknown(),
+      oemCompatibility: oem,
+      imagePipeline: images,
       mediaPlayer: player,
       playbackRetry: playbackRetry ??
           PlaybackRetryCoordinator(player: player, policy: retryPolicy),
@@ -105,6 +117,7 @@ final class AppDependencies {
     required this.connectivity,
     required this.offlineMode,
     required this.oemCompatibility,
+    required this.imagePipeline,
     required this.mediaPlayer,
     required this.playbackRetry,
   });
@@ -122,6 +135,7 @@ final class AppDependencies {
   final ConnectivityMonitor connectivity;
   final OfflineModeResolver offlineMode;
   final OemCompatibility oemCompatibility;
+  final ImagePipeline imagePipeline;
   final MediaPlayerController mediaPlayer;
   final PlaybackRetryCoordinator playbackRetry;
 

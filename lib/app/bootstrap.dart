@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
+import '../core/images/image_pipeline.dart';
+import '../core/images/image_pipeline_config.dart';
 import '../core/network/polling_connectivity_monitor.dart';
 import '../core/oem/android_oem_device_identity_reader.dart';
 import '../core/oem/oem_compatibility.dart';
@@ -26,6 +28,11 @@ Future<void> bootstrap({
   final mediaDb = AppDatabase.defaults();
   final connectivity = PollingConnectivityMonitor();
   final oem = await _oemFor(clientKind);
+  final imagePipeline = ImagePipeline.forDevice(
+    config: clientKind == ClientKind.companion
+        ? ImagePipelineConfig.companionDefault
+        : ImagePipelineConfig.forOem(oem.profile),
+  );
   AppDependencies.mount(
     AppDependencies(
       clientKind: clientKind,
@@ -38,6 +45,8 @@ Future<void> bootstrap({
       connectivity: connectivity,
       // TV-011: OEM key map / decoder / display / quirks from Build fingerprint.
       oemCompatibility: oem,
+      // TV-012: bounded ImageCache + thumbnail decode.
+      imagePipeline: imagePipeline,
       // TV-050: Media3 on TV; Companion keeps memory (no MVP video playback).
       mediaPlayer: _mediaPlayerFor(clientKind),
     ),
