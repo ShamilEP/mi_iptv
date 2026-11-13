@@ -93,6 +93,7 @@ Backend/infra availability is an **entry** dependency, not owned by this repo.
 - Automated Companion touch suite (QA-026): pairing, remote, send-to-TV on Android + iOS — see [companion_touch.md](./companion_touch.md).
 - Automated offline-first suite (QA-039): airplane / backend-down must not block interaction or playback recovery — see [offline_first.md](./offline_first.md).
 - MVP FR acceptance (QA-019): FR-012…016 / FR-024 / FR-026 / FR-028 matrix — see [qa-019_fr_acceptance.md](./qa-019_fr_acceptance.md).
+- Design System visual regression (QA-029): focus + 12 `UiState` PNG baselines via built-in `matchesGoldenFile` — see [visual_regression_design_system.md](./visual_regression_design_system.md).
 - Manual TV D-pad pass: focus ring always visible; first focus on highest-priority control (physical remote / OEM).
 - Manual Companion pass: no video playback; send-to-TV happy path + offline messaging.
 - Negative paths: stream failure + retry, sync conflict toast, offline/empty/error states.
