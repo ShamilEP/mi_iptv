@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  SEC-023 / Security §3.1 — Network Security Config
+
+  - Mi IPTV backend API traffic must remain HTTPS (enforced in Dart
+    TransportSecurityPolicy — not via per-domain NSC, because the API host
+    is configured at runtime).
+  - User-supplied IPTV media URLs are often plain http. Android blocks
+    cleartext unless permitted here; Media3 cannot play those streams
+    otherwise. Cleartext is therefore allowed at the platform layer, while
+    app code refuses cleartext for backend/API and warns on http media.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

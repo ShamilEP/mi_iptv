@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
+import '../../../../core/network/transport_security_policy.dart';
 import '../../domain/entities/playback_request.dart';
 import '../../domain/entities/stream_protocol.dart';
 import '../../domain/repositories/media_player_controller.dart';
@@ -40,13 +41,23 @@ final class Media3PlayerAdapter implements MediaPlayerController {
   Stream<MediaPlayerStatus> get status => _statusController.stream;
 
   @override
-  Future<void> play(PlaybackRequest request) {
+  Future<void> play(PlaybackRequest request) async {
+    // SEC-023: never hand non-http(s) schemes to Media3; do not log the URI.
+    if (!TransportSecurityPolicy.isMediaStreamUriAllowed(request.streamUri)) {
+      _emit(
+        const MediaPlayerStatus(
+          phase: MediaPlayerPhase.error,
+          message: 'unsupported_stream_scheme',
+        ),
+      );
+      return;
+    }
     final protocol = StreamFormatSniffer.sniff(
       request.streamUri,
       protocolHint: request.protocolHint,
     );
     final abr = _abrPolicy.resolve(request.mode);
-    return _invoke('play', <String, Object?>{
+    await _invoke('play', <String, Object?>{
       'uri': request.streamUri.toString(),
       'protocol': protocol.wireName,
       'headers': request.headers,

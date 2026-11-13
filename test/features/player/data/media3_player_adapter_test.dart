@@ -126,6 +126,25 @@ void main() {
     expect(statuses.last.duration, const Duration(seconds: 60));
   });
 
+  test('SEC-023 rejects non-http(s) stream schemes before channel invoke',
+      () async {
+    final adapter = Media3PlayerAdapter();
+    addTearDown(adapter.dispose);
+
+    final statuses = <MediaPlayerStatus>[];
+    final sub = adapter.status.listen(statuses.add);
+    addTearDown(sub.cancel);
+
+    await adapter.play(
+      PlaybackRequest(streamUri: Uri.parse('file:///tmp/a.m3u8')),
+    );
+    await Future<void>.delayed(Duration.zero);
+
+    expect(calls, isEmpty);
+    expect(statuses.last.phase, MediaPlayerPhase.error);
+    expect(statuses.last.message, 'unsupported_stream_scheme');
+  });
+
   test('MissingPluginException becomes error status without crashing', () async {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(const MethodChannel(methodName), null);
