@@ -5,16 +5,18 @@ import 'package:flutter/services.dart';
 import '../../domain/entities/playback_request.dart';
 import '../../domain/entities/stream_protocol.dart';
 import '../../domain/repositories/media_player_controller.dart';
+import '../../domain/services/abr_buffer_policy.dart';
 import '../../domain/services/stream_format_sniffer.dart';
 
 /// Android Media3 / ExoPlayer [MediaPlayerController] via platform channels
-/// (TV-050 / TV-051, approved Option A).
+/// (TV-050 / TV-051 / TV-053, approved Option A).
 ///
 /// Channel ownership / ExoPlayer lifecycle live in the native
 /// `Media3PlayerPlugin` attached to the Flutter engine — not in player
 /// screens. Only this adapter may talk to the Media3 channels.
 final class Media3PlayerAdapter implements MediaPlayerController {
   Media3PlayerAdapter({
+    this._abrPolicy = AbrBufferPolicy.defaults,
     MethodChannel? methodChannel,
     EventChannel? eventChannel,
   })  : _methods = methodChannel ??
@@ -28,6 +30,7 @@ final class Media3PlayerAdapter implements MediaPlayerController {
     _statusController.add(const MediaPlayerStatus(phase: MediaPlayerPhase.idle));
   }
 
+  final AbrBufferPolicy _abrPolicy;
   final MethodChannel _methods;
   final EventChannel _events;
   final _statusController = StreamController<MediaPlayerStatus>.broadcast();
@@ -42,11 +45,13 @@ final class Media3PlayerAdapter implements MediaPlayerController {
       request.streamUri,
       protocolHint: request.protocolHint,
     );
+    final abr = _abrPolicy.resolve(request.mode);
     return _invoke('play', <String, Object?>{
       'uri': request.streamUri.toString(),
       'protocol': protocol.wireName,
       'headers': request.headers,
       'userAgent': request.userAgent,
+      'abr': abr.toWire(),
     });
   }
 

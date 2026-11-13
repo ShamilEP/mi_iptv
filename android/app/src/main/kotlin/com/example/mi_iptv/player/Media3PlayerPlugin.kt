@@ -67,11 +67,14 @@ class Media3PlayerPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Event
                         headers[key] = value
                     }
                 }
+                @Suppress("UNCHECKED_CAST")
+                val abrMap = call.argument<Map<*, *>>("abr")
                 player.play(
                     uri = uri,
                     protocol = protocol,
                     headers = headers,
                     userAgent = userAgent,
+                    abr = AbrBufferConfig.fromMap(abrMap),
                 )
                 result.success(null)
             }

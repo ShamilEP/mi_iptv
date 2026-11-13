@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mi_iptv/features/player/data/adapters/media3_player_adapter.dart';
+import 'package:mi_iptv/features/player/domain/entities/playback_mode.dart';
 import 'package:mi_iptv/features/player/domain/entities/playback_request.dart';
 import 'package:mi_iptv/features/player/domain/entities/stream_protocol.dart';
 import 'package:mi_iptv/features/player/domain/repositories/media_player_controller.dart';
+import 'package:mi_iptv/features/player/domain/services/abr_buffer_policy.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -59,17 +61,22 @@ void main() {
     await adapter.seek(const Duration(seconds: 12));
     await adapter.stop();
 
+    final defaultAbr =
+        AbrBufferPolicy.defaults.resolve(PlaybackMode.vod).toWire();
+
     expect(calls.map((c) => c.method), <String>['play', 'pause', 'seek', 'stop']);
     expect(calls.first.arguments, <String, Object?>{
       'uri': 'https://example.com/stream.m3u8',
       'protocol': 'hls',
       'headers': <String, String>{},
       'userAgent': null,
+      'abr': defaultAbr,
     });
     expect(calls[2].arguments, <String, Object?>{'positionMs': 12000});
   });
 
-  test('play wires sniffed protocol, headers, and user-agent', () async {
+  test('play wires sniffed protocol, headers, user-agent, and ABR profile',
+      () async {
     final adapter = Media3PlayerAdapter();
     addTearDown(adapter.dispose);
 
@@ -79,8 +86,12 @@ void main() {
         protocolHint: StreamProtocol.unknown,
         headers: const <String, String>{'Referer': 'https://portal.example/'},
         userAgent: 'MiIPTV-TV/1.0',
+        mode: PlaybackMode.live,
       ),
     );
+
+    final liveAbr =
+        AbrBufferPolicy.defaults.resolve(PlaybackMode.live).toWire();
 
     expect(calls, hasLength(1));
     expect(calls.single.method, 'play');
@@ -89,6 +100,7 @@ void main() {
       'protocol': 'hls',
       'headers': <String, String>{'Referer': 'https://portal.example/'},
       'userAgent': 'MiIPTV-TV/1.0',
+      'abr': liveAbr,
     });
   });
 
