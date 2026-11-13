@@ -16,5 +16,6 @@ Executable UI: [`TvSplashPage`](../../lib/features/startup/presentation/tv/tv_sp
 
 ## Notes
 
-- Design shell: callers wire `onFinished` to Home / Auth. Native Android `launch_background` stays a separate cold-start concern.
+- Product wiring: [`TvStartupGate`](../../lib/features/startup/presentation/tv/tv_startup_gate.dart) (TV-020) runs warm + JWT inspect, then routes Home / Onboarding — see [tv-020-splash-startup-routing.md](../architecture/tv-020-splash-startup-routing.md).
+- Native Android `launch_background` stays a separate cold-start concern.
 - Focus map: [focus_maps.md](./focus_maps.md) (DSN-040) — non-interactive brand node.

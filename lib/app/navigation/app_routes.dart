@@ -6,6 +6,10 @@ import '../client_kind.dart';
 /// they graduate from gallery/demo pages into the product shell.
 abstract final class AppRoutes {
   static const String home = '/';
+  /// TV splash + startup routing gate (TV-020).
+  static const String tvSplash = '/tv/splash';
+  /// TV onboarding / auth when no stored session JWT (TV-020).
+  static const String tvOnboarding = '/tv/onboarding';
   static const String companionRemote = '/companion/remote';
   static const String companionLogin = '/companion/login';
   static const String tvLive = '/tv/live';
@@ -22,6 +26,8 @@ abstract final class AppRoutes {
       case ClientKind.tv:
         return const <String>[
           home,
+          tvSplash,
+          tvOnboarding,
           tvLive,
           tvSearch,
           tvFavorites,

@@ -24,6 +24,8 @@ void main() {
       contains(AppRoutes.tvContentDetail),
     );
     expect(AppRoutes.forClient(ClientKind.tv), contains(AppRoutes.tvVodPlayer));
+    expect(AppRoutes.forClient(ClientKind.tv), contains(AppRoutes.tvSplash));
+    expect(AppRoutes.forClient(ClientKind.tv), contains(AppRoutes.tvOnboarding));
     expect(
       AppRoutes.forClient(ClientKind.tv),
       isNot(contains(AppRoutes.companionRemote)),
