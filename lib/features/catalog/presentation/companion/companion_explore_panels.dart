@@ -18,6 +18,10 @@ class CompanionExploreCatalog extends StatelessWidget {
     this.favorites = const <CompanionExploreItem>[],
     required this.onSelect,
     this.cachedLabels = false,
+    this.featuredTitle,
+    this.liveTitle,
+    this.moviesTitle,
+    this.favoritesTitle,
   });
 
   final List<CompanionExploreItem> featured;
@@ -29,6 +33,11 @@ class CompanionExploreCatalog extends StatelessWidget {
   /// Appends `(cached)` to rail titles when offline-with-cache (CMP-006).
   final bool cachedLabels;
 
+  final String? featuredTitle;
+  final String? liveTitle;
+  final String? moviesTitle;
+  final String? favoritesTitle;
+
   String _title(String base) => cachedLabels ? '$base (cached)' : base;
 
   @override
@@ -37,21 +46,21 @@ class CompanionExploreCatalog extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _Rail(
-          title: _title(CompanionExploreCopy.featuredTitle),
+          title: _title(featuredTitle ?? CompanionExploreCopy.featuredTitle),
           items: featured,
           kind: ContentCardKind.landscape,
           onSelect: onSelect,
         ),
         const SizedBox(height: AppSpacing.lg),
         _Rail(
-          title: _title(CompanionExploreCopy.liveTitle),
+          title: _title(liveTitle ?? CompanionExploreCopy.liveTitle),
           items: live,
           kind: ContentCardKind.channelTile,
           onSelect: onSelect,
         ),
         const SizedBox(height: AppSpacing.lg),
         _Rail(
-          title: _title(CompanionExploreCopy.moviesTitle),
+          title: _title(moviesTitle ?? CompanionExploreCopy.moviesTitle),
           items: movies,
           kind: ContentCardKind.poster,
           onSelect: onSelect,
@@ -59,7 +68,7 @@ class CompanionExploreCatalog extends StatelessWidget {
         if (favorites.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.lg),
           _Rail(
-            title: _title(CompanionExploreCopy.favoritesTitle),
+            title: _title(favoritesTitle ?? CompanionExploreCopy.favoritesTitle),
             items: favorites,
             kind: ContentCardKind.poster,
             onSelect: onSelect,
@@ -129,6 +138,10 @@ class CompanionExploreDetail extends StatelessWidget {
     required this.onSendToTv,
     required this.onBack,
     this.sentLabel,
+    this.detailTitle,
+    this.sendLabel,
+    this.noPlayerNote,
+    this.backLabel,
   });
 
   final CompanionExploreItem item;
@@ -136,6 +149,10 @@ class CompanionExploreDetail extends StatelessWidget {
   final VoidCallback onSendToTv;
   final VoidCallback onBack;
   final String? sentLabel;
+  final String? detailTitle;
+  final String? sendLabel;
+  final String? noPlayerNote;
+  final String? backLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +170,7 @@ class CompanionExploreDetail extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          CompanionExploreCopy.detailTitle,
+          detailTitle ?? CompanionExploreCopy.detailTitle,
           style: textTheme.headlineMedium?.copyWith(color: brand.ink),
         ),
         const SizedBox(height: AppSpacing.md),
@@ -187,14 +204,14 @@ class CompanionExploreDetail extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
-          CompanionExploreCopy.noPlayerNote,
+          noPlayerNote ?? CompanionExploreCopy.noPlayerNote,
           style: textTheme.bodyLarge?.copyWith(color: brand.muted),
         ),
         const SizedBox(height: AppSpacing.lg),
         SizedBox(
           width: double.infinity,
           child: MiButton(
-            label: CompanionExploreCopy.sendToTvLabel,
+            label: sendLabel ?? CompanionExploreCopy.sendToTvLabel,
             emphasis: ControlEmphasis.sendToTv,
             onPressed: onSendToTv,
           ),
@@ -208,7 +225,7 @@ class CompanionExploreDetail extends StatelessWidget {
         ],
         const SizedBox(height: AppSpacing.md),
         MiButton(
-          label: CompanionExploreCopy.backToCatalogLabel,
+          label: backLabel ?? CompanionExploreCopy.backToCatalogLabel,
           emphasis: ControlEmphasis.secondary,
           onPressed: onBack,
         ),

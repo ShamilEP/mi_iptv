@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/accessibility/companion_accessibility.dart';
+import '../../../../core/l10n/app_locale.dart';
+import '../../../../core/l10n/app_locale_scope.dart';
+import '../../../../core/l10n/app_string_key.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/brand_lockup.dart';
 import '../../../../core/widgets/loading_pattern.dart';
@@ -96,6 +99,14 @@ class _CompanionExplorePageState extends State<CompanionExplorePage> {
   CompanionExploreItem? _selected;
   String? _sentLabel;
 
+  AppLocale _localeOf(BuildContext context) {
+    final scope = context.dependOnInheritedWidgetOfExactType<AppLocaleScope>();
+    return scope?.notifier?.locale ?? AppLocale.en;
+  }
+
+  String _t(BuildContext context, AppStringKey key) =>
+      CompanionExploreCopy.forLocale(_localeOf(context), key);
+
   void _select(CompanionExploreItem item) {
     setState(() {
       _selected = item;
@@ -133,20 +144,20 @@ class _CompanionExplorePageState extends State<CompanionExplorePage> {
       case CompanionExploreSurfaceState.offline:
         return OfflinePattern(onAction: widget.onRetry);
       case CompanionExploreSurfaceState.offlineCached:
-        return _catalogOrDetail(cached: true);
+        return _catalogOrDetail(context, cached: true);
       case CompanionExploreSurfaceState.syncing:
         return const Center(child: SyncingPattern(minHeight: AppSpacing.xxxl));
       case CompanionExploreSurfaceState.syncConflict:
         return SyncConflictBanner(
-          message: CompanionExploreCopy.syncConflictMessage,
+          message: _t(context, AppStringKey.exploreSyncConflict),
           onResolve: widget.onResolveConflict,
         );
       case CompanionExploreSurfaceState.ready:
-        return _catalogOrDetail(cached: false);
+        return _catalogOrDetail(context, cached: false);
     }
   }
 
-  Widget _catalogOrDetail({required bool cached}) {
+  Widget _catalogOrDetail(BuildContext context, {required bool cached}) {
     final selected = _selected;
     final catalog = CompanionExploreCatalog(
       featured: widget.featured,
@@ -155,6 +166,10 @@ class _CompanionExplorePageState extends State<CompanionExplorePage> {
       favorites: widget.favorites,
       onSelect: _select,
       cachedLabels: cached,
+      featuredTitle: _t(context, AppStringKey.exploreFeatured),
+      liveTitle: _t(context, AppStringKey.exploreLive),
+      moviesTitle: _t(context, AppStringKey.exploreMovies),
+      favoritesTitle: _t(context, AppStringKey.exploreFavorites),
     );
     if (selected == null) {
       if (!cached) return catalog;
@@ -162,7 +177,7 @@ class _CompanionExplorePageState extends State<CompanionExplorePage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           OfflineBanner(
-            message: CompanionExploreCopy.offlineCachedBanner,
+            message: _t(context, AppStringKey.exploreOfflineCachedBanner),
             onRetry: widget.onRetry,
           ),
           const SizedBox(height: AppSpacing.md),
@@ -176,6 +191,10 @@ class _CompanionExplorePageState extends State<CompanionExplorePage> {
       sentLabel: _sentLabel,
       onSendToTv: _send,
       onBack: _back,
+      detailTitle: _t(context, AppStringKey.exploreDetailTitle),
+      sendLabel: CompanionExploreCopy.sendToTvLabel,
+      noPlayerNote: _t(context, AppStringKey.exploreNoPlayerNote),
+      backLabel: _t(context, AppStringKey.exploreBackToCatalog),
     );
   }
 
@@ -199,12 +218,12 @@ class _CompanionExplorePageState extends State<CompanionExplorePage> {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Text(
-                  CompanionExploreCopy.title,
+                  _t(context, AppStringKey.exploreTitle),
                   style: textTheme.headlineMedium?.copyWith(color: brand.ink),
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  CompanionExploreCopy.body,
+                  _t(context, AppStringKey.exploreBody),
                   style: textTheme.bodyLarge?.copyWith(color: brand.muted),
                 ),
                 const SizedBox(height: AppSpacing.lg),

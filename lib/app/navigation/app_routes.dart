@@ -12,6 +12,8 @@ abstract final class AppRoutes {
   static const String tvOnboarding = '/tv/onboarding';
   static const String companionRemote = '/companion/remote';
   static const String companionLogin = '/companion/login';
+  /// Companion UI language + locale formats (CMP-008).
+  static const String companionLanguage = '/companion/language';
   static const String tvLive = '/tv/live';
   static const String tvSearch = '/tv/search';
   static const String tvFavorites = '/tv/favorites';
@@ -36,7 +38,12 @@ abstract final class AppRoutes {
           tvVodPlayer,
         ];
       case ClientKind.companion:
-        return const <String>[home, companionRemote, companionLogin];
+        return const <String>[
+          home,
+          companionRemote,
+          companionLogin,
+          companionLanguage,
+        ];
     }
   }
 }
