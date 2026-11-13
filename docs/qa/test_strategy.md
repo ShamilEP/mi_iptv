@@ -9,6 +9,7 @@ Defect workflow & release go/no-go: [defect_tracking.md](./defect_tracking.md), 
 Android TV device matrix: [android_tv_device_matrix.md](./android_tv_device_matrix.md) (QA-002 / PRD-010).  
 TV D-pad navigation automation: [tv_dpad_navigation.md](./tv_dpad_navigation.md) (QA-025).  
 Companion touch automation: [companion_touch.md](./companion_touch.md) (QA-026).  
+Offline-first (airplane / backend-down): [offline_first.md](./offline_first.md) (QA-039).  
 Client security acceptance criteria: [client_security_checklist.md](../security/client_security_checklist.md) (SEC-002).  
 Incident response (token/key compromise): [incident_response_runbook.md](../security/incident_response_runbook.md) (SEC-052).
 
@@ -90,6 +91,7 @@ Backend/infra availability is an **entry** dependency, not owned by this repo.
 - Widget tests for TV Home, Live, Player overlays, Companion browse/send-to-TV.
 - Automated TV D-pad suite (QA-025): first focus, determinism, Back, focus traps — see [tv_dpad_navigation.md](./tv_dpad_navigation.md).
 - Automated Companion touch suite (QA-026): pairing, remote, send-to-TV on Android + iOS — see [companion_touch.md](./companion_touch.md).
+- Automated offline-first suite (QA-039): airplane / backend-down must not block interaction or playback recovery — see [offline_first.md](./offline_first.md).
 - Manual TV D-pad pass: focus ring always visible; first focus on highest-priority control (physical remote / OEM).
 - Manual Companion pass: no video playback; send-to-TV happy path + offline messaging.
 - Negative paths: stream failure + retry, sync conflict toast, offline/empty/error states.

@@ -31,6 +31,14 @@ Detect network / backend loss, show the Offline state, and keep **cached** catal
 | Offline | Has channels / VOD / progress | Offline banner + rails labeled `(cached)` |
 | Offline | Empty | Full `OfflinePattern` |
 
+## Non-blocking (QA-039 / NFR-004)
+
+- DNS probe and monitor ticks hard-timeout (~2s) → offline; hangs never stall the UI.
+- `bootstrap` starts the monitor with `unawaited` so first paint is not gated on reachability.
+- Cached Home rails stay interactive under `OfflineBanner`; playback retries stay capped (TV-054).
+
+Executable acceptance: [offline_first.md](../qa/offline_first.md).
+
 ## Packages
 
 No new pubspec dependency. Reachability uses `dart:io` DNS lookup behind `ConnectivityProbe`.  
@@ -38,4 +46,4 @@ No new pubspec dependency. Reachability uses `dart:io` DNS lookup behind `Connec
 
 ## Wiring
 
-`bootstrap` mounts `PollingConnectivityMonitor` and calls `start()`. Unit tests keep `MemoryConnectivityMonitor`.
+`bootstrap` mounts `PollingConnectivityMonitor` and starts it without awaiting the first probe. Unit tests keep `MemoryConnectivityMonitor`.
