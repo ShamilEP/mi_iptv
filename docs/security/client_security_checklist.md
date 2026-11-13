@@ -38,7 +38,7 @@ Related: [incident response runbook](./incident_response_runbook.md) (SEC-052), 
 
 | ID | Acceptance criterion | Attach to | Evidence |
 |---|---|---|---|
-| **SEC-C05** | Client→backend calls use HTTPS / TLS only (no cleartext API base URLs in release configs) | Network / auth / catalog / sync adapters | `review` + `auto` when URL validators exist |
+| **SEC-C05** | Client→backend calls use HTTPS / TLS only (no cleartext API base URLs in release configs); user IPTV may use http media with warning (SEC-023) | Network / auth / catalog / sync / player | `review` + `auto` ([network_security_cleartext.md](./network_security_cleartext.md), `TransportSecurityPolicy`) |
 | **SEC-C06** | Session tokens persist only through a **secure storage adapter** (Keystore / Keychain behind a domain interface); widgets/use cases never call plugins directly | `auth`, secure-storage data layer | `review` + `auto` (fake adapter in unit tests) |
 | **SEC-C07** | Source credentials treated sensitive end-to-end; encrypted at rest if locally cached | `sources`, local cache adapters | `review` |
 

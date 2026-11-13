@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/accessibility/tv_accessibility.dart';
+import '../../../../core/network/transport_security_policy.dart';
 import '../../../../core/theme/theme.dart';
+import '../../../../core/widgets/cleartext_media_notice.dart';
 import '../../../../core/widgets/focusable_surface.dart';
 import '../../../../core/widgets/mi_overlay_panel.dart';
 import '../../../../core/widgets/mi_subtitle_caption.dart';
@@ -256,6 +258,10 @@ class _TvVodPlayerPageState extends State<TvVodPlayerPage> {
         _subtitlesOn && caption != null && caption.trim().isNotEmpty;
     final positionLabel = formatVodClock(_transport.position);
     final durationLabel = formatVodClock(_transport.duration);
+    final showCleartextWarning = widget.playbackRequest != null &&
+        TransportSecurityPolicy.requiresCleartextMediaWarning(
+          widget.playbackRequest!.streamUri,
+        );
 
     return TvAccessibleScope(
       child: Focus(
@@ -272,23 +278,29 @@ class _TvVodPlayerPageState extends State<TvVodPlayerPage> {
                       alignment: Alignment.topCenter,
                       child: FractionallySizedBox(
                         widthFactor: 1,
-                        heightFactor: 0.18,
+                        heightFactor: showCleartextWarning ? 0.28 : 0.18,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
                             color: MiOverlayPanel.scrimColor(context),
                           ),
                           child: Padding(
                             padding: AppOverscan.padding,
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                widget.title,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: textTheme.headlineMedium?.copyWith(
-                                  color: brand.cloud,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Text(
+                                  widget.title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: textTheme.headlineMedium?.copyWith(
+                                    color: brand.cloud,
+                                  ),
                                 ),
-                              ),
+                                if (showCleartextWarning) ...[
+                                  const SizedBox(height: AppSpacing.sm),
+                                  const CleartextMediaNotice(),
+                                ],
+                              ],
                             ),
                           ),
                         ),
