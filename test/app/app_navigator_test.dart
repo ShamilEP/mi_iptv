@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mi_iptv/app/client_kind.dart';
+import 'package:mi_iptv/app/di/app_dependencies.dart';
 import 'package:mi_iptv/app/navigation/app_navigator.dart';
 import 'package:mi_iptv/app/navigation/app_routes.dart';
+import 'package:mi_iptv/core/oem/oem_compatibility.dart';
+import 'package:mi_iptv/core/oem/oem_device_identity.dart';
+import 'package:mi_iptv/core/oem/oem_manufacturer.dart';
 import 'package:mi_iptv/core/theme/theme.dart';
 import 'package:mi_iptv/features/catalog/presentation/companion/companion_explore_page.dart';
 import 'package:mi_iptv/features/devices/presentation/companion/companion_remote_page.dart';
 import 'package:mi_iptv/features/home/presentation/tv/tv_home_connectivity_binder.dart';
 import 'package:mi_iptv/features/home/presentation/tv/tv_home_page.dart';
+import 'package:mi_iptv/features/live_tv/presentation/tv/tv_live_tv_page.dart';
 
 void main() {
   test('AppRoutes.forClient splits TV and Companion', () {
@@ -84,5 +90,37 @@ void main() {
     expect(find.byType(CompanionRemotePage), findsNothing);
     expect(find.byType(CompanionExplorePage), findsNothing);
     expect(find.textContaining('not available'), findsOneWidget);
+  });
+
+  testWidgets('TV-011 live route injects OEM key mapper from DI', (tester) async {
+    addTearDown(AppDependencies.debugReset);
+    AppDependencies.mount(
+      AppDependencies(
+        clientKind: ClientKind.tv,
+        oemCompatibility: OemCompatibility.forIdentity(
+          const OemDeviceIdentity(manufacturer: OemManufacturer.sony),
+        ),
+      ),
+    );
+
+    await tester.binding.setSurfaceSize(const Size(1920, 1080));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    final route = AppNavigator.onGenerateRoute(
+      const RouteSettings(name: AppRoutes.tvLive),
+      clientKind: ClientKind.tv,
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.tvDark(),
+        onGenerateRoute: (_) => route,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TvLiveTvPage), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.pageUp);
+    await tester.pump();
+    expect(find.text('Ember Sports'), findsWidgets);
   });
 }

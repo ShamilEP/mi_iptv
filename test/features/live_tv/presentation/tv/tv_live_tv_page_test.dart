@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mi_iptv/core/oem/oem_quirk.dart';
+import 'package:mi_iptv/core/oem/tv_remote_key_mapper.dart';
 import 'package:mi_iptv/core/theme/theme.dart';
 import 'package:mi_iptv/core/widgets/status_badge.dart';
 import 'package:mi_iptv/core/widgets/stream_failure_recovery_overlay.dart';
@@ -49,6 +51,31 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
     await tester.pump();
 
+    expect(find.text('Ember Sports'), findsWidgets);
+  });
+
+  testWidgets('TV-011 CH+/CH− zap channels via OEM key map', (tester) async {
+    await pump(tester);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.channelUp);
+    await tester.pump();
+    expect(find.text('Ember Sports'), findsWidgets);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.channelDown);
+    await tester.pump();
+    expect(find.text('Signal News'), findsWidgets);
+  });
+
+  testWidgets('TV-011 OEM page keys zap when quirk enabled', (tester) async {
+    await pump(
+      tester,
+      page: const TvLiveTvPage(
+        keyMapper: TvRemoteKeyMapper(quirks: {OemQuirk.pageKeysAsChannel}),
+      ),
+    );
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.pageUp);
+    await tester.pump();
     expect(find.text('Ember Sports'), findsWidgets);
   });
 
