@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../core/accessibility/companion_accessibility.dart';
 import '../core/images/image_pipeline_route_observer.dart';
 import '../core/theme/theme.dart';
+import '../features/player/presentation/playback_session_lifecycle_binder.dart';
 import 'client_kind.dart';
 import 'di/app_dependencies.dart';
 import 'navigation/app_navigator.dart';
@@ -36,11 +37,19 @@ class MiIptvApp extends StatelessWidget {
       title: _isCompanion ? 'Mi IPTV Companion' : 'Mi IPTV',
       debugShowCheckedModeBanner: false,
       theme: _isCompanion ? AppTheme.companionLight() : AppTheme.tvDark(),
-      builder: _isCompanion
-          ? (context, child) => CompanionAccessibleScope(
-                child: child ?? const SizedBox.shrink(),
-              )
-          : null,
+      builder: (context, child) {
+        Widget built = child ?? const SizedBox.shrink();
+        if (_isCompanion) {
+          built = CompanionAccessibleScope(child: built);
+        } else if (AppDependencies.isMounted) {
+          // TV-052: forward app background/foreground to session coordinator.
+          built = PlaybackSessionLifecycleBinder(
+            coordinator: AppDependencies.instance.playbackSession,
+            child: built,
+          );
+        }
+        return built;
+      },
       // TV-020: splash gate inspects JWT then routes Home / Onboarding.
       initialRoute: initialRoute ?? _defaultInitialRoute,
       navigatorObservers: observers,

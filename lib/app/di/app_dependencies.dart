@@ -15,9 +15,12 @@ import '../../features/catalog/domain/repositories/catalog_repository.dart';
 import '../../features/devices/data/repositories/secure_pairing_store.dart';
 import '../../features/devices/domain/repositories/pairing_secure_store.dart';
 import '../../features/player/data/adapters/memory_media_player_controller.dart';
+import '../../features/player/data/adapters/memory_playback_session_host.dart';
 import '../../features/player/domain/repositories/media_player_controller.dart';
+import '../../features/player/domain/repositories/playback_session_host.dart';
 import '../../features/player/domain/services/playback_retry_coordinator.dart';
 import '../../features/player/domain/services/playback_retry_policy.dart';
+import '../../features/player/domain/services/playback_session_coordinator.dart';
 import '../../features/sources/data/repositories/secure_source_credential_store.dart';
 import '../../features/sources/domain/repositories/source_credential_store.dart';
 import '../../features/sync/data/repositories/in_memory_sync_repository.dart';
@@ -27,7 +30,7 @@ import '../app_environment.dart';
 import '../client_kind.dart';
 
 /// Manual composition root (CMP-002 / TV-002 / TV-005 / CMP-005 / TV-007 /
-/// TV-008 / TV-010 / TV-011 / TV-012 / TV-050 / TV-054).
+/// TV-008 / TV-010 / TV-011 / TV-012 / TV-050 / TV-052 / TV-054).
 ///
 /// TV and Companion mount the **same** shared domain graph; only [clientKind]
 /// (and later surface adapters) differ. No third-party DI until approved.
@@ -44,6 +47,8 @@ import '../client_kind.dart';
 /// [mediaPlayer] defaults to [MemoryMediaPlayerController]; TV [bootstrap]
 /// injects [Media3PlayerAdapter] (TV-050). Lifecycle is owned here / native
 /// engine — not by player screens.
+/// [playbackSession] defaults to memory host; TV [bootstrap] injects Android
+/// audio-focus / keep-screen-on / HDMI host (TV-052).
 /// [playbackRetry] wraps [mediaPlayer] with capped exponential backoff (TV-054).
 final class AppDependencies {
   factory AppDependencies({
@@ -60,6 +65,8 @@ final class AppDependencies {
     OemCompatibility? oemCompatibility,
     ImagePipeline? imagePipeline,
     MediaPlayerController? mediaPlayer,
+    PlaybackSessionHost? playbackSessionHost,
+    PlaybackSessionCoordinator? playbackSession,
     PlaybackRetryCoordinator? playbackRetry,
     PlaybackRetryPolicy retryPolicy = PlaybackRetryPolicy.defaults,
     ResolveSyncConflict syncConflictResolver = const ResolveSyncConflict(),
@@ -75,6 +82,7 @@ final class AppDependencies {
               ? ImagePipelineConfig.companionDefault
               : ImagePipelineConfig.forOem(oem.profile),
         );
+    final sessionHost = playbackSessionHost ?? MemoryPlaybackSessionHost();
     return AppDependencies._(
       clientKind: clientKind,
       environment: environment,
@@ -98,6 +106,9 @@ final class AppDependencies {
       oemCompatibility: oem,
       imagePipeline: images,
       mediaPlayer: player,
+      playbackSessionHost: sessionHost,
+      playbackSession: playbackSession ??
+          PlaybackSessionCoordinator(player: player, host: sessionHost),
       playbackRetry: playbackRetry ??
           PlaybackRetryCoordinator(player: player, policy: retryPolicy),
     );
@@ -119,6 +130,8 @@ final class AppDependencies {
     required this.oemCompatibility,
     required this.imagePipeline,
     required this.mediaPlayer,
+    required this.playbackSessionHost,
+    required this.playbackSession,
     required this.playbackRetry,
   });
 
@@ -137,6 +150,8 @@ final class AppDependencies {
   final OemCompatibility oemCompatibility;
   final ImagePipeline imagePipeline;
   final MediaPlayerController mediaPlayer;
+  final PlaybackSessionHost playbackSessionHost;
+  final PlaybackSessionCoordinator playbackSession;
   final PlaybackRetryCoordinator playbackRetry;
 
   static AppDependencies? _mounted;
