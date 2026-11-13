@@ -10,11 +10,21 @@ import 'navigation/app_routes.dart';
 
 /// Root application widget. [clientKind] selects TV vs Companion (ADR-001).
 class MiIptvApp extends StatelessWidget {
-  const MiIptvApp({super.key, this.clientKind = ClientKind.tv});
+  const MiIptvApp({
+    super.key,
+    this.clientKind = ClientKind.tv,
+    this.initialRoute,
+  });
 
   final ClientKind clientKind;
 
+  /// Override for widget tests that skip the TV splash gate.
+  final String? initialRoute;
+
   bool get _isCompanion => clientKind == ClientKind.companion;
+
+  String get _defaultInitialRoute =>
+      _isCompanion ? AppRoutes.home : AppRoutes.tvSplash;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +41,8 @@ class MiIptvApp extends StatelessWidget {
                 child: child ?? const SizedBox.shrink(),
               )
           : null,
-      initialRoute: AppRoutes.home,
+      // TV-020: splash gate inspects JWT then routes Home / Onboarding.
+      initialRoute: initialRoute ?? _defaultInitialRoute,
       navigatorObservers: observers,
       onGenerateRoute: (settings) => AppNavigator.onGenerateRoute(
         settings,

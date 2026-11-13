@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mi_iptv/app/app.dart';
+import 'package:mi_iptv/app/navigation/app_routes.dart';
 import 'package:mi_iptv/core/theme/theme.dart';
 import 'package:mi_iptv/core/widgets/content_card.dart';
 import 'package:mi_iptv/core/widgets/content_row.dart';
@@ -232,7 +233,7 @@ void main() {
   });
 
   testWidgets('MiIptvApp boots with content rows on home', (tester) async {
-    await tester.pumpWidget(const MiIptvApp());
+    await tester.pumpWidget(const MiIptvApp(initialRoute: AppRoutes.home));
     await tester.pumpAndSettle();
     expect(find.byType(ContentRow), findsWidgets);
     expect(find.byType(ContentRowList), findsOneWidget);

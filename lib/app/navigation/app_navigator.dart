@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../../core/oem/tv_remote_key_mapper.dart';
 import '../../features/auth/presentation/companion/companion_login_pairing_page.dart';
+import '../../features/auth/presentation/tv/tv_onboarding_auth_page.dart';
 import '../../features/catalog/presentation/companion/companion_explore_page.dart';
 import '../../features/catalog/presentation/tv/tv_content_detail_page.dart';
 import '../../features/devices/presentation/companion/companion_remote_page.dart';
 import '../../features/favorites/presentation/tv/tv_favorites_page.dart';
 import '../../features/home/presentation/tv/tv_home_connectivity_binder.dart';
-import '../../core/oem/tv_remote_key_mapper.dart';
 import '../../features/live_tv/presentation/tv/tv_live_tv_page.dart';
 import '../../features/player/presentation/tv/tv_vod_player_page.dart';
 import '../../features/search/presentation/tv/tv_search_page.dart';
 import '../../features/settings/presentation/tv/tv_settings_page.dart';
+import '../../features/startup/presentation/tv/tv_startup_gate.dart';
 import '../client_kind.dart';
 import '../di/app_dependencies.dart';
 import 'app_routes.dart';
@@ -34,6 +36,20 @@ abstract final class AppNavigator {
           builder: (_) => clientKind == ClientKind.companion
               ? const CompanionExplorePage()
               : const TvHomeConnectivityBinder(),
+        );
+      case AppRoutes.tvSplash:
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => const TvStartupGate(),
+        );
+      case AppRoutes.tvOnboarding:
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (context) => TvOnboardingAuthPage(
+            onContinueLater: () {
+              Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+            },
+          ),
         );
       case AppRoutes.companionRemote:
         return MaterialPageRoute<void>(
