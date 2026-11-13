@@ -16,4 +16,8 @@ abstract final class CompanionLoginPairingCopy {
   static const String connectedLabel = 'Connected';
   static const String offlineLabel = 'Offline';
   static const String demoAccountEmail = 'you@example.com';
+
+  /// Non-secret store-review hint (CMP-010). Real credentials stay out of git.
+  static const String storeReviewAccountHint =
+      'Reviewers: use the staging account from the private ops channel.';
 }

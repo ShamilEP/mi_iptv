@@ -35,3 +35,13 @@ Re-export rasters (requires Pillow):
 ```bash
 python tool/export_brand_assets.py
 ```
+
+## Store readiness (CMP-010)
+
+| Artifact | Use |
+|---|---|
+| `app_icon_512.png` | Play / App Store listing master |
+| `adaptive/*` | Android adaptive launcher layers |
+| `mark_companion.svg` / `lockup_companion.png` | Companion brand surfaces |
+
+Android mipmaps refresh via the export script. Refresh iOS `AppIcon.appiconset` from `app_icon_512.png` before App Store upload.
