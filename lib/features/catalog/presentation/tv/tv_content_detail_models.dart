@@ -1,3 +1,5 @@
+import '../../../sync/domain/services/playback_progress_policy.dart';
+
 /// Presentation model for the TV content detail shell (DSN-034 / US-12).
 ///
 /// Series season/episode navigation is deferred (PRD-013) — this model has no
@@ -30,10 +32,12 @@ class TvContentDetail {
   final bool isFavorite;
   final List<TvRelatedContent> related;
 
-  /// Resume is offered when progress is recoverable (≥15%, US-13).
+  /// Resume is offered when progress is recoverable (≥15%, US-13 / FR-015).
   bool get showsResume {
     final value = progress;
-    return value != null && value >= 0.15 && value < 1.0;
+    return value != null &&
+        value >= PlaybackProgressPolicy.continueWatchingThreshold &&
+        value < 1.0;
   }
 
   TvContentDetail copyWith({
