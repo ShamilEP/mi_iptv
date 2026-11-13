@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 
 import '../core/network/polling_connectivity_monitor.dart';
@@ -35,7 +37,8 @@ Future<void> bootstrap({
       mediaPlayer: _mediaPlayerFor(clientKind),
     ),
   );
-  await connectivity.start();
+  // QA-039 / NFR-004: never stall first paint on airplane mode / DNS hangs.
+  unawaited(connectivity.start());
   runApp(MiIptvApp(clientKind: clientKind));
 }
 

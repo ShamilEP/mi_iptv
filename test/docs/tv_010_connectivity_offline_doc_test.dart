@@ -12,6 +12,7 @@ void main() {
     expect(doc, contains('offlineCached'));
     expect(doc, contains('LocalMediaStore'));
     expect(doc, contains('NFR-004'));
+    expect(doc, contains('QA-039'));
     expect(doc, contains('connectivity_plus'));
   });
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mi_iptv/core/network/connectivity_probe.dart';
 import 'package:mi_iptv/core/network/connectivity_status.dart';
@@ -35,6 +37,21 @@ void main() {
     await monitor.dispose();
   });
 
+  test('PollingConnectivityMonitor times out hanging probes as offline',
+      () async {
+    final monitor = PollingConnectivityMonitor(
+      probe: _HangingProbe(),
+      interval: const Duration(hours: 1),
+      probeTimeout: const Duration(milliseconds: 40),
+      initial: ConnectivityStatus.online,
+    );
+    final future = monitor.onStatusChanged.first;
+    await monitor.start();
+    expect(await future.timeout(const Duration(milliseconds: 500)),
+        ConnectivityStatus.offline);
+    await monitor.dispose();
+  });
+
   test('OfflineModeResolver uses LocalMediaStore cache', () async {
     final store = MemoryLocalMediaStore();
     final monitor = MemoryConnectivityMonitor(ConnectivityStatus.offline);
@@ -63,4 +80,9 @@ final class _FakeProbe implements ConnectivityProbe {
 
   @override
   Future<bool> isReachable() async => reachable;
+}
+
+final class _HangingProbe implements ConnectivityProbe {
+  @override
+  Future<bool> isReachable() => Completer<bool>().future;
 }
