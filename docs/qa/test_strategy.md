@@ -95,6 +95,7 @@ Backend/infra availability is an **entry** dependency, not owned by this repo.
 - MVP FR acceptance (QA-019): FR-012…016 / FR-024 / FR-026 / FR-028 matrix — see [qa-019_fr_acceptance.md](./qa-019_fr_acceptance.md).
 - Design System visual regression (QA-029): focus + 12 `UiState` PNG baselines via built-in `matchesGoldenFile` — see [visual_regression_design_system.md](./visual_regression_design_system.md).
 - Live playback soak (QA-042 / NFR-003): accelerated leak/stability suite + 24h lab procedure on QA-002 stick — see [live_playback_soak.md](./live_playback_soak.md).
+- Store compliance (QA-052): Play TV quality + App Store / Play Companion readiness — see [store_compliance.md](./store_compliance.md).
 - Manual TV D-pad pass: focus ring always visible; first focus on highest-priority control (physical remote / OEM).
 - Manual Companion pass: no video playback; send-to-TV happy path + offline messaging.
 - Negative paths: stream failure + retry, sync conflict toast, offline/empty/error states.

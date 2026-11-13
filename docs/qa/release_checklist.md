@@ -52,7 +52,11 @@ Record build SHA, date, and reviewer name. Any unchecked **Must** item ⇒ **NO-
 
 ---
 
-## B2. Store submission — Companion (CMP-010)
+## B2. Store compliance (QA-052)
+
+Canonical checklist: **[store_compliance.md](./store_compliance.md)** (`StoreCompliance` + automated suite).
+
+### Companion (CMP-010)
 
 | # | Check | Pass? |
 |---|---|---|
@@ -61,6 +65,14 @@ Record build SHA, date, and reviewer name. Any unchecked **Must** item ⇒ **NO-
 | S3 | Play Data Safety / Apple App Privacy filled from [companion_store_privacy_checklist.md](./companion_store_privacy_checklist.md) | ☐ |
 | S4 | Review account provisioned privately per [store_review_account.md](./store_review_account.md) — **no passwords in git** | ☐ |
 | S5 | Privacy policy URL + final package IDs attached by Product (PRD-042) or explicitly Blocked | ☐ |
+
+### Android TV / Google Play TV quality
+
+| # | Check | Pass? |
+|---|---|---|
+| T1 | Leanback launcher + 320×180 banner + touchscreen not required (TV-003) | ☐ |
+| T2 | D-pad focus visible; overscan respected on chrome (QA-025 / AppOverscan) | ☐ |
+| T3 | Smoke on QA-002 tier M (L when available) | ☐ |
 
 ---
 
