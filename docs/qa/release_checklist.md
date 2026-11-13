@@ -52,6 +52,18 @@ Record build SHA, date, and reviewer name. Any unchecked **Must** item ⇒ **NO-
 
 ---
 
+## B2. Store submission — Companion (CMP-010)
+
+| # | Check | Pass? |
+|---|---|---|
+| S1 | Launcher / listing icons from DSN-005 (`app_icon_512`, Android adaptive) | ☐ |
+| S2 | Permissions inventory matches [cmp-010](../architecture/cmp-010-companion-store-readiness.md) (`INTERNET` only on Android) | ☐ |
+| S3 | Play Data Safety / Apple App Privacy filled from [companion_store_privacy_checklist.md](./companion_store_privacy_checklist.md) | ☐ |
+| S4 | Review account provisioned privately per [store_review_account.md](./store_review_account.md) — **no passwords in git** | ☐ |
+| S5 | Privacy policy URL + final package IDs attached by Product (PRD-042) or explicitly Blocked | ☐ |
+
+---
+
 ## C. Scope honesty (Must)
 
 | # | Check | Pass? |
