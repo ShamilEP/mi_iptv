@@ -10,9 +10,12 @@ import '../core/oem/oem_compatibility.dart';
 import '../core/persistence/drift/app_database.dart';
 import '../core/persistence/drift/drift_local_media_store.dart';
 import '../core/storage/flutter_secure_storage_adapter.dart';
+import '../features/player/data/adapters/android_playback_session_host.dart';
 import '../features/player/data/adapters/media3_player_adapter.dart';
 import '../features/player/data/adapters/memory_media_player_controller.dart';
+import '../features/player/data/adapters/memory_playback_session_host.dart';
 import '../features/player/domain/repositories/media_player_controller.dart';
+import '../features/player/domain/repositories/playback_session_host.dart';
 import 'app.dart';
 import 'app_environment.dart';
 import 'client_kind.dart';
@@ -33,26 +36,31 @@ Future<void> bootstrap({
         ? ImagePipelineConfig.companionDefault
         : ImagePipelineConfig.forOem(oem.profile),
   );
-  AppDependencies.mount(
-    AppDependencies(
-      clientKind: clientKind,
-      environment: resolvedEnv,
-      // CMP-005 / TV-008: Keystore/Keychain; unit tests inject memory.
-      secureStorage: FlutterSecureStorageAdapter(),
-      // TV-007: durable SQLite via Drift; unit tests keep MemoryLocalMediaStore.
-      localMediaStore: DriftLocalMediaStore(mediaDb),
-      // TV-010: DNS polling probe (no connectivity_plus until approved).
-      connectivity: connectivity,
-      // TV-011: OEM key map / decoder / display / quirks from Build fingerprint.
-      oemCompatibility: oem,
-      // TV-012: bounded ImageCache + thumbnail decode.
-      imagePipeline: imagePipeline,
-      // TV-050: Media3 on TV; Companion keeps memory (no MVP video playback).
-      mediaPlayer: _mediaPlayerFor(clientKind),
-    ),
+  final sessionHost = _sessionHostFor(clientKind);
+  final deps = AppDependencies(
+    clientKind: clientKind,
+    environment: resolvedEnv,
+    // CMP-005 / TV-008: Keystore/Keychain; unit tests inject memory.
+    secureStorage: FlutterSecureStorageAdapter(),
+    // TV-007: durable SQLite via Drift; unit tests keep MemoryLocalMediaStore.
+    localMediaStore: DriftLocalMediaStore(mediaDb),
+    // TV-010: DNS polling probe (no connectivity_plus until approved).
+    connectivity: connectivity,
+    // TV-011: OEM key map / decoder / display / quirks from Build fingerprint.
+    oemCompatibility: oem,
+    // TV-012: bounded ImageCache + thumbnail decode.
+    imagePipeline: imagePipeline,
+    // TV-050: Media3 on TV; Companion keeps memory (no MVP video playback).
+    mediaPlayer: _mediaPlayerFor(clientKind),
+    // TV-052: audio focus / keep-screen-on / HDMI (TV only).
+    playbackSessionHost: sessionHost,
   );
+  AppDependencies.mount(deps);
   // QA-039 / NFR-004: never stall first paint on airplane mode / DNS hangs.
   unawaited(connectivity.start());
+  if (clientKind == ClientKind.tv) {
+    unawaited(deps.playbackSession.start());
+  }
   runApp(MiIptvApp(clientKind: clientKind));
 }
 
@@ -68,5 +76,12 @@ MediaPlayerController _mediaPlayerFor(ClientKind clientKind) {
   return switch (clientKind) {
     ClientKind.tv => Media3PlayerAdapter(),
     ClientKind.companion => MemoryMediaPlayerController(),
+  };
+}
+
+PlaybackSessionHost _sessionHostFor(ClientKind clientKind) {
+  return switch (clientKind) {
+    ClientKind.tv => AndroidPlaybackSessionHost(),
+    ClientKind.companion => MemoryPlaybackSessionHost(),
   };
 }
