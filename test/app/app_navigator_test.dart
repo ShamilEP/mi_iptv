@@ -37,6 +37,10 @@ void main() {
     );
     expect(
       AppRoutes.forClient(ClientKind.companion),
+      contains(AppRoutes.companionLanguage),
+    );
+    expect(
+      AppRoutes.forClient(ClientKind.companion),
       isNot(contains(AppRoutes.tvLive)),
     );
   });

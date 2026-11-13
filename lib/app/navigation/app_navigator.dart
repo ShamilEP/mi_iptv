@@ -7,6 +7,7 @@ import '../../features/catalog/presentation/companion/companion_explore_connecti
 import '../../features/catalog/presentation/tv/tv_content_detail_page.dart';
 import '../../features/devices/presentation/companion/companion_remote_connectivity_binder.dart';
 import '../../features/favorites/presentation/tv/tv_favorites_page.dart';
+import '../../features/settings/presentation/companion/companion_language_page.dart';
 import '../../features/home/presentation/tv/tv_home_connectivity_binder.dart';
 import '../../features/live_tv/presentation/tv/tv_live_tv_page.dart';
 import '../../features/player/presentation/tv/tv_vod_player_page.dart';
@@ -60,6 +61,11 @@ abstract final class AppNavigator {
         return MaterialPageRoute<void>(
           settings: settings,
           builder: (_) => const CompanionLoginPairingPage(),
+        );
+      case AppRoutes.companionLanguage:
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => const CompanionLanguagePage(),
         );
       case AppRoutes.tvLive:
         return MaterialPageRoute<void>(

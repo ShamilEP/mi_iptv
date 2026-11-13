@@ -1,5 +1,6 @@
 import '../../core/images/image_pipeline.dart';
 import '../../core/images/image_pipeline_config.dart';
+import '../../core/l10n/locale_controller.dart';
 import '../../core/network/connectivity_monitor.dart';
 import '../../core/network/memory_connectivity_monitor.dart';
 import '../../core/network/offline_mode_resolver.dart';
@@ -33,7 +34,8 @@ import '../app_environment.dart';
 import '../client_kind.dart';
 
 /// Manual composition root (CMP-002 / TV-002 / TV-005 / CMP-005 / CMP-006 /
-/// TV-007 / TV-008 / TV-010 / TV-011 / TV-012 / TV-050 / TV-052 / TV-054).
+/// CMP-008 / TV-007 / TV-008 / TV-010 / TV-011 / TV-012 / TV-050 / TV-052 /
+/// TV-054).
 ///
 /// TV and Companion mount the **same** shared domain graph; only [clientKind]
 /// (and later surface adapters) differ. No third-party DI until approved.
@@ -66,6 +68,7 @@ final class AppDependencies {
     LocalMediaStore? localMediaStore,
     LinkedTvStatusStore? linkedTvStatusStore,
     CompanionLocalCache? companionLocalCache,
+    LocaleController? localeController,
     ConnectivityMonitor? connectivity,
     OemCompatibility? oemCompatibility,
     ImagePipeline? imagePipeline,
@@ -95,6 +98,8 @@ final class AppDependencies {
               : ImagePipelineConfig.forOem(oem.profile),
         );
     final sessionHost = playbackSessionHost ?? MemoryPlaybackSessionHost();
+    final locales =
+        localeController ?? LocaleController(store: mediaStore);
     return AppDependencies._(
       clientKind: clientKind,
       environment: environment,
@@ -112,6 +117,7 @@ final class AppDependencies {
       localMediaStore: mediaStore,
       linkedTvStatusStore: linkedTvStore,
       companionLocalCache: companionCache,
+      localeController: locales,
       connectivity: network,
       offlineMode: OfflineModeResolver(
         connectivity: network,
@@ -141,6 +147,7 @@ final class AppDependencies {
     required this.localMediaStore,
     required this.linkedTvStatusStore,
     required this.companionLocalCache,
+    required this.localeController,
     required this.connectivity,
     required this.offlineMode,
     required this.oemCompatibility,
@@ -163,6 +170,7 @@ final class AppDependencies {
   final LocalMediaStore localMediaStore;
   final LinkedTvStatusStore linkedTvStatusStore;
   final CompanionLocalCache companionLocalCache;
+  final LocaleController localeController;
   final ConnectivityMonitor connectivity;
   final OfflineModeResolver offlineMode;
   final OemCompatibility oemCompatibility;

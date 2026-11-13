@@ -1,22 +1,40 @@
-/// Locked copy for Companion Explore and Send-to-TV (DSN-052).
+import '../../../../core/l10n/app_locale.dart';
+import '../../../../core/l10n/app_string_catalog.dart';
+import '../../../../core/l10n/app_string_key.dart';
+
+/// Locked copy for Companion Explore and Send-to-TV (DSN-052 / CMP-008).
+///
+/// Default getters stay English for gallery tests; use [forLocale] under
+/// [AppLocaleScope].
 abstract final class CompanionExploreCopy {
-  static const String title = 'Explore';
-  static const String body =
-      'Browse the catalog in showcase mode. Play happens on the TV.';
-  static const String sendToTvLabel = 'Reproducir en TV';
-  static const String noPlayerNote = 'No video plays on this phone.';
+  static String forLocale(AppLocale locale, AppStringKey key) =>
+      AppStringCatalog.of(key, locale);
+
+  static String get title =>
+      forLocale(AppLocale.en, AppStringKey.exploreTitle);
+  static String get body => forLocale(AppLocale.en, AppStringKey.exploreBody);
+  static String get sendToTvLabel =>
+      forLocale(AppLocale.es, AppStringKey.exploreSendToTv);
+  static String get noPlayerNote =>
+      forLocale(AppLocale.en, AppStringKey.exploreNoPlayerNote);
   static const String sentPrefix = 'Sent to TV:';
-  static const String featuredTitle = 'Featured';
-  static const String liveTitle = 'Live channels';
-  static const String moviesTitle = 'Movies';
-  static const String favoritesTitle = 'Favorites';
-  static const String detailTitle = 'Title details';
-  static const String backToCatalogLabel = 'Back to catalog';
+  static String get featuredTitle =>
+      forLocale(AppLocale.en, AppStringKey.exploreFeatured);
+  static String get liveTitle =>
+      forLocale(AppLocale.en, AppStringKey.exploreLive);
+  static String get moviesTitle =>
+      forLocale(AppLocale.en, AppStringKey.exploreMovies);
+  static String get favoritesTitle =>
+      forLocale(AppLocale.en, AppStringKey.exploreFavorites);
+  static String get detailTitle =>
+      forLocale(AppLocale.en, AppStringKey.exploreDetailTitle);
+  static String get backToCatalogLabel =>
+      forLocale(AppLocale.en, AppStringKey.exploreBackToCatalog);
   static const String demoTvName = 'Living room';
-  static const String syncConflictMessage =
-      'Favorites differ on another device. Resolve before sending to TV.';
-  static const String offlineCachedBanner =
-      'You are offline. Showing cached catalog, favorites, and last TV status.';
+  static String get syncConflictMessage =>
+      forLocale(AppLocale.en, AppStringKey.exploreSyncConflict);
+  static String get offlineCachedBanner =>
+      forLocale(AppLocale.en, AppStringKey.exploreOfflineCachedBanner);
 }
 
 /// Mandatory Explore surface states from DSN-010 (CMP-045 / CMP-006).
