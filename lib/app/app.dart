@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../core/accessibility/companion_accessibility.dart';
+import '../core/images/image_pipeline_route_observer.dart';
 import '../core/theme/theme.dart';
 import 'client_kind.dart';
+import 'di/app_dependencies.dart';
 import 'navigation/app_navigator.dart';
 import 'navigation/app_routes.dart';
 
@@ -16,6 +18,10 @@ class MiIptvApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final observers = <NavigatorObserver>[
+      if (AppDependencies.isMounted)
+        ImagePipelineRouteObserver(AppDependencies.instance.imagePipeline),
+    ];
     return MaterialApp(
       title: _isCompanion ? 'Mi IPTV Companion' : 'Mi IPTV',
       debugShowCheckedModeBanner: false,
@@ -26,6 +32,7 @@ class MiIptvApp extends StatelessWidget {
               )
           : null,
       initialRoute: AppRoutes.home,
+      navigatorObservers: observers,
       onGenerateRoute: (settings) => AppNavigator.onGenerateRoute(
         settings,
         clientKind: clientKind,

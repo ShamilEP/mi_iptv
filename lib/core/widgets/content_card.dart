@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../images/image_pipeline.dart';
 import '../theme/theme.dart';
 import 'content_card_metrics.dart';
 import 'focusable_surface.dart';
+import 'managed_network_image.dart';
 
 export 'content_card_metrics.dart';
 
@@ -19,6 +21,8 @@ class ContentCard extends StatelessWidget {
     this.width,
     this.onPressed,
     this.artwork,
+    this.imageUrl,
+    this.imagePipeline,
     this.focusNode,
     this.onFocusChange,
   }) : assert(
@@ -36,8 +40,14 @@ class ContentCard extends StatelessWidget {
   final double? width;
   final VoidCallback? onPressed;
 
-  /// Optional artwork; falls back to a brand panel placeholder.
+  /// Optional artwork; falls back to [imageUrl] then a brand panel placeholder.
   final Widget? artwork;
+
+  /// Remote poster / logo URL (TV-012). HTTPS only; uses thumbnail decode.
+  final String? imageUrl;
+
+  /// Optional pipeline for shared cache budgets (from [AppDependencies]).
+  final ImagePipeline? imagePipeline;
 
   /// Optional [FocusNode] for row last-focus memory (DSN-012).
   final FocusNode? focusNode;
@@ -51,6 +61,15 @@ class ContentCard extends StatelessWidget {
     final brand = context.brandColors;
     final showProgress =
         kind == ContentCardKind.continueWatching && progress != null;
+    final resolvedArtwork = artwork ??
+        (imageUrl == null
+            ? null
+            : ManagedNetworkImage(
+                url: imageUrl!,
+                kind: kind,
+                width: width,
+                pipeline: imagePipeline,
+              ));
 
     return SizedBox(
       width: size.width,
@@ -67,7 +86,8 @@ class ContentCard extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              artwork ?? _ArtworkPlaceholder(kind: kind, title: title),
+              resolvedArtwork ??
+                  _ArtworkPlaceholder(kind: kind, title: title),
               if (kind != ContentCardKind.channelTile)
                 const _BottomScrim(),
               if (kind != ContentCardKind.channelTile)
