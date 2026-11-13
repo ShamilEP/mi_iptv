@@ -15,13 +15,21 @@ class CompanionExploreCatalog extends StatelessWidget {
     required this.featured,
     required this.live,
     required this.movies,
+    this.favorites = const <CompanionExploreItem>[],
     required this.onSelect,
+    this.cachedLabels = false,
   });
 
   final List<CompanionExploreItem> featured;
   final List<CompanionExploreItem> live;
   final List<CompanionExploreItem> movies;
+  final List<CompanionExploreItem> favorites;
   final ValueChanged<CompanionExploreItem> onSelect;
+
+  /// Appends `(cached)` to rail titles when offline-with-cache (CMP-006).
+  final bool cachedLabels;
+
+  String _title(String base) => cachedLabels ? '$base (cached)' : base;
 
   @override
   Widget build(BuildContext context) {
@@ -29,25 +37,34 @@ class CompanionExploreCatalog extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _Rail(
-          title: CompanionExploreCopy.featuredTitle,
+          title: _title(CompanionExploreCopy.featuredTitle),
           items: featured,
           kind: ContentCardKind.landscape,
           onSelect: onSelect,
         ),
         const SizedBox(height: AppSpacing.lg),
         _Rail(
-          title: CompanionExploreCopy.liveTitle,
+          title: _title(CompanionExploreCopy.liveTitle),
           items: live,
           kind: ContentCardKind.channelTile,
           onSelect: onSelect,
         ),
         const SizedBox(height: AppSpacing.lg),
         _Rail(
-          title: CompanionExploreCopy.moviesTitle,
+          title: _title(CompanionExploreCopy.moviesTitle),
           items: movies,
           kind: ContentCardKind.poster,
           onSelect: onSelect,
         ),
+        if (favorites.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.lg),
+          _Rail(
+            title: _title(CompanionExploreCopy.favoritesTitle),
+            items: favorites,
+            kind: ContentCardKind.poster,
+            onSelect: onSelect,
+          ),
+        ],
       ],
     );
   }
@@ -127,7 +144,9 @@ class CompanionExploreDetail extends StatelessWidget {
     final kind = switch (item.kind) {
       CompanionExploreKind.featured => ContentCardKind.landscape,
       CompanionExploreKind.live => ContentCardKind.channelTile,
-      CompanionExploreKind.movies => ContentCardKind.poster,
+      CompanionExploreKind.movies ||
+      CompanionExploreKind.favorites =>
+        ContentCardKind.poster,
     };
 
     return Column(

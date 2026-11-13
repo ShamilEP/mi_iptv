@@ -10,6 +10,8 @@ import 'package:mi_iptv/core/network/offline_mode_resolver.dart';
 import 'package:mi_iptv/core/network/polling_connectivity_monitor.dart';
 import 'package:mi_iptv/core/persistence/memory_local_media_store.dart';
 import 'package:mi_iptv/features/catalog/domain/entities/content_item.dart';
+import 'package:mi_iptv/features/sync/domain/entities/favorite_entry.dart';
+import 'package:mi_iptv/features/sync/domain/entities/sync_metadata.dart';
 
 void main() {
   test('MemoryConnectivityMonitor emits status changes', () async {
@@ -71,6 +73,25 @@ void main() {
     ]);
     expect(await OfflineCacheAvailability.hasBrowseableCache(store), isTrue);
     expect(await resolver.resolve(), OfflinePresentation.offlineCached);
+  });
+
+  test('OfflineCacheAvailability treats favorites as browseable (CMP-006)', () async {
+    final store = MemoryLocalMediaStore();
+    expect(await OfflineCacheAvailability.hasBrowseableCache(store), isFalse);
+
+    await store.replaceFavorites(<FavoriteEntry>[
+      FavoriteEntry(
+        contentId: 'fav-1',
+        contentType: ContentType.vodMovie,
+        title: 'Harbor Lights',
+        order: 0,
+        sync: SyncMetadata(
+          syncVersion: 1,
+          updatedAtServer: DateTime.utc(2026, 11, 1),
+        ),
+      ),
+    ]);
+    expect(await OfflineCacheAvailability.hasBrowseableCache(store), isTrue);
   });
 }
 

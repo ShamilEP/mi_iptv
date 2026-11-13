@@ -21,4 +21,4 @@ Airplane mode and backend-down must **not block** playback recovery or Home inte
 
 - Widget / unit level — no device farm or real airplane toggle required for this gate.
 - Manual TV pass still covers physical radio-off and OEM network quirks (see [test_strategy.md](./test_strategy.md)).
-- Companion offline messaging remains under CMP-006 when that task lands.
+- Companion offline cache / clear states: [cmp-006-companion-offline-cache.md](../architecture/cmp-006-companion-offline-cache.md) (CMP-006).

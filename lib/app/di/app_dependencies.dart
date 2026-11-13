@@ -12,7 +12,10 @@ import '../../features/auth/data/repositories/secure_session_token_store.dart';
 import '../../features/auth/domain/repositories/session_token_store.dart';
 import '../../features/catalog/data/repositories/in_memory_catalog_repository.dart';
 import '../../features/catalog/domain/repositories/catalog_repository.dart';
+import '../../features/catalog/domain/services/companion_local_cache.dart';
+import '../../features/devices/data/repositories/local_linked_tv_status_store.dart';
 import '../../features/devices/data/repositories/secure_pairing_store.dart';
+import '../../features/devices/domain/repositories/linked_tv_status_store.dart';
 import '../../features/devices/domain/repositories/pairing_secure_store.dart';
 import '../../features/player/data/adapters/memory_media_player_controller.dart';
 import '../../features/player/data/adapters/memory_playback_session_host.dart';
@@ -29,8 +32,8 @@ import '../../features/sync/domain/usecases/resolve_sync_conflict.dart';
 import '../app_environment.dart';
 import '../client_kind.dart';
 
-/// Manual composition root (CMP-002 / TV-002 / TV-005 / CMP-005 / TV-007 /
-/// TV-008 / TV-010 / TV-011 / TV-012 / TV-050 / TV-052 / TV-054).
+/// Manual composition root (CMP-002 / TV-002 / TV-005 / CMP-005 / CMP-006 /
+/// TV-007 / TV-008 / TV-010 / TV-011 / TV-012 / TV-050 / TV-052 / TV-054).
 ///
 /// TV and Companion mount the **same** shared domain graph; only [clientKind]
 /// (and later surface adapters) differ. No third-party DI until approved.
@@ -61,6 +64,8 @@ final class AppDependencies {
     PairingSecureStore? pairingSecureStore,
     SourceCredentialStore? sourceCredentialStore,
     LocalMediaStore? localMediaStore,
+    LinkedTvStatusStore? linkedTvStatusStore,
+    CompanionLocalCache? companionLocalCache,
     ConnectivityMonitor? connectivity,
     OemCompatibility? oemCompatibility,
     ImagePipeline? imagePipeline,
@@ -74,6 +79,13 @@ final class AppDependencies {
     final storage = secureStorage ?? MemorySecureStorage();
     final player = mediaPlayer ?? MemoryMediaPlayerController();
     final mediaStore = localMediaStore ?? MemoryLocalMediaStore();
+    final linkedTvStore =
+        linkedTvStatusStore ?? LocalLinkedTvStatusStore(mediaStore);
+    final companionCache = companionLocalCache ??
+        CompanionLocalCache(
+          mediaStore: mediaStore,
+          linkedTvStatusStore: linkedTvStore,
+        );
     final network = connectivity ?? MemoryConnectivityMonitor();
     final oem = oemCompatibility ?? OemCompatibility.unknown();
     final images = imagePipeline ??
@@ -98,6 +110,8 @@ final class AppDependencies {
       sourceCredentialStore:
           sourceCredentialStore ?? SecureSourceCredentialStore(storage),
       localMediaStore: mediaStore,
+      linkedTvStatusStore: linkedTvStore,
+      companionLocalCache: companionCache,
       connectivity: network,
       offlineMode: OfflineModeResolver(
         connectivity: network,
@@ -125,6 +139,8 @@ final class AppDependencies {
     required this.pairingSecureStore,
     required this.sourceCredentialStore,
     required this.localMediaStore,
+    required this.linkedTvStatusStore,
+    required this.companionLocalCache,
     required this.connectivity,
     required this.offlineMode,
     required this.oemCompatibility,
@@ -145,6 +161,8 @@ final class AppDependencies {
   final PairingSecureStore pairingSecureStore;
   final SourceCredentialStore sourceCredentialStore;
   final LocalMediaStore localMediaStore;
+  final LinkedTvStatusStore linkedTvStatusStore;
+  final CompanionLocalCache companionLocalCache;
   final ConnectivityMonitor connectivity;
   final OfflineModeResolver offlineMode;
   final OemCompatibility oemCompatibility;
