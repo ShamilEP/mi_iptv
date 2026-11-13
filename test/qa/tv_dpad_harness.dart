@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mi_iptv/core/theme/theme.dart';
+import 'package:mi_iptv/core/widgets/content_row.dart';
 
-/// Shared helpers for TV D-pad navigation automation (QA-025 / SRS §12).
+/// Shared helpers for TV D-pad navigation automation (QA-025 / TV-121 / SRS §12).
 abstract final class TvDpadHarness {
   static Future<void> pumpTv(
     WidgetTester tester, {
@@ -41,6 +42,17 @@ abstract final class TvDpadHarness {
 
     walk(context as Element);
     return List<String>.unmodifiable(labels);
+  }
+
+  /// N-th [ContentRowState] under [of] (default: whole tree).
+  static ContentRowState contentRowState(
+    WidgetTester tester, {
+    Finder? of,
+    int index = 0,
+  }) {
+    final rows = find.byType(ContentRow);
+    final scoped = of == null ? rows : find.descendant(of: of, matching: rows);
+    return tester.state<ContentRowState>(scoped.at(index));
   }
 
   static Future<void> press(

@@ -12,7 +12,7 @@ import 'package:mi_iptv/features/settings/presentation/tv/tv_settings_page.dart'
 import 'tv_dpad_harness.dart';
 
 void main() {
-  group('QA-025 D-pad navigation', () {
+  group('QA-025 / TV-121 D-pad navigation', () {
     testWidgets('Home first focus is Continue watching card 0', (tester) async {
       expect(TvFocusMaps.home.firstFocusId, 'cw-0');
 
@@ -139,6 +139,88 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(backed, 1);
+    });
+
+    testWidgets('Back stack pops Settings and restores Home first focus', (
+      tester,
+    ) async {
+      expect(TvFocusMaps.home.backBehavior.name, 'exitScreen');
+      expect(TvFocusMaps.settings.backBehavior.name, 'exitScreen');
+      expect(TvFocusMaps.home.restoreFocusId, 'cw-0');
+
+      await TvDpadHarness.pumpTv(
+        tester,
+        home: Builder(
+          builder: (context) {
+            return Scaffold(
+              body: Column(
+                children: [
+                  const Expanded(child: TvHomePage()),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const TvSettingsPage(),
+                        ),
+                      );
+                    },
+                    child: const Text('open-settings'),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      );
+
+      expect(TvDpadHarness.focusedLabels(), contains('Evening news'));
+
+      await tester.tap(find.text('open-settings'));
+      await tester.pumpAndSettle();
+      expect(find.byType(TvSettingsPage), findsOneWidget);
+      expect(
+        TvDpadHarness.focusedLabels(),
+        contains(TvSettingsCopy.account),
+      );
+
+      final navigator = tester.state<NavigatorState>(find.byType(Navigator));
+      navigator.pop();
+      await tester.pumpAndSettle();
+
+      expect(find.byType(TvSettingsPage), findsNothing);
+      expect(find.byType(TvHomePage), findsOneWidget);
+      expect(TvDpadHarness.focusedLabels(), contains('Evening news'));
+    });
+
+    testWidgets('Home Continue watching keeps last-focus memory', (
+      tester,
+    ) async {
+      await TvDpadHarness.pumpTv(tester, home: const TvHomePage());
+      expect(TvDpadHarness.focusedLabels(), contains('Evening news'));
+
+      final continueRow = TvDpadHarness.contentRowState(
+        tester,
+        of: find.byType(TvHomePage),
+      );
+      expect(continueRow.lastFocusedIndex, 0);
+
+      await TvDpadHarness.press(tester, LogicalKeyboardKey.arrowRight);
+      expect(TvDpadHarness.focusedLabels(), contains('Series night'));
+      expect(continueRow.lastFocusedIndex, 1);
+
+      await TvDpadHarness.press(tester, LogicalKeyboardKey.arrowDown);
+      final afterDown = TvDpadHarness.focusedLabels();
+      expect(afterDown, isNot(contains('Series night')));
+      expect(
+        continueRow.lastFocusedIndex,
+        1,
+        reason: 'row must remember card 1 after focus left',
+      );
+
+      continueRow.restoreLastFocus();
+      await tester.pumpAndSettle();
+      expect(TvDpadHarness.focusedLabels(), contains('Series night'));
+      expect(continueRow.activeIndex, 1);
     });
   });
 }

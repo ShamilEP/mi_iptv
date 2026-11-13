@@ -89,7 +89,7 @@ Backend/infra availability is an **entry** dependency, not owned by this repo.
 
 - Unit tests for use cases (login, refresh, sync LWW / playback position rules).
 - Widget tests for TV Home, Live, Player overlays, Companion browse/send-to-TV.
-- Automated TV D-pad suite (QA-025): first focus, determinism, Back, focus traps — see [tv_dpad_navigation.md](./tv_dpad_navigation.md).
+- Automated TV D-pad suite (QA-025 / TV-121): first focus, determinism, Back stack, focus traps, last-focus memory — see [tv_dpad_navigation.md](./tv_dpad_navigation.md).
 - Automated Companion touch suite (QA-026): pairing, remote, send-to-TV on Android + iOS — see [companion_touch.md](./companion_touch.md).
 - Automated offline-first suite (QA-039): airplane / backend-down must not block interaction or playback recovery — see [offline_first.md](./offline_first.md).
 - Manual TV D-pad pass: focus ring always visible; first focus on highest-priority control (physical remote / OEM).
