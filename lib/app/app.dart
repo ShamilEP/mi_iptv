@@ -28,7 +28,7 @@ class MiIptvApp extends StatefulWidget {
   /// Override for widget tests that skip the TV splash gate.
   final String? initialRoute;
 
-  /// Optional locale controller (CMP-008). Defaults to DI when mounted.
+  /// Optional locale controller (CMP-008 / TV-014). Defaults to DI when mounted.
   final LocaleController? localeController;
 
   @override
@@ -58,10 +58,8 @@ class _MiIptvAppState extends State<MiIptvApp> {
       _ownsLocales = true;
     }
     _locales.addListener(_onLocale);
-    if (_isCompanion) {
-      // ignore: discarded_futures
-      _locales.hydrate();
-    }
+    // ignore: discarded_futures
+    _locales.hydrate();
   }
 
   @override
@@ -83,23 +81,19 @@ class _MiIptvAppState extends State<MiIptvApp> {
       if (AppDependencies.isMounted)
         ImagePipelineRouteObserver(AppDependencies.instance.imagePipeline),
     ];
-    final title = _isCompanion
-        ? AppStringCatalog.of(
-            AppStringKey.appNameCompanion,
-            _locales.locale,
-          )
-        : 'Mi IPTV';
+    final title = AppStringCatalog.of(
+      _isCompanion ? AppStringKey.appNameCompanion : AppStringKey.appNameTv,
+      _locales.locale,
+    );
 
     Widget app = MaterialApp(
       title: title,
       debugShowCheckedModeBanner: false,
       theme: _isCompanion ? AppTheme.companionLight() : AppTheme.tvDark(),
-      locale: _isCompanion ? _locales.locale.toFlutterLocale : null,
-      supportedLocales: _isCompanion
-          ? AppLocale.supported
-              .map((locale) => locale.toFlutterLocale)
-              .toList(growable: false)
-          : const <Locale>[Locale('en')],
+      locale: _locales.locale.toFlutterLocale,
+      supportedLocales: AppLocale.supported
+          .map((locale) => locale.toFlutterLocale)
+          .toList(growable: false),
       builder: (context, child) {
         Widget built = child ?? const SizedBox.shrink();
         if (_isCompanion) {
@@ -122,9 +116,6 @@ class _MiIptvAppState extends State<MiIptvApp> {
       ),
     );
 
-    if (_isCompanion) {
-      app = AppLocaleScope(controller: _locales, child: app);
-    }
-    return app;
+    return AppLocaleScope(controller: _locales, child: app);
   }
 }

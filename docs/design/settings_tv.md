@@ -13,3 +13,4 @@ Executable UI: [`TvSettingsPage`](../../lib/features/settings/presentation/tv/tv
 
 - Shell uses demo values until settings repositories are wired.
 - Uses `MiListRow` (DSN-013) for TV focus chrome.
+- **TV-014:** Language category hosts [`TvLanguagePanel`](../../lib/features/settings/presentation/tv/tv_language_panel.dart) (EN / ES / zh-CN / FR + format samples) when `AppLocaleScope` is present.

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/accessibility/tv_accessibility.dart';
+import '../../../../core/l10n/app_locale.dart';
+import '../../../../core/l10n/app_locale_scope.dart';
+import '../../../../core/l10n/app_string_key.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/brand_lockup.dart';
+import 'tv_language_panel.dart';
 import 'tv_settings_copy.dart';
 import 'tv_settings_models.dart';
 import 'tv_settings_panels.dart';
@@ -55,69 +59,92 @@ class TvSettingsPage extends StatefulWidget {
 class _TvSettingsPageState extends State<TvSettingsPage> {
   late TvSettingsCategory _category = widget.initialCategory;
 
-  String _categoryLabel(TvSettingsCategory category) {
+  AppLocale _localeOf(BuildContext context) {
+    final scope = context.dependOnInheritedWidgetOfExactType<AppLocaleScope>();
+    return scope?.notifier?.locale ?? AppLocale.en;
+  }
+
+  bool _hasLocaleScope(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<AppLocaleScope>() != null;
+
+  String _categoryLabel(BuildContext context, TvSettingsCategory category) {
+    final locale = _localeOf(context);
     switch (category) {
       case TvSettingsCategory.account:
-        return TvSettingsCopy.account;
+        return TvSettingsCopy.forLocale(locale, AppStringKey.settingsAccount);
       case TvSettingsCategory.sources:
-        return TvSettingsCopy.sources;
+        return TvSettingsCopy.forLocale(locale, AppStringKey.settingsSources);
       case TvSettingsCategory.network:
-        return TvSettingsCopy.network;
+        return TvSettingsCopy.forLocale(locale, AppStringKey.settingsNetwork);
       case TvSettingsCategory.language:
-        return TvSettingsCopy.language;
+        return TvSettingsCopy.forLocale(locale, AppStringKey.settingsLanguage);
       case TvSettingsCategory.playback:
-        return TvSettingsCopy.playback;
+        return TvSettingsCopy.forLocale(locale, AppStringKey.settingsPlayback);
     }
+  }
+
+  List<TvSettingsValue> _languageExtraValues() {
+    final values = widget.snapshot.valuesFor(TvSettingsCategory.language);
+    if (values.length <= 1) return const <TvSettingsValue>[];
+    return values.sublist(1);
   }
 
   @override
   Widget build(BuildContext context) {
     final brand = context.brandColors;
     final textTheme = Theme.of(context).textTheme;
+    final locale = _localeOf(context);
+    final showLanguagePanel =
+        _category == TvSettingsCategory.language && _hasLocaleScope(context);
 
     return TvAccessibleScope(
       child: Scaffold(
-      backgroundColor: brand.ink,
-      body: Padding(
-        padding: AppOverscan.padding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const BrandLockup(markHeight: AppSpacing.xxl),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              TvSettingsCopy.title,
-              style: textTheme.headlineMedium?.copyWith(color: brand.cloud),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 360,
-                    child: TvSettingsCategoryList(
-                      selected: _category,
-                      snapshot: widget.snapshot,
-                      onSelected: (category) =>
-                          setState(() => _category = category),
-                    ),
-                  ),
-                  const SizedBox(width: AppGrid.railGap),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: TvSettingsValuesPanel(
-                        categoryLabel: _categoryLabel(_category),
-                        values: widget.snapshot.valuesFor(_category),
+        backgroundColor: brand.ink,
+        body: Padding(
+          padding: AppOverscan.padding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const BrandLockup(markHeight: AppSpacing.xxl),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                TvSettingsCopy.forLocale(locale, AppStringKey.settingsTitle),
+                style: textTheme.headlineMedium?.copyWith(color: brand.cloud),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 360,
+                      child: TvSettingsCategoryList(
+                        selected: _category,
+                        snapshot: widget.snapshot,
+                        onSelected: (category) =>
+                            setState(() => _category = category),
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: AppGrid.railGap),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: showLanguagePanel
+                            ? TvLanguagePanel(
+                                extraValues: _languageExtraValues(),
+                              )
+                            : TvSettingsValuesPanel(
+                                categoryLabel:
+                                    _categoryLabel(context, _category),
+                                values: widget.snapshot.valuesFor(_category),
+                              ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
       ),
     );
   }

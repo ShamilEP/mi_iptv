@@ -5,7 +5,7 @@
 
 ## Goal
 
-Externalize Companion UI strings and apply locale-aware date / number formats. Shared core is reusable by **TV-014**.
+Externalize Companion UI strings and apply locale-aware date / number formats. Shared core is reused by **TV-014** (TV app shell + Settings language panel).
 
 ## Layout
 
@@ -16,7 +16,7 @@ Externalize Companion UI strings and apply locale-aware date / number formats. S
 | Catalog | [`AppStringCatalog`](../../lib/core/l10n/app_string_catalog.dart) + `translations/` |
 | Formats | [`LocaleFormats`](../../lib/core/l10n/locale_formats.dart) |
 | Controller | [`LocaleController`](../../lib/core/l10n/locale_controller.dart) (persists via `LocalMediaStore`) |
-| Scope | [`AppLocaleScope`](../../lib/core/l10n/app_locale_scope.dart) on Companion `MiIptvApp` |
+| Scope | [`AppLocaleScope`](../../lib/core/l10n/app_locale_scope.dart) on Companion and TV `MiIptvApp` |
 | Language UI | [`CompanionLanguagePage`](../../lib/features/settings/presentation/companion/companion_language_page.dart) → `/companion/language` |
 
 ## Packages

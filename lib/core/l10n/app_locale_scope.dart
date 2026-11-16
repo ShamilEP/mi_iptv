@@ -6,7 +6,7 @@ import 'app_string_key.dart';
 import 'locale_controller.dart';
 import 'locale_formats.dart';
 
-/// Provides [LocaleController] to the Companion tree (CMP-008).
+/// Provides [LocaleController] to TV and Companion trees (CMP-008 / TV-014).
 class AppLocaleScope extends InheritedNotifier<LocaleController> {
   const AppLocaleScope({
     super.key,
