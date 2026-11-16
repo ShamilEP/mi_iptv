@@ -2,7 +2,8 @@
 
 **Status:** Working draft for Product + counsel review — **not** final Terms of Service.  
 **Purpose:** Give engineering a look-alike position (common for media *clients* / playlist aggregators) so Settings, store text, and source UX can keep moving.  
-**Authority:** Final ToS, privacy policy URL, and complaint contact remain **Product (PRD-040 / PRD-042)**. Replace placeholders before store submission.
+**Authority:** Final ToS / Privacy Policy **URLs** remain **Product (PRD-042)**.  
+**Takedown contact (Product):** `shamil.espinosa@gmail.com` (set for SEC-043).
 
 This draft is original summary language inspired by patterns used by media clients that play *user-provided* libraries or playlists (e.g. “you supply the content; we supply the player”). It is **not** copied from any third-party ToS and is **not legal advice**.
 
@@ -73,15 +74,14 @@ Aligned with common “notice and action” flows for platforms that host *some*
 | Streams that only exist on a third-party host the user typed in | We typically **cannot** take down the remote host; we can disable the saved source on the account and/or suspend the account |
 | Companion “send-to-TV” / pairing | Same account-level remedies |
 
-### 3.2 How to submit a notice (placeholder)
+### 3.2 How to submit a notice
 
-Until Product publishes a real channel, engineering should treat contact as **unset**:
-
-| Field | Draft placeholder |
+| Field | Value |
 |---|---|
-| Channel | Email (preferred) or HTTPS web form |
-| Address | `takedown@<PRODUCT-DOMAIN>` — **replace before launch** |
-| Postal (if required for store / local law) | **TBD — Product / counsel** |
+| Channel | Email |
+| Address | `shamil.espinosa@gmail.com` |
+| `mailto:` | `mailto:shamil.espinosa@gmail.com` ([`UserSuppliedContentPolicy.takedownContactUri`](../../lib/core/legal/user_supplied_content_policy.dart)) |
+| Postal (if required for store / local law) | **TBD — counsel** if a physical address is required |
 | Subject line | `Takedown notice — Mi IPTV` |
 
 ### 3.3 What a complete notice should include (checklist for Product UI / help center)
@@ -118,14 +118,14 @@ If local law requires a counter-notice path for restored material, Product/couns
 | In-app Legal screen | Future Settings → Account / About — show draft summary + “ToS URL TBD” |
 | Server-side notice mailbox | Backend / Infra — not this repo |
 
-Do **not** hardcode a production takedown mailbox until Product replaces the placeholder.
+Takedown mailbox is Product-set in [`UserSuppliedContentPolicy`](../../lib/core/legal/user_supplied_content_policy.dart). ToS body remains draft until counsel sign-off.
 
 ---
 
-## 6. Open decisions for Product (PRD-040)
+## 6. Open decisions for Product (PRD-040 / PRD-042)
 
-- [ ] Final ToS + Privacy Policy URLs (with PRD-042)  
-- [ ] Real `takedown@…` or web form URL  
+- [ ] Final ToS + Privacy Policy URLs (PRD-042)  
+- [x] Takedown / complaint email — `shamil.espinosa@gmail.com`  
 - [ ] Whether synced user sources are stored server-side in MVP (affects takedown mechanics)  
 - [ ] Jurisdiction / governing law blurb  
 - [ ] Whether to show a one-time “I am authorized to use these sources” checkbox when adding M3U/Xtream  

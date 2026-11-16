@@ -1,8 +1,7 @@
-/// Draft stance on user-supplied IPTV sources and takedowns (SEC-043 / PRD-040).
+/// Stance on user-supplied IPTV sources and takedowns (SEC-043 / PRD-040).
 ///
-/// **Not final legal copy.** Product + counsel must approve before store ship.
-/// Contact fields stay empty until PRD-040 provides them — do not invent a
-/// production mailbox.
+/// ToS body copy remains a **development draft** until counsel signs off.
+/// Takedown contact was set by Product for client/store use.
 abstract final class UserSuppliedContentPolicy {
   /// Documented draft for Product / counsel review.
   static const String draftDocPath =
@@ -24,11 +23,13 @@ abstract final class UserSuppliedContentPolicy {
       'Mi Catalog and app branding are separate from user-supplied sources and '
       'remain owned by Mi IPTV or its licensors.';
 
-  /// Empty until Product sets a real HTTPS help URL or mailto (PRD-040).
-  static const String? takedownContactUri = null;
+  /// Product-provided complaint / takedown mailbox (SEC-043).
+  static const String takedownContactEmail = 'shamil.espinosa@gmail.com';
 
-  static const String takedownContactPlaceholderLabel =
-      'Takedown contact — TBD (Product PRD-040)';
+  /// `mailto:` URI for in-app / store listing links.
+  static const String takedownContactUri = 'mailto:$takedownContactEmail';
+
+  static const String takedownContactLabel = 'Copyright / takedown notices';
 
   static const String tosUrlPlaceholderLabel = 'Terms of Service — TBD (PRD-042)';
 
@@ -40,5 +41,5 @@ abstract final class UserSuppliedContentPolicy {
       'Legal text is a development draft and is not final Terms of Service.';
 
   static bool get hasPublishedTakedownContact =>
-      takedownContactUri != null && takedownContactUri!.trim().isNotEmpty;
+      takedownContactUri.trim().isNotEmpty;
 }

@@ -4,11 +4,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mi_iptv/core/legal/user_supplied_content_policy.dart';
 
 void main() {
-  group('SEC-043 draft user-supplied content policy', () {
-    test('stays draft with no invented takedown mailbox', () {
+  group('SEC-043 user-supplied content policy', () {
+    test('publishes Product takedown contact while ToS body stays draft', () {
       expect(UserSuppliedContentPolicy.isDraft, isTrue);
-      expect(UserSuppliedContentPolicy.hasPublishedTakedownContact, isFalse);
-      expect(UserSuppliedContentPolicy.takedownContactUri, isNull);
+      expect(UserSuppliedContentPolicy.hasPublishedTakedownContact, isTrue);
+      expect(
+        UserSuppliedContentPolicy.takedownContactEmail,
+        'shamil.espinosa@gmail.com',
+      );
+      expect(
+        UserSuppliedContentPolicy.takedownContactUri,
+        'mailto:shamil.espinosa@gmail.com',
+      );
       expect(
         UserSuppliedContentPolicy.shortProductStance.toLowerCase(),
         contains('responsible'),
@@ -19,7 +26,7 @@ void main() {
       );
     });
 
-    test('draft ToS doc exists and flags Product ownership', () {
+    test('draft ToS doc records SEC-043 contact and Product ownership', () {
       final file = File(UserSuppliedContentPolicy.draftDocPath);
       expect(file.existsSync(), isTrue);
       final text = file.readAsStringSync();
@@ -28,7 +35,8 @@ void main() {
       expect(text, contains('PRD-040'));
       expect(text, contains('takedown'));
       expect(text, contains('M3U'));
-      expect(text, isNot(contains('takedown@mi-iptv.com')));
+      expect(text, contains('shamil.espinosa@gmail.com'));
+      expect(text, isNot(contains('takedown@<PRODUCT-DOMAIN>')));
     });
   });
 }
