@@ -10,6 +10,7 @@ Android TV device matrix: [android_tv_device_matrix.md](./android_tv_device_matr
 TV D-pad navigation automation: [tv_dpad_navigation.md](./tv_dpad_navigation.md) (QA-025).  
 Companion touch automation: [companion_touch.md](./companion_touch.md) (QA-026).  
 Offline-first (airplane / backend-down): [offline_first.md](./offline_first.md) (QA-039).  
+Upgrades / local DB migrations (QA-041 / FR-027): [upgrades_and_migrations.md](./upgrades_and_migrations.md).  
 Client security acceptance criteria: [client_security_checklist.md](../security/client_security_checklist.md) (SEC-002).  
 Incident response (token/key compromise): [incident_response_runbook.md](../security/incident_response_runbook.md) (SEC-052).
 
@@ -95,6 +96,7 @@ Backend/infra availability is an **entry** dependency, not owned by this repo.
 - MVP FR acceptance (QA-019): FR-012…016 / FR-024 / FR-026 / FR-028 matrix — see [qa-019_fr_acceptance.md](./qa-019_fr_acceptance.md).
 - Design System visual regression (QA-029): focus + 12 `UiState` PNG baselines via built-in `matchesGoldenFile` — see [visual_regression_design_system.md](./visual_regression_design_system.md).
 - Live playback soak (QA-042 / NFR-003): accelerated leak/stability suite + 24h lab procedure on QA-002 stick — see [live_playback_soak.md](./live_playback_soak.md).
+- Upgrades and migrations (QA-041 / FR-027): v1→current DB + sync outbox/`syncVersion` preservation; recoverable schema failure — see [upgrades_and_migrations.md](./upgrades_and_migrations.md).
 - Store compliance (QA-052): Play TV quality + App Store / Play Companion readiness — see [store_compliance.md](./store_compliance.md).
 - Manual TV D-pad pass: focus ring always visible; first focus on highest-priority control (physical remote / OEM).
 - Manual Companion pass: no video playback; send-to-TV happy path + offline messaging.
