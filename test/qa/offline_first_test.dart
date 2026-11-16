@@ -12,6 +12,7 @@ import 'package:mi_iptv/core/widgets/offline_banner.dart';
 import 'package:mi_iptv/features/catalog/domain/entities/content_item.dart';
 import 'package:mi_iptv/features/home/presentation/tv/tv_home_connectivity_binder.dart';
 import 'package:mi_iptv/features/home/presentation/tv/tv_home_page.dart';
+import 'package:mi_iptv/features/player/domain/entities/playback_audio_state.dart';
 import 'package:mi_iptv/features/player/domain/entities/playback_error.dart';
 import 'package:mi_iptv/features/player/domain/entities/playback_request.dart';
 import 'package:mi_iptv/features/player/domain/repositories/media_player_controller.dart';
@@ -182,9 +183,13 @@ final class _FakeProbe implements ConnectivityProbe {
 final class _FailingPlayer implements MediaPlayerController {
   final _controller = StreamController<MediaPlayerStatus>.broadcast();
   int playCount = 0;
+  PlaybackAudioState _audio = const PlaybackAudioState();
 
   @override
   Stream<MediaPlayerStatus> get status => _controller.stream;
+
+  @override
+  PlaybackAudioState get audioState => _audio;
 
   @override
   Future<void> play(PlaybackRequest request) async {
@@ -199,6 +204,11 @@ final class _FailingPlayer implements MediaPlayerController {
 
   @override
   Future<void> stop() async {}
+
+  @override
+  Future<void> setAudioState(PlaybackAudioState state) async {
+    _audio = state;
+  }
 
   void emitNetworkError() {
     _controller.add(

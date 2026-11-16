@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 import '../../../../core/network/transport_security_policy.dart';
+import '../../domain/entities/playback_audio_state.dart';
 import '../../domain/entities/playback_request.dart';
 import '../../domain/entities/stream_protocol.dart';
 import '../../domain/repositories/media_player_controller.dart';
@@ -36,6 +37,10 @@ final class Media3PlayerAdapter implements MediaPlayerController {
   final EventChannel _events;
   final _statusController = StreamController<MediaPlayerStatus>.broadcast();
   StreamSubscription<dynamic>? _subscription;
+  PlaybackAudioState _audioState = const PlaybackAudioState();
+
+  @override
+  PlaybackAudioState get audioState => _audioState;
 
   @override
   Stream<MediaPlayerStatus> get status => _statusController.stream;
@@ -63,6 +68,9 @@ final class Media3PlayerAdapter implements MediaPlayerController {
       'headers': request.headers,
       'userAgent': request.userAgent,
       'abr': abr.toWire(),
+      // TV-056: re-apply user mute/volume after prepare (engine may rebuild).
+      'muted': _audioState.muted,
+      'volume': _audioState.volume,
     });
   }
 
@@ -78,6 +86,15 @@ final class Media3PlayerAdapter implements MediaPlayerController {
 
   @override
   Future<void> stop() => _invoke('stop');
+
+  @override
+  Future<void> setAudioState(PlaybackAudioState state) async {
+    _audioState = state;
+    await _invoke('setAudioState', <String, Object?>{
+      'muted': state.muted,
+      'volume': state.volume,
+    });
+  }
 
   /// Detach event subscription. Native ExoPlayer is released with the engine.
   Future<void> dispose() async {

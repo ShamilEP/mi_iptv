@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mi_iptv/features/player/data/adapters/memory_media_player_controller.dart';
 import 'package:mi_iptv/features/player/data/adapters/memory_playback_session_host.dart';
+import 'package:mi_iptv/features/player/domain/entities/playback_audio_state.dart';
 import 'package:mi_iptv/features/player/domain/entities/playback_request.dart';
 import 'package:mi_iptv/features/player/domain/entities/playback_session_signal.dart';
 import 'package:mi_iptv/features/player/domain/repositories/media_player_controller.dart';
@@ -97,9 +98,13 @@ final class _TrackingPlayer implements MediaPlayerController {
   final _controller = StreamController<MediaPlayerStatus>.broadcast();
   int pauseCalls = 0;
   int playCalls = 0;
+  PlaybackAudioState _audio = const PlaybackAudioState();
 
   @override
   Stream<MediaPlayerStatus> get status => _controller.stream;
+
+  @override
+  PlaybackAudioState get audioState => _audio;
 
   @override
   Future<void> play(PlaybackRequest request) async {
@@ -117,6 +122,11 @@ final class _TrackingPlayer implements MediaPlayerController {
 
   @override
   Future<void> stop() async {}
+
+  @override
+  Future<void> setAudioState(PlaybackAudioState state) async {
+    _audio = state;
+  }
 
   void emit(MediaPlayerPhase phase) {
     _controller.add(MediaPlayerStatus(phase: phase));

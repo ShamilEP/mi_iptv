@@ -34,6 +34,9 @@ internal class Media3PlayerEngine(
     private var lastHeaders: Map<String, String> = emptyMap()
     private var lastUserAgent: String? = null
     private var lastAbr: AbrBufferConfig = AbrBufferConfig.vodDefault
+    /** Last user-chosen level (0..1). Survives play / player rebuild (TV-056). */
+    private var userVolume: Float = 0.8f
+    private var muted: Boolean = false
 
     private val listener = object : Player.Listener {
         override fun onPlaybackStateChanged(playbackState: Int) {
@@ -62,8 +65,12 @@ internal class Media3PlayerEngine(
         headers: Map<String, String>,
         userAgent: String?,
         abr: AbrBufferConfig,
+        muted: Boolean? = null,
+        volume: Float? = null,
     ) {
         runOnMain {
+            if (muted != null) this.muted = muted
+            if (volume != null) userVolume = volume.coerceIn(0f, 1f)
             val exo = ensurePlayer(
                 headers = headers,
                 userAgent = userAgent,
@@ -77,8 +84,19 @@ internal class Media3PlayerEngine(
                 .build()
             exo.setMediaItem(item)
             exo.prepare()
+            applyAudio(exo)
             exo.playWhenReady = true
             emitStatus(phase = "buffering")
+        }
+    }
+
+    /** Explicit user mute/volume only — never call from focus/pause paths (TV-056). */
+    fun setAudioState(muted: Boolean, volume: Float) {
+        runOnMain {
+            this.muted = muted
+            userVolume = volume.coerceIn(0f, 1f)
+            applyAudio(player)
+            emitStatus()
         }
     }
 
@@ -175,8 +193,14 @@ internal class Media3PlayerEngine(
             .build()
             .also {
                 it.addListener(listener)
+                applyAudio(it)
                 player = it
             }
+    }
+
+    private fun applyAudio(exo: ExoPlayer?) {
+        if (exo == null) return
+        exo.volume = if (muted) 0f else userVolume
     }
 
     private fun releasePlayerInternal() {
