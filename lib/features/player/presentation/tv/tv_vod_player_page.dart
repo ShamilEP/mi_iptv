@@ -6,12 +6,14 @@ import 'package:flutter/services.dart';
 import '../../../../core/accessibility/tv_accessibility.dart';
 import '../../../../core/network/transport_security_policy.dart';
 import '../../../../core/theme/theme.dart';
+import '../../../../core/widgets/buffering_reconnect_overlay.dart';
 import '../../../../core/widgets/cleartext_media_notice.dart';
 import '../../../../core/widgets/focusable_surface.dart';
 import '../../../../core/widgets/mi_overlay_panel.dart';
 import '../../../../core/widgets/mi_subtitle_caption.dart';
 import '../../../../core/widgets/vod_player_controls_overlay.dart';
 import '../../domain/entities/playback_request.dart';
+import '../../domain/entities/playback_status_feedback.dart';
 import '../../domain/repositories/media_player_controller.dart';
 import '../../domain/services/accelerated_seek.dart';
 import 'tv_track_models.dart';
@@ -35,6 +37,7 @@ class TvVodPlayerPage extends StatefulWidget {
     this.subtitleTracks = demoSubtitleTracks,
     this.mediaPlayer,
     this.playbackRequest,
+    this.isReconnecting = false,
     this.onExit,
     this.onSeekBackward,
     this.onSeekForward,
@@ -58,6 +61,9 @@ class TvVodPlayerPage extends StatefulWidget {
 
   /// Optional stream to start when [mediaPlayer] is present.
   final PlaybackRequest? playbackRequest;
+
+  /// True while [PlaybackRetryCoordinator] auto-retry is in flight (TV-055).
+  final bool isReconnecting;
 
   /// Called after Back exits playback (in addition to [Navigator.maybePop]).
   final VoidCallback? onExit;
@@ -262,6 +268,10 @@ class _TvVodPlayerPageState extends State<TvVodPlayerPage> {
         TransportSecurityPolicy.requiresCleartextMediaWarning(
           widget.playbackRequest!.streamUri,
         );
+    final statusFeedback = resolvePlaybackStatusFeedback(
+      phase: _transport.phase,
+      isReconnecting: widget.isReconnecting,
+    );
 
     return TvAccessibleScope(
       child: Focus(
@@ -272,7 +282,10 @@ class _TvVodPlayerPageState extends State<TvVodPlayerPage> {
           body: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: _reveal,
-            child: OverlayStage(
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                OverlayStage(
               topOverlay: _controlsVisible && !_trackSelectorOpen
                   ? Align(
                       alignment: Alignment.topCenter,
@@ -391,6 +404,12 @@ class _TvVodPlayerPageState extends State<TvVodPlayerPage> {
                   ),
                 ),
               ),
+            ),
+                if (statusFeedback != PlaybackStatusFeedback.none)
+                  BufferingReconnectOverlay(
+                    label: PlaybackStatusFeedbackCopy.labelFor(statusFeedback),
+                  ),
+              ],
             ),
           ),
         ),

@@ -73,6 +73,23 @@ final class MemoryMediaPlayerController implements MediaPlayerController {
     _emit(const MediaPlayerStatus(phase: MediaPlayerPhase.idle));
   }
 
+  /// Test helper — emit an arbitrary phase (e.g. buffering) without jargon.
+  void emitPhase(
+    MediaPlayerPhase phase, {
+    Duration? position,
+    Duration? duration,
+    String? message,
+  }) {
+    _emit(
+      MediaPlayerStatus(
+        phase: phase,
+        position: position ?? _status.position,
+        duration: duration ?? _status.duration,
+        message: message,
+      ),
+    );
+  }
+
   void dispose() {
     unawaited(_controller.close());
   }

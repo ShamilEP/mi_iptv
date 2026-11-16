@@ -5,10 +5,12 @@ import '../../../../core/accessibility/tv_accessibility.dart';
 import '../../../../core/oem/tv_remote_action.dart';
 import '../../../../core/oem/tv_remote_key_mapper.dart';
 import '../../../../core/theme/theme.dart';
+import '../../../../core/widgets/buffering_reconnect_overlay.dart';
 import '../../../../core/widgets/channel_info_overlay.dart';
 import '../../../../core/widgets/mi_overlay_panel.dart';
 import '../../../../core/widgets/status_badge.dart';
 import '../../../../core/widgets/stream_failure_recovery_overlay.dart';
+import '../../../player/domain/entities/playback_status_feedback.dart';
 import 'tv_live_tv_channel.dart';
 import 'tv_live_tv_channel_list.dart';
 
@@ -18,6 +20,7 @@ import 'tv_live_tv_channel_list.dart';
 /// shows name, number, logo, and source; LIVE + active-source badges indicate
 /// status. When [streamFailed] is true, [StreamFailureRecoveryOverlay] keeps
 /// that channel context and offers recovery actions (DSN-039).
+/// [statusFeedback] shows spinner + plain reconnect/loading copy (TV-055).
 /// CH+/CH− (and OEM aliases via [keyMapper]) zap channels (TV-011).
 class TvLiveTvPage extends StatefulWidget {
   const TvLiveTvPage({
@@ -26,6 +29,7 @@ class TvLiveTvPage extends StatefulWidget {
     this.initialIndex = 0,
     this.showChannelList = true,
     this.streamFailed = false,
+    this.statusFeedback = PlaybackStatusFeedback.none,
     this.failureMessage = StreamFailureRecoveryOverlay.defaultMessage,
     this.onRetry,
     this.onSwitchSource,
@@ -39,6 +43,9 @@ class TvLiveTvPage extends StatefulWidget {
 
   /// Whether the current channel's stream failed (DSN-039).
   final bool streamFailed;
+
+  /// Buffering / reconnect spinner (TV-055). Ignored while [streamFailed].
+  final PlaybackStatusFeedback statusFeedback;
 
   /// Actionable copy for [StreamFailureRecoveryOverlay].
   final String failureMessage;
@@ -207,6 +214,14 @@ class _TvLiveTvPageState extends State<TvLiveTvPage> {
                     onRetry: widget.onRetry,
                     onSwitchSource: widget.onSwitchSource,
                     onBackToChannels: widget.onBackToChannels,
+                  ),
+                )
+              else if (widget.statusFeedback != PlaybackStatusFeedback.none)
+                Positioned.fill(
+                  child: BufferingReconnectOverlay(
+                    label: PlaybackStatusFeedbackCopy.labelFor(
+                      widget.statusFeedback,
+                    ),
                   ),
                 ),
             ],
