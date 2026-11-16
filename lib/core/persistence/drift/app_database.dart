@@ -2,9 +2,11 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'app_database_migrations.dart';
+
 part 'app_database.g.dart';
 
-/// Durable SQLite schema for local media cache / sync outbox (TV-007).
+/// Durable SQLite schema for local media cache / sync outbox (TV-007 / TV-015).
 class CachedChannels extends Table {
   TextColumn get contentId => text()();
   TextColumn get title => text()();
@@ -88,6 +90,15 @@ class OutboxRows extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
+/// Schema watermark / migration bookkeeping (TV-015). Non-secret only.
+class LocalSchemaMetaRows extends Table {
+  TextColumn get key => text()();
+  TextColumn get value => text()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {key};
+}
+
 @DriftDatabase(
   tables: [
     CachedChannels,
@@ -97,14 +108,22 @@ class OutboxRows extends Table {
     SourceRows,
     SettingRows,
     OutboxRows,
+    LocalSchemaMetaRows,
   ],
 )
 final class AppDatabase extends _$AppDatabase {
-  AppDatabase(super.executor);
+  AppDatabase(
+    super.executor, {
+    int? schemaVersionOverride,
+    MigrationStrategy? migrationOverride,
+  })  : _schemaVersionOverride = schemaVersionOverride,
+        _migrationOverride = migrationOverride;
 
   /// Device default — file under application support directory.
   AppDatabase.defaults()
-      : super(
+      : _schemaVersionOverride = null,
+        _migrationOverride = null,
+        super(
           driftDatabase(
             name: 'mi_iptv_local_media',
             native: const DriftNativeOptions(
@@ -113,6 +132,27 @@ final class AppDatabase extends _$AppDatabase {
           ),
         );
 
+  /// Opens a DB as schema v1 (TV-007 shape) for upgrade-safety tests (TV-015).
+  factory AppDatabase.legacyV1(QueryExecutor executor) {
+    late final AppDatabase db;
+    db = AppDatabase(
+      executor,
+      schemaVersionOverride: 1,
+      migrationOverride: MigrationStrategy(
+        onCreate: (m) => AppDatabaseMigrations.createV1Tables(m, db),
+      ),
+    );
+    return db;
+  }
+
+  final int? _schemaVersionOverride;
+  final MigrationStrategy? _migrationOverride;
+
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion =>
+      _schemaVersionOverride ?? AppDatabaseMigrations.currentSchemaVersion;
+
+  @override
+  MigrationStrategy get migration =>
+      _migrationOverride ?? AppDatabaseMigrations.strategyFor(this);
 }
