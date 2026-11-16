@@ -1,12 +1,15 @@
 import 'package:flutter/foundation.dart';
 
+import '../../domain/entities/playback_track.dart';
+import '../../domain/services/default_track_policy.dart';
+
 /// Kind of selectable media track in the player overlay (DSN-064).
 enum TvMediaTrackKind {
   audio,
   subtitle,
 }
 
-/// Demo / shell media track (no Media3 wiring).
+/// Demo / shell media track (Media3 defaults applied natively — TV-057).
 @immutable
 class TvMediaTrack {
   const TvMediaTrack({
@@ -15,6 +18,7 @@ class TvMediaTrack {
     required this.label,
     this.languageCode = '',
     this.isOff = false,
+    this.isDefault = false,
   });
 
   final String id;
@@ -24,15 +28,47 @@ class TvMediaTrack {
 
   /// Subtitle “Off” row — hides captions without removing the option.
   final bool isOff;
+
+  /// Source-marked default track (TV-057).
+  final bool isDefault;
+
+  PlaybackTrack toDomain() {
+    return PlaybackTrack(
+      id: id,
+      kind: kind == TvMediaTrackKind.audio
+          ? PlaybackTrackKind.audio
+          : PlaybackTrackKind.subtitle,
+      label: label,
+      languageCode: languageCode,
+      isDefault: isDefault,
+      isOff: isOff,
+    );
+  }
 }
 
-/// Remembered audio / subtitle choice for the player shell (DSN-064).
+/// Remembered audio / subtitle choice for the player shell (DSN-064 / TV-057).
 @immutable
 class TvTrackPreference {
   const TvTrackPreference({
-    this.audioTrackId = demoDefaultAudioId,
-    this.subtitleTrackId = demoDefaultSubtitleId,
+    required this.audioTrackId,
+    required this.subtitleTrackId,
   });
+
+  /// MVP defaults from [DefaultTrackPolicy] over demo source tracks.
+  factory TvTrackPreference.sourceDefaults({
+    List<TvMediaTrack> audioTracks = demoAudioTracks,
+    List<TvMediaTrack> subtitleTracks = demoSubtitleTracks,
+  }) {
+    final resolved = DefaultTrackPolicy.resolve(
+      audioTracks: audioTracks.map((t) => t.toDomain()).toList(growable: false),
+      subtitleTracks:
+          subtitleTracks.map((t) => t.toDomain()).toList(growable: false),
+    );
+    return TvTrackPreference(
+      audioTrackId: resolved.audioTrackId,
+      subtitleTrackId: resolved.subtitleTrackId,
+    );
+  }
 
   final String audioTrackId;
   final String subtitleTrackId;
@@ -68,6 +104,7 @@ const List<TvMediaTrack> demoAudioTracks = <TvMediaTrack>[
     kind: TvMediaTrackKind.audio,
     label: 'English',
     languageCode: 'en',
+    isDefault: true,
   ),
   TvMediaTrack(
     id: 'aud-es',
@@ -85,7 +122,7 @@ const List<TvMediaTrack> demoAudioTracks = <TvMediaTrack>[
 
 const List<TvMediaTrack> demoSubtitleTracks = <TvMediaTrack>[
   TvMediaTrack(
-    id: 'sub-off',
+    id: DefaultTrackPolicy.subtitleOffId,
     kind: TvMediaTrackKind.subtitle,
     label: TvTrackSelectorCopy.offLabel,
     isOff: true,
@@ -95,6 +132,7 @@ const List<TvMediaTrack> demoSubtitleTracks = <TvMediaTrack>[
     kind: TvMediaTrackKind.subtitle,
     label: 'English',
     languageCode: 'en',
+    isDefault: true,
   ),
   TvMediaTrack(
     id: 'sub-es',

@@ -3,10 +3,14 @@ package com.example.mi_iptv.player
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.TrackSelectionOverride
+import androidx.media3.common.Tracks
+import androidx.media3.common.text.CueGroup
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
@@ -15,13 +19,15 @@ import androidx.media3.exoplayer.trackselection.AdaptiveTrackSelection
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 
 /**
- * Owns a single [ExoPlayer] instance for the Flutter process (TV-050 / TV-051 / TV-053).
+ * Owns a single [ExoPlayer] instance for the Flutter process (TV-050 / TV-051 / TV-053 / TV-057).
  *
  * Lifecycle is tied to the Flutter engine plugin — not to Flutter screens.
  * Supports HLS, DASH, progressive TS/MP4 with content-type sniffing for
  * extension-less IPTV URLs, custom headers / User-Agent, and cross-protocol
  * redirects. ABR / buffer profiles (live vs VOD, device ceilings) land via
- * [AbrBufferConfig] (TV-053 / NFR-QOE-04).
+ * [AbrBufferConfig] (TV-053 / NFR-QOE-04). Source-default audio/text tracks and
+ * cue text for Flutter DSN-021 captions land via [applySourceDefaultTracks]
+ * (TV-057).
  */
 internal class Media3PlayerEngine(
     context: Context,
@@ -30,6 +36,7 @@ internal class Media3PlayerEngine(
     private val appContext = context.applicationContext
     private val mainHandler = Handler(Looper.getMainLooper())
     private var player: ExoPlayer? = null
+    private var trackSelector: DefaultTrackSelector? = null
     private var positionTicker: Runnable? = null
     private var lastHeaders: Map<String, String> = emptyMap()
     private var lastUserAgent: String? = null
@@ -37,6 +44,7 @@ internal class Media3PlayerEngine(
     /** Last user-chosen level (0..1). Survives play / player rebuild (TV-056). */
     private var userVolume: Float = 0.8f
     private var muted: Boolean = false
+    private var lastSubtitleCue: String = ""
 
     private val listener = object : Player.Listener {
         override fun onPlaybackStateChanged(playbackState: Int) {
@@ -46,6 +54,19 @@ internal class Media3PlayerEngine(
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             emitStatus()
             if (isPlaying) startTicker() else stopTicker()
+        }
+
+        override fun onTracksChanged(tracks: Tracks) {
+            applySourceDefaultTracks(tracks)
+            emitStatus()
+        }
+
+        override fun onCues(cueGroup: CueGroup) {
+            lastSubtitleCue = cueGroup.cues
+                .mapNotNull { cue -> cue.text?.toString()?.trim() }
+                .filter { it.isNotEmpty() }
+                .joinToString("\n")
+            emitStatus()
         }
 
         override fun onPlayerError(error: PlaybackException) {
@@ -179,17 +200,18 @@ internal class Media3PlayerEngine(
             /* minDurationToRetainAfterDiscardMs */ 25_000,
             abr.bandwidthFraction,
         )
-        val trackSelector = DefaultTrackSelector(appContext, adaptiveFactory)
-        trackSelector.parameters = trackSelector.buildUponParameters()
+        val selector = DefaultTrackSelector(appContext, adaptiveFactory)
+        selector.parameters = selector.buildUponParameters()
             .setMaxVideoBitrate(abr.maxVideoBitrateBps)
             .setMaxVideoSize(abr.maxWidth, abr.maxHeight)
             .setForceHighestSupportedBitrate(false)
             .build()
+        trackSelector = selector
 
         return ExoPlayer.Builder(appContext)
             .setMediaSourceFactory(mediaSourceFactory)
             .setLoadControl(loadControl)
-            .setTrackSelector(trackSelector)
+            .setTrackSelector(selector)
             .build()
             .also {
                 it.addListener(listener)
@@ -203,13 +225,51 @@ internal class Media3PlayerEngine(
         exo.volume = if (muted) 0f else userVolume
     }
 
+    /**
+     * Selects the source-default audio (engine default) and default text track
+     * when marked; otherwise keeps text disabled (TV-057 / FR-017 MVP).
+     */
+    private fun applySourceDefaultTracks(tracks: Tracks) {
+        val selector = trackSelector ?: return
+        val builder = selector.buildUponParameters()
+            .clearOverridesOfType(C.TRACK_TYPE_TEXT)
+            .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true)
+
+        var enabledDefaultText = false
+        for (group in tracks.groups) {
+            if (group.type != C.TRACK_TYPE_TEXT) continue
+            for (i in 0 until group.length) {
+                val format = group.getTrackFormat(i)
+                val isDefault =
+                    (format.selectionFlags and C.SELECTION_FLAG_DEFAULT) != 0
+                if (isDefault) {
+                    builder
+                        .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false)
+                        .setOverrideForType(
+                            TrackSelectionOverride(group.mediaTrackGroup, listOf(i)),
+                        )
+                    enabledDefaultText = true
+                    break
+                }
+            }
+            if (enabledDefaultText) break
+        }
+
+        if (!enabledDefaultText) {
+            lastSubtitleCue = ""
+        }
+        selector.setParameters(builder)
+    }
+
     private fun releasePlayerInternal() {
         stopTicker()
         player?.removeListener(listener)
         player?.release()
         player = null
+        trackSelector = null
         lastHeaders = emptyMap()
         lastUserAgent = null
+        lastSubtitleCue = ""
     }
 
     private fun mimeTypeFor(protocol: String?): String? {
@@ -247,6 +307,7 @@ internal class Media3PlayerEngine(
             "positionMs" to (exo?.currentPosition ?: 0L),
             "durationMs" to durationOf(exo),
             "message" to message,
+            "subtitleCue" to lastSubtitleCue,
         )
         onStatus(payload)
     }

@@ -127,12 +127,14 @@ final class Media3PlayerAdapter implements MediaPlayerController {
   void _onEvent(dynamic raw) {
     if (raw is! Map) return;
     final map = Map<Object?, Object?>.from(raw);
+    final cue = map['subtitleCue']?.toString();
     _emit(
       MediaPlayerStatus(
         phase: _phaseOf(map['phase']?.toString()),
         position: Duration(milliseconds: _intOf(map['positionMs'])),
         duration: Duration(milliseconds: _intOf(map['durationMs'])),
         message: map['message']?.toString(),
+        subtitleCue: (cue == null || cue.isEmpty) ? null : cue,
       ),
     );
   }
