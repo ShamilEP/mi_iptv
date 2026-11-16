@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import '../../domain/entities/playback_audio_state.dart';
 import '../../domain/entities/playback_request.dart';
 import '../../domain/entities/stream_protocol.dart';
 import '../../domain/repositories/media_player_controller.dart';
@@ -14,6 +15,7 @@ final class MemoryMediaPlayerController implements MediaPlayerController {
 
   final _controller = StreamController<MediaPlayerStatus>.broadcast();
   MediaPlayerStatus _status = const MediaPlayerStatus(phase: MediaPlayerPhase.idle);
+  PlaybackAudioState _audioState = const PlaybackAudioState();
   PlaybackRequest? _lastRequest;
   StreamProtocol? _lastProtocol;
 
@@ -22,6 +24,9 @@ final class MemoryMediaPlayerController implements MediaPlayerController {
   PlaybackRequest? get lastRequest => _lastRequest;
 
   StreamProtocol? get lastProtocol => _lastProtocol;
+
+  @override
+  PlaybackAudioState get audioState => _audioState;
 
   @override
   Stream<MediaPlayerStatus> get status => _controller.stream;
@@ -33,6 +38,7 @@ final class MemoryMediaPlayerController implements MediaPlayerController {
       request.streamUri,
       protocolHint: request.protocolHint,
     );
+    // TV-056: play must not reset mute / volume.
     _emit(
       MediaPlayerStatus(
         phase: MediaPlayerPhase.playing,
@@ -71,6 +77,11 @@ final class MemoryMediaPlayerController implements MediaPlayerController {
   @override
   Future<void> stop() async {
     _emit(const MediaPlayerStatus(phase: MediaPlayerPhase.idle));
+  }
+
+  @override
+  Future<void> setAudioState(PlaybackAudioState state) async {
+    _audioState = state;
   }
 
   /// Test helper — emit an arbitrary phase (e.g. buffering) without jargon.

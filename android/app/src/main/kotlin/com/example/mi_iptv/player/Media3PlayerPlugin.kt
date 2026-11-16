@@ -69,12 +69,16 @@ class Media3PlayerPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Event
                 }
                 @Suppress("UNCHECKED_CAST")
                 val abrMap = call.argument<Map<*, *>>("abr")
+                val muted = call.argument<Boolean>("muted")
+                val volume = call.argument<Number>("volume")?.toFloat()
                 player.play(
                     uri = uri,
                     protocol = protocol,
                     headers = headers,
                     userAgent = userAgent,
                     abr = AbrBufferConfig.fromMap(abrMap),
+                    muted = muted,
+                    volume = volume,
                 )
                 result.success(null)
             }
@@ -93,6 +97,16 @@ class Media3PlayerPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, Event
             }
             "stop" -> {
                 player.stop()
+                result.success(null)
+            }
+            "setAudioState" -> {
+                val muted = call.argument<Boolean>("muted")
+                val volume = call.argument<Number>("volume")?.toFloat()
+                if (muted == null || volume == null) {
+                    result.error("bad_args", "muted and volume required", null)
+                    return
+                }
+                player.setAudioState(muted = muted, volume = volume)
                 result.success(null)
             }
             else -> result.notImplemented()

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mi_iptv/features/player/data/adapters/media3_player_adapter.dart';
+import 'package:mi_iptv/features/player/domain/entities/playback_audio_state.dart';
 import 'package:mi_iptv/features/player/domain/entities/playback_mode.dart';
 import 'package:mi_iptv/features/player/domain/entities/playback_request.dart';
 import 'package:mi_iptv/features/player/domain/entities/stream_protocol.dart';
@@ -71,6 +72,8 @@ void main() {
       'headers': <String, String>{},
       'userAgent': null,
       'abr': defaultAbr,
+      'muted': false,
+      'volume': 0.8,
     });
     expect(calls[2].arguments, <String, Object?>{'positionMs': 12000});
   });
@@ -101,7 +104,33 @@ void main() {
       'headers': <String, String>{'Referer': 'https://portal.example/'},
       'userAgent': 'MiIPTV-TV/1.0',
       'abr': liveAbr,
+      'muted': false,
+      'volume': 0.8,
     });
+  });
+
+  test('TV-056 setAudioState and play preserve user mute/volume', () async {
+    final adapter = Media3PlayerAdapter();
+    addTearDown(adapter.dispose);
+
+    const muted = PlaybackAudioState(muted: true, volume: 0.4);
+    await adapter.setAudioState(muted);
+    expect(adapter.audioState, muted);
+
+    await adapter.play(
+      PlaybackRequest(streamUri: Uri.parse('https://example.com/a.m3u8')),
+    );
+
+    expect(adapter.audioState.muted, isTrue);
+    expect(adapter.audioState.volume, 0.4);
+    expect(calls.last.method, 'play');
+    final args = Map<Object?, Object?>.from(calls.last.arguments! as Map);
+    expect(args['muted'], isTrue);
+    expect(args['volume'], 0.4);
+    expect(
+      calls.map((c) => c.method),
+      containsAll(<String>['setAudioState', 'play']),
+    );
   });
 
   test('status events map Media3 phases onto domain status', () async {

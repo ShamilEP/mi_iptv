@@ -151,19 +151,19 @@ class _TvVodPlayerPageState extends State<TvVodPlayerPage> {
   }
 
   void _toggleMute() {
-    _transport.toggleMute();
+    unawaited(_transport.toggleMute());
     _reveal();
     widget.onMuteToggle?.call();
   }
 
   void _volumeDown() {
-    _transport.volumeDown();
+    unawaited(_transport.volumeDown());
     _reveal();
     widget.onVolumeDown?.call();
   }
 
   void _volumeUp() {
-    _transport.volumeUp();
+    unawaited(_transport.volumeUp());
     _reveal();
     widget.onVolumeUp?.call();
   }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mi_iptv/features/player/domain/entities/playback_audio_state.dart';
 import 'package:mi_iptv/features/player/domain/entities/playback_error.dart';
 import 'package:mi_iptv/features/player/domain/entities/playback_request.dart';
 import 'package:mi_iptv/features/player/domain/repositories/media_player_controller.dart';
@@ -121,9 +122,13 @@ void main() {
 final class _FakePlayer implements MediaPlayerController {
   final _controller = StreamController<MediaPlayerStatus>.broadcast();
   int playCount = 0;
+  PlaybackAudioState _audio = const PlaybackAudioState();
 
   @override
   Stream<MediaPlayerStatus> get status => _controller.stream;
+
+  @override
+  PlaybackAudioState get audioState => _audio;
 
   @override
   Future<void> play(PlaybackRequest request) async {
@@ -138,6 +143,11 @@ final class _FakePlayer implements MediaPlayerController {
 
   @override
   Future<void> stop() async {}
+
+  @override
+  Future<void> setAudioState(PlaybackAudioState state) async {
+    _audio = state;
+  }
 
   void emitError(String code, {Duration position = Duration.zero}) {
     _controller.add(

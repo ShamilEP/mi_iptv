@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mi_iptv/features/player/data/adapters/memory_media_player_controller.dart';
+import 'package:mi_iptv/features/player/domain/entities/playback_audio_state.dart';
 import 'package:mi_iptv/features/player/domain/entities/playback_request.dart';
 import 'package:mi_iptv/features/player/domain/entities/stream_protocol.dart';
 import 'package:mi_iptv/features/player/domain/repositories/media_player_controller.dart';
@@ -28,5 +29,19 @@ void main() {
     await player.stop();
     expect(player.currentStatus.phase, MediaPlayerPhase.idle);
     expect(statuses, isNotEmpty);
+  });
+
+  test('TV-056 memory play preserves mute without user setAudioState', () async {
+    final player = MemoryMediaPlayerController();
+    addTearDown(player.dispose);
+
+    await player.setAudioState(
+      const PlaybackAudioState(muted: true, volume: 0.2),
+    );
+    await player.play(
+      PlaybackRequest(streamUri: Uri.parse('https://cdn.example/a.mp4')),
+    );
+    expect(player.audioState.muted, isTrue);
+    expect(player.audioState.volume, 0.2);
   });
 }
