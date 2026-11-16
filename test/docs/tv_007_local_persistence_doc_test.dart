@@ -20,5 +20,7 @@ void main() {
     expect(text.toLowerCase(), contains('drift'));
     expect(text.toLowerCase(), contains('no passwords'));
     expect(text, contains('bootstrap'));
+    expect(text, contains('TV-015'));
+    expect(text, contains('AppDatabaseMigrations'));
   });
 }
