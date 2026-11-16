@@ -4,6 +4,15 @@
 /// via [AppStringCatalog].
 enum AppStringKey {
   appNameCompanion,
+  appNameTv,
+  settingsTitle,
+  settingsAccount,
+  settingsSources,
+  settingsNetwork,
+  settingsLanguage,
+  settingsPlayback,
+  settingsCurrentValues,
+  languageBodyTv,
   exploreTitle,
   exploreBody,
   exploreFeatured,

@@ -23,6 +23,29 @@ void main() {
     );
   });
 
+  test('TV-014 catalogs cover Settings title for EN, ES, zh-CN, FR', () {
+    expect(
+      AppStringCatalog.of(AppStringKey.settingsTitle, AppLocale.en),
+      'Settings',
+    );
+    expect(
+      AppStringCatalog.of(AppStringKey.settingsTitle, AppLocale.es),
+      'Ajustes',
+    );
+    expect(
+      AppStringCatalog.of(AppStringKey.settingsTitle, AppLocale.zhCn),
+      '设置',
+    );
+    expect(
+      AppStringCatalog.of(AppStringKey.settingsTitle, AppLocale.fr),
+      'Paramètres',
+    );
+    expect(
+      AppStringCatalog.of(AppStringKey.appNameTv, AppLocale.en),
+      'Mi IPTV',
+    );
+  });
+
   test('CMP-008 AppLocale.parse accepts PRD-012 tags', () {
     expect(AppLocale.parse('en'), AppLocale.en);
     expect(AppLocale.parse('es-ES'), AppLocale.es);

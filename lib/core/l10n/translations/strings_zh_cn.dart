@@ -2,6 +2,15 @@ import '../app_string_key.dart';
 
 const Map<AppStringKey, String> stringsZhCn = <AppStringKey, String>{
   AppStringKey.appNameCompanion: 'Mi IPTV 伴侣',
+  AppStringKey.appNameTv: 'Mi IPTV',
+  AppStringKey.settingsTitle: '设置',
+  AppStringKey.settingsAccount: '账户',
+  AppStringKey.settingsSources: '片源',
+  AppStringKey.settingsNetwork: '网络',
+  AppStringKey.settingsLanguage: '语言',
+  AppStringKey.settingsPlayback: '播放',
+  AppStringKey.settingsCurrentValues: '当前值',
+  AppStringKey.languageBodyTv: '选择电视界面语言。日期与数字格式会随区域设置更新。',
   AppStringKey.exploreTitle: '浏览',
   AppStringKey.exploreBody: '以展示模式浏览目录。播放在电视上进行。',
   AppStringKey.exploreFeatured: '精选',

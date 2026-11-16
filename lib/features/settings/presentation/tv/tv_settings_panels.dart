@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/l10n/app_locale.dart';
+import '../../../../core/l10n/app_locale_scope.dart';
+import '../../../../core/l10n/app_string_key.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/mi_list_row.dart';
 import '../../../../core/widgets/ui_state.dart';
@@ -21,6 +24,38 @@ class TvSettingsCategoryList extends StatelessWidget {
   final TvSettingsSnapshot snapshot;
   final ValueChanged<TvSettingsCategory> onSelected;
 
+  AppLocale _localeOf(BuildContext context) {
+    final scope = context.dependOnInheritedWidgetOfExactType<AppLocaleScope>();
+    return scope?.notifier?.locale ?? AppLocale.en;
+  }
+
+  String _label(BuildContext context, TvSettingsCategory category) {
+    final locale = _localeOf(context);
+    switch (category) {
+      case TvSettingsCategory.account:
+        return TvSettingsCopy.forLocale(locale, AppStringKey.settingsAccount);
+      case TvSettingsCategory.sources:
+        return TvSettingsCopy.forLocale(locale, AppStringKey.settingsSources);
+      case TvSettingsCategory.network:
+        return TvSettingsCopy.forLocale(locale, AppStringKey.settingsNetwork);
+      case TvSettingsCategory.language:
+        return TvSettingsCopy.forLocale(locale, AppStringKey.settingsLanguage);
+      case TvSettingsCategory.playback:
+        return TvSettingsCopy.forLocale(locale, AppStringKey.settingsPlayback);
+    }
+  }
+
+  String _subtitle(BuildContext context, TvSettingsCategory category) {
+    if (category == TvSettingsCategory.language) {
+      final scope =
+          context.dependOnInheritedWidgetOfExactType<AppLocaleScope>();
+      if (scope?.notifier != null) {
+        return scope!.notifier!.locale.displayName;
+      }
+    }
+    return snapshot.summaryFor(category);
+  }
+
   @override
   Widget build(BuildContext context) {
     final brand = context.brandColors;
@@ -29,13 +64,13 @@ class TvSettingsCategoryList extends StatelessWidget {
         for (final category in TvSettingsCategory.values) ...[
           MiListRow(
             key: ValueKey<String>('settings-cat-${category.name}'),
-            title: _label(category),
-            subtitle: snapshot.summaryFor(category),
+            title: _label(context, category),
+            subtitle: _subtitle(context, category),
             leading: Icon(
               Iconography.of(_role(category)).icon,
               color: brand.cloud,
               size: AppSpacing.lg,
-              semanticLabel: _label(category),
+              semanticLabel: _label(context, category),
             ),
             state: category == selected ? UiState.selected : UiState.defaults,
             onPressed: () => onSelected(category),
@@ -44,21 +79,6 @@ class TvSettingsCategoryList extends StatelessWidget {
         ],
       ],
     );
-  }
-
-  String _label(TvSettingsCategory category) {
-    switch (category) {
-      case TvSettingsCategory.account:
-        return TvSettingsCopy.account;
-      case TvSettingsCategory.sources:
-        return TvSettingsCopy.sources;
-      case TvSettingsCategory.network:
-        return TvSettingsCopy.network;
-      case TvSettingsCategory.language:
-        return TvSettingsCopy.language;
-      case TvSettingsCategory.playback:
-        return TvSettingsCopy.playback;
-    }
   }
 
   IconRole _role(TvSettingsCategory category) {
@@ -92,6 +112,8 @@ class TvSettingsValuesPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final brand = context.brandColors;
     final textTheme = Theme.of(context).textTheme;
+    final scope = context.dependOnInheritedWidgetOfExactType<AppLocaleScope>();
+    final locale = scope?.notifier?.locale ?? AppLocale.en;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,7 +124,7 @@ class TvSettingsValuesPanel extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
-          TvSettingsCopy.currentValues,
+          TvSettingsCopy.forLocale(locale, AppStringKey.settingsCurrentValues),
           style: textTheme.bodyLarge?.copyWith(color: brand.mist),
         ),
         const SizedBox(height: AppSpacing.md),

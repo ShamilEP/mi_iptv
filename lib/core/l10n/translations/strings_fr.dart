@@ -2,6 +2,16 @@ import '../app_string_key.dart';
 
 const Map<AppStringKey, String> stringsFr = <AppStringKey, String>{
   AppStringKey.appNameCompanion: 'Mi IPTV Companion',
+  AppStringKey.appNameTv: 'Mi IPTV',
+  AppStringKey.settingsTitle: 'Paramètres',
+  AppStringKey.settingsAccount: 'Compte',
+  AppStringKey.settingsSources: 'Sources',
+  AppStringKey.settingsNetwork: 'Réseau',
+  AppStringKey.settingsLanguage: 'Langue',
+  AppStringKey.settingsPlayback: 'Lecture',
+  AppStringKey.settingsCurrentValues: 'Valeurs actuelles',
+  AppStringKey.languageBodyTv:
+      'Choisissez la langue de l’interface TV. Les formats de date et de nombre suivent la locale.',
   AppStringKey.exploreTitle: 'Explorer',
   AppStringKey.exploreBody:
       'Parcourez le catalogue en mode démonstration. La lecture se fait sur la TV.',
