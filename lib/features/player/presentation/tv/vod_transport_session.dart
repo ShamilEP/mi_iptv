@@ -35,6 +35,7 @@ final class VodTransportSession extends ChangeNotifier {
   bool _playing;
   bool _muted = false;
   double _volume = 0.8;
+  MediaPlayerPhase _phase = MediaPlayerPhase.idle;
 
   Timer? _accelTimer;
   DateTime? _accelStartedAt;
@@ -45,6 +46,7 @@ final class VodTransportSession extends ChangeNotifier {
   bool get playing => _playing;
   bool get muted => _muted;
   double get volume => _volume;
+  MediaPlayerPhase get phase => _phase;
   PlaybackRequest? get activeRequest => _activeRequest;
 
   double get progress {
@@ -135,6 +137,7 @@ final class VodTransportSession extends ChangeNotifier {
 
   void _onStatus(MediaPlayerStatus status) {
     _position = status.position;
+    _phase = status.phase;
     if (status.duration > Duration.zero) {
       _duration = status.duration;
     }

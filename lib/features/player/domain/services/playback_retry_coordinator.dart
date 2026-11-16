@@ -29,13 +29,20 @@ final class PlaybackRetryCoordinator {
   bool _disposed = false;
 
   final _errors = StreamController<PlaybackError>.broadcast();
+  final _retrying = StreamController<bool>.broadcast();
 
   /// Classified errors (including exhausted retries).
   Stream<PlaybackError> get errors => _errors.stream;
 
+  /// Emits when auto-retry starts / ends (TV-055 reconnect spinner).
+  Stream<bool> get retrying => _retrying.stream;
+
   Stream<MediaPlayerStatus> get status => _player.status;
 
   int get failedAttempts => _failedAttempts;
+
+  /// True while a backoff wait or re-`play` is in flight.
+  bool get isRetrying => _retryInFlight;
 
   PlaybackRequest? get activeRequest => _activeRequest;
 
@@ -44,7 +51,7 @@ final class PlaybackRetryCoordinator {
     _ensureListening();
     _activeRequest = request;
     _failedAttempts = 0;
-    _retryInFlight = false;
+    _setRetrying(false);
     await _player.play(request);
   }
 
@@ -54,7 +61,7 @@ final class PlaybackRetryCoordinator {
 
   Future<void> stop() async {
     _failedAttempts = 0;
-    _retryInFlight = false;
+    _setRetrying(false);
     _activeRequest = null;
     await _player.stop();
   }
@@ -64,6 +71,15 @@ final class PlaybackRetryCoordinator {
     await _subscription?.cancel();
     _subscription = null;
     await _errors.close();
+    await _retrying.close();
+  }
+
+  void _setRetrying(bool value) {
+    if (_retryInFlight == value) return;
+    _retryInFlight = value;
+    if (!_retrying.isClosed) {
+      _retrying.add(value);
+    }
   }
 
   void _ensureListening() {
@@ -76,7 +92,7 @@ final class PlaybackRetryCoordinator {
     if (status.phase == MediaPlayerPhase.playing ||
         status.phase == MediaPlayerPhase.paused) {
       _failedAttempts = 0;
-      _retryInFlight = false;
+      _setRetrying(false);
       return;
     }
 
@@ -97,17 +113,18 @@ final class PlaybackRetryCoordinator {
       failedAttempts: _failedAttempts,
       error: error,
     )) {
+      _setRetrying(false);
       if (!_errors.isClosed) {
         _errors.add(error);
       }
       return;
     }
 
-    _retryInFlight = true;
+    _setRetrying(true);
     final delay = policy.delayBeforeRetry(_failedAttempts);
     await _wait(delay);
     if (_disposed || _activeRequest != request) {
-      _retryInFlight = false;
+      _setRetrying(false);
       return;
     }
 
@@ -117,7 +134,7 @@ final class PlaybackRetryCoordinator {
         await _player.seek(error.position);
       }
     } finally {
-      _retryInFlight = false;
+      _setRetrying(false);
     }
   }
 

@@ -4,9 +4,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mi_iptv/core/oem/oem_quirk.dart';
 import 'package:mi_iptv/core/oem/tv_remote_key_mapper.dart';
 import 'package:mi_iptv/core/theme/theme.dart';
+import 'package:mi_iptv/core/widgets/buffering_reconnect_overlay.dart';
 import 'package:mi_iptv/core/widgets/status_badge.dart';
 import 'package:mi_iptv/core/widgets/stream_failure_recovery_overlay.dart';
 import 'package:mi_iptv/features/live_tv/presentation/tv/tv_live_tv_page.dart';
+import 'package:mi_iptv/features/player/domain/entities/playback_status_feedback.dart';
 
 void main() {
   Future<void> pump(WidgetTester tester, {TvLiveTvPage? page}) async {
@@ -118,5 +120,32 @@ void main() {
     expect(switched, isTrue);
     expect(backed, isTrue);
     expect(find.text('Signal News'), findsWidgets);
+  });
+
+  testWidgets('TV-055 shows reconnect spinner without jargon', (tester) async {
+    await pump(
+      tester,
+      page: const TvLiveTvPage(
+        statusFeedback: PlaybackStatusFeedback.reconnecting,
+      ),
+    );
+
+    expect(find.byType(BufferingReconnectOverlay), findsOneWidget);
+    expect(find.text('Reconnecting…'), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.textContaining('ERROR_CODE'), findsNothing);
+  });
+
+  testWidgets('TV-055 failure recovery hides reconnect spinner', (tester) async {
+    await pump(
+      tester,
+      page: const TvLiveTvPage(
+        streamFailed: true,
+        statusFeedback: PlaybackStatusFeedback.reconnecting,
+      ),
+    );
+
+    expect(find.text('Retry'), findsOneWidget);
+    expect(find.text('Reconnecting…'), findsNothing);
   });
 }

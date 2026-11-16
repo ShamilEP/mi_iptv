@@ -77,6 +77,45 @@ void main() {
     expect(player.playCount, 1);
     expect(exhausted.single.kind, PlaybackErrorKind.decoder);
   });
+
+  test('TV-055 exposes isRetrying while backoff wait is in flight', () async {
+    final player = _FakePlayer();
+    final gate = Completer<void>();
+    final coordinator = PlaybackRetryCoordinator(
+      player: player,
+      policy: const PlaybackRetryPolicy(
+        maxAttempts: 2,
+        initialDelay: Duration(milliseconds: 10),
+        multiplier: 2,
+        maxDelay: Duration(seconds: 1),
+      ),
+      wait: (_) => gate.future,
+    );
+    addTearDown(coordinator.dispose);
+
+    final retryingEvents = <bool>[];
+    final sub = coordinator.retrying.listen(retryingEvents.add);
+    addTearDown(sub.cancel);
+
+    await coordinator.play(
+      PlaybackRequest(streamUri: Uri.parse('https://cdn.example/live.m3u8')),
+    );
+    expect(coordinator.isRetrying, isFalse);
+
+    player.emitError('ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT');
+    await Future<void>.delayed(Duration.zero);
+    await Future<void>.delayed(Duration.zero);
+
+    expect(coordinator.isRetrying, isTrue);
+    expect(retryingEvents, contains(true));
+
+    gate.complete();
+    await Future<void>.delayed(Duration.zero);
+    await Future<void>.delayed(Duration.zero);
+
+    expect(coordinator.isRetrying, isFalse);
+    expect(retryingEvents.last, isFalse);
+  });
 }
 
 final class _FakePlayer implements MediaPlayerController {
