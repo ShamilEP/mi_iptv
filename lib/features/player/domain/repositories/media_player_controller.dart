@@ -30,10 +30,15 @@ final class MediaPlayerStatus {
     this.position = Duration.zero,
     this.duration = Duration.zero,
     this.message,
+    this.subtitleCue,
   });
 
   final MediaPlayerPhase phase;
   final Duration position;
   final Duration duration;
   final String? message;
+
+  /// Active subtitle cue text for DSN-021 Flutter rendering (TV-057).
+  /// Empty / null when no cue or subtitles disabled.
+  final String? subtitleCue;
 }

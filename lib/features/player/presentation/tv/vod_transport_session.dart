@@ -40,6 +40,7 @@ final class VodTransportSession extends ChangeNotifier {
   bool _playing;
   PlaybackAudioState _audio;
   MediaPlayerPhase _phase = MediaPlayerPhase.idle;
+  String? _subtitleCue;
 
   Timer? _accelTimer;
   DateTime? _accelStartedAt;
@@ -52,6 +53,9 @@ final class VodTransportSession extends ChangeNotifier {
   double get volume => _audio.volume;
   PlaybackAudioState get audioState => _audio;
   MediaPlayerPhase get phase => _phase;
+
+  /// Live cue text from Media3 for DSN-021 captions (TV-057).
+  String? get subtitleCue => _subtitleCue;
   PlaybackRequest? get activeRequest => _activeRequest;
 
   double get progress {
@@ -147,6 +151,7 @@ final class VodTransportSession extends ChangeNotifier {
   void _onStatus(MediaPlayerStatus status) {
     _position = status.position;
     _phase = status.phase;
+    _subtitleCue = status.subtitleCue;
     if (status.duration > Duration.zero) {
       _duration = status.duration;
     }

@@ -32,7 +32,7 @@ class TvVodPlayerPage extends StatefulWidget {
     this.subtitleText = demoSubtitle,
     this.subtitleSize = SubtitleSizePreset.standard,
     this.autoHide = true,
-    this.initialPreference = const TvTrackPreference(),
+    this.initialPreference,
     this.audioTracks = demoAudioTracks,
     this.subtitleTracks = demoSubtitleTracks,
     this.mediaPlayer,
@@ -52,7 +52,8 @@ class TvVodPlayerPage extends StatefulWidget {
   final String? subtitleText;
   final SubtitleSizePreset subtitleSize;
   final bool autoHide;
-  final TvTrackPreference initialPreference;
+  /// When null, uses [TvTrackPreference.sourceDefaults] (TV-057).
+  final TvTrackPreference? initialPreference;
   final List<TvMediaTrack> audioTracks;
   final List<TvMediaTrack> subtitleTracks;
 
@@ -87,7 +88,11 @@ class TvVodPlayerPage extends StatefulWidget {
 class _TvVodPlayerPageState extends State<TvVodPlayerPage> {
   bool _controlsVisible = true;
   bool _trackSelectorOpen = false;
-  late TvTrackPreference _preference = widget.initialPreference;
+  late TvTrackPreference _preference = widget.initialPreference ??
+      TvTrackPreference.sourceDefaults(
+        audioTracks: widget.audioTracks,
+        subtitleTracks: widget.subtitleTracks,
+      );
   Timer? _hideTimer;
   late final VodTransportSession _transport;
 
@@ -259,7 +264,11 @@ class _TvVodPlayerPageState extends State<TvVodPlayerPage> {
   Widget build(BuildContext context) {
     final brand = context.brandColors;
     final textTheme = Theme.of(context).textTheme;
-    final caption = widget.subtitleText;
+    // Live Media3 cues preferred; demo [subtitleText] for shell without player.
+    final liveCue = _transport.subtitleCue;
+    final caption = (liveCue != null && liveCue.trim().isNotEmpty)
+        ? liveCue
+        : widget.subtitleText;
     final showCaption =
         _subtitlesOn && caption != null && caption.trim().isNotEmpty;
     final positionLabel = formatVodClock(_transport.position);

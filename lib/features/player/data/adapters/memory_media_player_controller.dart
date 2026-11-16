@@ -39,12 +39,14 @@ final class MemoryMediaPlayerController implements MediaPlayerController {
       protocolHint: request.protocolHint,
     );
     // TV-056: play must not reset mute / volume.
+    // TV-057: preserve active cue text across play.
     _emit(
       MediaPlayerStatus(
         phase: MediaPlayerPhase.playing,
         position: Duration.zero,
         duration: const Duration(minutes: 1),
         message: request.streamUri.scheme.isEmpty ? 'invalid_uri' : null,
+        subtitleCue: _status.subtitleCue,
       ),
     );
   }
@@ -56,6 +58,7 @@ final class MemoryMediaPlayerController implements MediaPlayerController {
         phase: MediaPlayerPhase.paused,
         position: _status.position,
         duration: _status.duration,
+        subtitleCue: _status.subtitleCue,
       ),
     );
   }
@@ -70,6 +73,7 @@ final class MemoryMediaPlayerController implements MediaPlayerController {
             : _status.phase,
         position: clamped,
         duration: _status.duration,
+        subtitleCue: _status.subtitleCue,
       ),
     );
   }
@@ -90,6 +94,7 @@ final class MemoryMediaPlayerController implements MediaPlayerController {
     Duration? position,
     Duration? duration,
     String? message,
+    String? subtitleCue,
   }) {
     _emit(
       MediaPlayerStatus(
@@ -97,6 +102,20 @@ final class MemoryMediaPlayerController implements MediaPlayerController {
         position: position ?? _status.position,
         duration: duration ?? _status.duration,
         message: message,
+        subtitleCue: subtitleCue ?? _status.subtitleCue,
+      ),
+    );
+  }
+
+  /// Test helper — emit a DSN-021 caption cue while playing.
+  void emitSubtitleCue(String? cue) {
+    _emit(
+      MediaPlayerStatus(
+        phase: _status.phase,
+        position: _status.position,
+        duration: _status.duration,
+        message: _status.message,
+        subtitleCue: cue,
       ),
     );
   }
