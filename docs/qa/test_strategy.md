@@ -124,6 +124,7 @@ Backend/infra availability is an **entry** dependency, not owned by this repo.
 
 - Expand coverage for Release 1 client surfaces only.
 - Release 1 feature gate (QA-053 / SRS §23): shell + helper automation + deferred matrix — see [release1_features.md](./release1_features.md).
+- QoE / SLO baselines (QA-054 / FR-029): lab fixtures vs interim PRD-006 referential budgets — see [qoe_slo_baselines.md](./qoe_slo_baselines.md).
 - Regression of MVP smoke on every RC.
 
 **Exit**
