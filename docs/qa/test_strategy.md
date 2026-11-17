@@ -118,10 +118,12 @@ Backend/infra availability is an **entry** dependency, not owned by this repo.
 
 - MVP exit met.
 - Release 1 Design/feature scope agreed externally (e.g. EPG, profiles) without inventing Product decisions in this doc.
+- Provisional PRD-032 stories/AC: [user_stories_release1.md](../product/user_stories_release1.md) (pending SRS §18 / §23 lock).
 
 **In-phase testing**
 
 - Expand coverage for Release 1 client surfaces only.
+- Release 1 feature gate (QA-053 / SRS §23): shell + helper automation + deferred matrix — see [release1_features.md](./release1_features.md).
 - Regression of MVP smoke on every RC.
 
 **Exit**
