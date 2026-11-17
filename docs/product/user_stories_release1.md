@@ -184,7 +184,7 @@ And if the content is missing or restricted, I see a clear error or parental gat
 And unsigned users are prompted to sign in then continue to the target
 ```
 
-**Notes:** No `app_links` / URI handler in the client yet — provisional AC; OS manifest + routing TBD at Product lock.
+**Notes:** Release 1 delivery locked 2026-11-17 (CMP-050). Interim scheme `https://link.mi-iptv.app/vod|live/{id}` — see [cmp-050-companion-deep-links.md](../architecture/cmp-050-companion-deep-links.md).
 
 ---
 
