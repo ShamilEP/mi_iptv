@@ -7,7 +7,7 @@ Executable UI: [`CompanionLoginPairingPage`](../../lib/features/auth/presentatio
 1. **Sign in** — email and password for the account, then **Log in**. Empty fields stay on this step and ask for both.
 2. **Account** — the signed-in email stays visible with the TV list.
 3. **Linked TVs** — one row per TV. Each row shows a labeled connection state: **Connected** or **Offline** (icon plus text).
-4. **Empty list** — “No linked TVs on this account.” No pairing-code or QR step; that mechanism is not specified here.
+4. **Empty list** — “No linked TVs on this account.” Pairing-code entry for a new TV is a separate Release 2 flow — see [pairing_code.md](./pairing_code.md) (DSN-071).
 
 ## Notes
 
