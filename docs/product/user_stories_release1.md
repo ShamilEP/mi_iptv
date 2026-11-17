@@ -203,7 +203,7 @@ And payloads use anonymous IDs only — no email, tokens, or source passwords
 And retention follows the locked GDPR policy (PRD-004)
 ```
 
-**Notes:** Exact event catalog is a Product lock item; security bar stays SEC-C09.
+**Notes:** Product lock 2026-11-17 — **MVP three events only** (startup / channel change / buffering) until Release 2; see [prd_006_qoe_slo_baselines.md](./prd_006_qoe_slo_baselines.md). Security bar stays SEC-C09.
 
 ---
 
