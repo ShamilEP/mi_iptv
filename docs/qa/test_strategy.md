@@ -10,6 +10,7 @@ Android TV device matrix: [android_tv_device_matrix.md](./android_tv_device_matr
 TV D-pad navigation automation: [tv_dpad_navigation.md](./tv_dpad_navigation.md) (QA-025).  
 Companion touch automation: [companion_touch.md](./companion_touch.md) (QA-026).  
 Offline-first (airplane / backend-down): [offline_first.md](./offline_first.md) (QA-039).  
+Localization (QA-040 / NFR-012): string overflow + locale formats — see [localization.md](./localization.md).  
 Upgrades / local DB migrations (QA-041 / FR-027): [upgrades_and_migrations.md](./upgrades_and_migrations.md).  
 Client security acceptance criteria: [client_security_checklist.md](../security/client_security_checklist.md) (SEC-002).  
 Incident response (token/key compromise): [incident_response_runbook.md](../security/incident_response_runbook.md) (SEC-052).
@@ -93,6 +94,7 @@ Backend/infra availability is an **entry** dependency, not owned by this repo.
 - Automated TV D-pad suite (QA-025 / TV-121): first focus, determinism, Back stack, focus traps, last-focus memory — see [tv_dpad_navigation.md](./tv_dpad_navigation.md).
 - Automated Companion touch suite (QA-026): pairing, remote, send-to-TV on Android + iOS — see [companion_touch.md](./companion_touch.md).
 - Automated offline-first suite (QA-039): airplane / backend-down must not block interaction or playback recovery — see [offline_first.md](./offline_first.md).
+- Automated localization suite (QA-040 / NFR-012): catalog completeness, locale date/number formats, string overflow ellipsis — see [localization.md](./localization.md).
 - MVP FR acceptance (QA-019): FR-012…016 / FR-024 / FR-026 / FR-028 matrix — see [qa-019_fr_acceptance.md](./qa-019_fr_acceptance.md).
 - Design System visual regression (QA-029): focus + 12 `UiState` PNG baselines via built-in `matchesGoldenFile` — see [visual_regression_design_system.md](./visual_regression_design_system.md).
 - Live playback soak (QA-042 / NFR-003): accelerated leak/stability suite + 24h lab procedure on QA-002 stick — see [live_playback_soak.md](./live_playback_soak.md).
