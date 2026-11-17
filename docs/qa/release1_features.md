@@ -20,7 +20,7 @@ Gate Release 1 client surfaces called out for QA-053 against provisional PRD-032
 | **Tolerant search** (US-R1-07) | `TolerantSearch` contains + typo recovery | Backend search API |
 | **Audio / subtitle tracks** (US-R1-08) | Track picker opens; session preference remembered; MVP `DefaultTrackPolicy` still selects source defaults | Media3 track enumeration / durable prefs |
 | **History** (US-R1-06) | History separate from Continue watching; privacy toggle + clear | History API / sync |
-| **Deep links** (US-R1-09) | — (documented only) | OS URI / `app_links` integration |
+| **Deep links** (US-R1-09) | CMP-050 parser + Companion binder + Android VIEW filter | iOS Universal Links / `app_links` package |
 | **Extended QoE** (US-R1-10) | — (documented only; security bar = anonymous IDs) | Extended event catalog vs field data |
 | **Settings sync** (US-R1-11) | — (documented only) | Sync allow-list + multi-device lab |
 

@@ -31,9 +31,11 @@ class CompanionExplorePage extends StatefulWidget {
     this.favorites = const <CompanionExploreItem>[],
     this.tvName = CompanionExploreCopy.demoTvName,
     this.surfaceState = CompanionExploreSurfaceState.ready,
+    this.initialItemId,
     this.onSendToTv,
     this.onRetry,
     this.onResolveConflict,
+    this.onDeepLinkMiss,
   });
 
   final List<CompanionExploreItem> featured;
@@ -42,9 +44,13 @@ class CompanionExplorePage extends StatefulWidget {
   final List<CompanionExploreItem> favorites;
   final String tvName;
   final CompanionExploreSurfaceState surfaceState;
+
+  /// When set (e.g. CMP-050 deep link), open matching detail if present.
+  final String? initialItemId;
   final ValueChanged<CompanionExploreItem>? onSendToTv;
   final VoidCallback? onRetry;
   final VoidCallback? onResolveConflict;
+  final VoidCallback? onDeepLinkMiss;
 
   static const List<CompanionExploreItem> demoFeatured = <CompanionExploreItem>[
     CompanionExploreItem(
@@ -98,6 +104,67 @@ class CompanionExplorePage extends StatefulWidget {
 class _CompanionExplorePageState extends State<CompanionExplorePage> {
   CompanionExploreItem? _selected;
   String? _sentLabel;
+  String? _appliedInitialId;
+
+  @override
+  void initState() {
+    super.initState();
+    _applyInitialItem(fromInit: true);
+  }
+
+  @override
+  void didUpdateWidget(covariant CompanionExplorePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialItemId != oldWidget.initialItemId ||
+        widget.featured != oldWidget.featured ||
+        widget.live != oldWidget.live ||
+        widget.movies != oldWidget.movies ||
+        widget.favorites != oldWidget.favorites) {
+      _applyInitialItem(fromInit: false);
+    }
+  }
+
+  void _applyInitialItem({required bool fromInit}) {
+    final id = widget.initialItemId;
+    if (id == null || id.isEmpty) {
+      _appliedInitialId = null;
+      return;
+    }
+    if (id == _appliedInitialId && _selected?.id == id) return;
+    final match = _findById(id);
+    if (match == null) {
+      _appliedInitialId = id;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        widget.onDeepLinkMiss?.call();
+      });
+      return;
+    }
+    void apply() {
+      _appliedInitialId = id;
+      _selected = match;
+      _sentLabel = null;
+    }
+
+    if (fromInit) {
+      apply();
+    } else {
+      setState(apply);
+    }
+  }
+
+  CompanionExploreItem? _findById(String id) {
+    for (final pool in [
+      widget.featured,
+      widget.live,
+      widget.movies,
+      widget.favorites,
+    ]) {
+      for (final item in pool) {
+        if (item.id == id) return item;
+      }
+    }
+    return null;
+  }
 
   AppLocale _localeOf(BuildContext context) {
     final scope = context.dependOnInheritedWidgetOfExactType<AppLocaleScope>();

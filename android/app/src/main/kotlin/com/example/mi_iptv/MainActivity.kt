@@ -1,5 +1,6 @@
 package com.example.mi_iptv
 
+import com.example.mi_iptv.deeplink.DeepLinkPlugin
 import com.example.mi_iptv.oem.OemCompatibilityPlugin
 import com.example.mi_iptv.player.Media3PlayerPlugin
 import com.example.mi_iptv.player.PlaybackSessionPlugin
@@ -15,5 +16,7 @@ class MainActivity : FlutterActivity() {
         flutterEngine.plugins.add(PlaybackSessionPlugin())
         // TV-011: OEM fingerprint (manufacturer / model / API) for compatibility profiles.
         flutterEngine.plugins.add(OemCompatibilityPlugin())
+        // CMP-050: https VIEW deep links → Dart MethodChannel.
+        flutterEngine.plugins.add(DeepLinkPlugin())
     }
 }

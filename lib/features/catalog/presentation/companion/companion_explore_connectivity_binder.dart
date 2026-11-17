@@ -26,16 +26,20 @@ class CompanionExploreConnectivityBinder extends StatefulWidget {
     super.key,
     this.connectivity,
     this.localCache,
+    this.initialItemId,
     this.onSendToTv,
     this.onRetry,
     this.onResolveConflict,
+    this.onDeepLinkMiss,
   });
 
   final ConnectivityMonitor? connectivity;
   final CompanionLocalCache? localCache;
+  final String? initialItemId;
   final ValueChanged<CompanionExploreItem>? onSendToTv;
   final VoidCallback? onRetry;
   final VoidCallback? onResolveConflict;
+  final VoidCallback? onDeepLinkMiss;
 
   @override
   State<CompanionExploreConnectivityBinder> createState() =>
@@ -219,9 +223,11 @@ class _CompanionExploreConnectivityBinderState
       favorites: _favorites,
       tvName: _tvName,
       surfaceState: _surface,
+      initialItemId: widget.initialItemId,
       onSendToTv: widget.onSendToTv,
       onRetry: widget.onRetry ?? () => unawaited(_refresh()),
       onResolveConflict: widget.onResolveConflict,
+      onDeepLinkMiss: widget.onDeepLinkMiss,
     );
   }
 }
