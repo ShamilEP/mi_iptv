@@ -8,6 +8,8 @@ SRS §10 requires every **MVP** FR to have at least one story with Gherkin accep
 
 Language of this handoff: **English** (repo harness). Criteria use Given / When / Then.
 
+**Release 1 continuation (provisional):** [user_stories_release1.md](./user_stories_release1.md) (PRD-032).
+
 ### Open follow-up (does not block story shape)
 
 - **MVP country list values** for FR-002 / US-09: Product chose a **country list** model; the concrete ISO country set is still to be enumerated (ask Product before shipping onboarding copy).
