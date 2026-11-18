@@ -1,0 +1,100 @@
+---
+trigger: glob
+globs: "**/lib/core/theme/**/*.dart, **/lib/core/widgets/**/*.dart, **/lib/features/**/presentation/**/*.dart"
+description: Brand Theme 2026–27 tokens, TV focus, required UI states
+---
+
+# Brand & UI (Theme 2026–27)
+
+Dark-first TV; light companion surfaces. Use `lib/core/theme` tokens — no one-off hex in widgets.
+
+## Colors
+| Token | Hex | Use |
+|---|---|---|
+| ink | `#0A0D14` | TV background |
+| surface | `#1A2130` | Cards / panels |
+| panel | `#11161F` | Nested panels |
+| border | `#2A3447` | Hairline borders |
+| cloud | `#F0EEE9` | Primary text / focus ring / companion bg |
+| mist | `#A3AFC4` | Secondary text |
+| signal | `#2BD9C8` | Primary actions, progress |
+| ember | `#FF7A4D` | LIVE, alerts, send-to-TV |
+| success | `#6FDC8C` | Synced / connected |
+| warning | `#FFC857` | Weak network |
+| error | `#FF6B7A` | Stream failed |
+| companionPrimary | `#0A6F68` | Companion CTA on light |
+| companionLive | `#B8431B` | LIVE on light |
+
+Semantic roles (DSN-007): use `SemanticColorUsage` / `docs/design/semantic_color_usage.md` — do not swap Signal↔Ember or Warning↔Error.
+
+## Typography (DSN-003)
+Families (bundled OFL under `assets/fonts/`, system fallbacks in `AppTypography`):
+- Display/Headline/Title: **Bricolage Grotesque** (800 / 700)
+- Body/UI: **Figtree** (400 / 600)
+- Data/timecode: **JetBrains Mono** (500)
+
+| Role | Material slot | TV size/line | Companion size/line |
+|---|---|---|---|
+| Display | `displayLarge` | 56/64 w800 | 36/44 w800 |
+| Headline | `headlineMedium` | 40/48 w700 | 28/36 w700 |
+| Title | `titleLarge` | 28/36 w700 | 20/28 w700 |
+| Body | `bodyLarge` | 20/28 w400 | 16/24 w400 |
+| UI emphasis | `bodyMedium` | body size w600 | body size w600 |
+| Label | `labelLarge` | 16/24 w600 | 13/20 w600 |
+| Data | `labelSmall` | 16/24 w500 | 13/20 w500 |
+
+Use `AppTheme.tvDark()` / `companionLight()` text themes — no one-off `fontSize` in widgets. Do not add `google_fonts`.
+
+## Layout foundations (DSN-004)
+Use named tokens from `lib/core/theme` — no one-off padding, radius, shadow, or duration numbers in widgets.
+
+### Spacing (`AppSpacing`) — 4dp base, 8-forward for TV
+| Token | px | Use |
+|---|---|---|
+| xxs | 4 | Hairline nudge, icon gap |
+| xs | 8 | Tight stack |
+| sm | 12 | Compact companion clusters |
+| md | 16 | Default inner / card pad |
+| lg | 24 | Section stack, rail gaps |
+| xl | 32 | Block separation |
+| xxl | 48 | TV page / overscan inset |
+| xxxl | 64 | Rare hero breathing room |
+
+Semantic aliases: `stackTight`→xs, `stack`→lg, `insetCard`→md, `insetPageTv`→xxl, `insetPageCompanion`→md.
+
+### Grid (`AppGrid`)
+`gutter` 16 · `rowGap` 24 · `railGap` 32
+
+### TV overscan (`AppOverscan`)
+**48px** all sides (~5% of 1080p). Keep actionable chrome and text inside; full-bleed player/hero may ignore. Companion: system `SafeArea` / `MediaQuery.padding` + `AppSpacing.insetPageCompanion`.
+
+### Radius (`AppRadius`)
+xs 8 · sm 12 · **md 16** (default cards / `FocusableSurface`) · lg 24 · full 999 (pills)
+
+### Elevation (`AppElevation`)
+Soft ambient recipes on Ink — not Material elevation ints: `flat`, `raised`, `overlay`. Focus chrome stays in `FocusStyles.focusGlow`.
+
+### Motion (`AppMotion`) — DSN-004 / DSN-020
+`fast` 120ms (focus) · `normal` 200ms · `slow` 320ms · curves `emphasized` / `standard`. Focus scale remains `FocusStyles.scale` (1.05).  
+Short + functional only; use `AppMotion.durationOf` / `curveOf` so reduced motion (`MediaQuery.disableAnimations`) snaps transitions. Keep focus ring/glow visible. Guide: `docs/design/motion_guidelines.md`.
+
+## TV focus
+Visible focus always: **4px Cloud ring** + Signal outer glow; scale ~**1.05–1.06**. First focus on the highest-priority actionable control.
+
+## Mandatory interaction states
+Default, Focused, Pressed, Disabled, Loading, Empty, Error, Offline, Playing, Selected, Syncing, Sync Conflict.
+
+## Logo & icon kit (DSN-005)
+Canonical mark: two Signal arches spell **m**; stem + Ember live-dot spell **i** (broadcast signal + LIVE beacon).
+- Geometry: viewBox `72×64`, stroke 7, live-dot r `5.5` → clear space = **dot diameter (11)**.
+- Minimum mark size: **24 px**. Use `BrandMark` / `BrandWordmark` / `BrandLockup` — do not invent logos.
+- Wordmark: lowercase `iptv`, Bricolage Grotesque **700**, tracking **−3%** (`BrandAssets.wordmarkTrackingEm`).
+- Tones: `BrandMarkTone.dark` (Signal/Ember), `.companion` (companionPrimary/Live), `.monochrome` (Ink).
+- Kit paths: `assets/brand/` (SVG masters, `app_icon_512.png`, `tv_banner_320x180.png`, adaptive layers).
+- Android: adaptive `ic_launcher` + `drawable/tv_banner` (Leanback launcher wiring is TV-003).
+
+## Accessibility (DSN-002)
+- Text / fill contrast: use only **approved** FG/BG pairs locked in `test/core/theme/color_contrast_test.dart` (WCAG AA 4.5:1 via `ColorContrast`). Helpers live in `lib/core/theme/color_contrast.dart`.
+- **Never** use status accents (`signal`, `ember`, `success`, `warning`, `error`) as body text on `cloud` — those pairs fail AA. On companion light, prefer `ink`, `companionPrimary`, `companionLive`, or `companionMuted` on `cloud`; use Ink (or Cloud) as `on*` text for filled CTAs / chips.
+- **State ≠ color alone:** for every mandatory `UiState`, pair hue with a non-color cue (label, icon, pattern, scale, or ring). Reference: TV focus = 4px Cloud ring + Signal glow **and** scale ~1.05 (`FocusStyles` / `FocusableSurface`).
+- LIVE / sync / error / warning / offline widgets: Ember / success / warning / error must ship with text or icon — never hue alone.
